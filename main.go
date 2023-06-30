@@ -61,7 +61,7 @@ func NewApplication() *Application {
 	app.SetRoot(flex, true).SetFocus(pages)
 	a.app = app
 	a.pages = pages
-	a.pageNames = []string{"list"}
+	a.pageNames = []string{"services"}
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEscape && len(a.pageNames) > 1 {
 			a.Close()
