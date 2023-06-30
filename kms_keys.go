@@ -5,45 +5,63 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
 type KmsKeys struct {
-	client *kms.Client
+	*Table
+	kmsClient *kms.Client
+	app       *Application
 }
 
-/*
-type KmsKeysEntry struct {
-	Id      string
-	Aliases string
+func NewKmsKeys(kmsClient *kms.Client, app *Application) *KmsKeys {
+	k := &KmsKeys{
+		Table: NewTable([]string{
+			"ID",
+			"ALIASES",
+			"DESCRIPTION",
+			"ENABLED",
+			"STATE",
+			"SPEC",
+			"USAGE",
+			"REGIONALITY",
+		}, 1, 0),
+		kmsClient: kmsClient,
+		app:       app,
+	}
+	k.Render() // TODO fix
+	return k
 }
-*/
 
-func NewKmsKeys(c *kms.Client) *KmsKeys {
-	return &KmsKeys{
-		client: c,
+func (k KmsKeys) GetName() string {
+	return "KMS - Keys"
+}
+
+func (k KmsKeys) keyPolicyHandler() {
+	r, _ := k.GetSelection()
+	keyId := k.GetCell(r, 0).Text
+	policyView := NewKmsKeyPolicy(k.kmsClient, keyId)
+	k.app.AddAndSwitch("kms.policy", policyView)
+}
+
+func (k KmsKeys) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
+			Description: "Key Policy",
+			Action:      k.keyPolicyHandler,
+		},
 	}
 }
 
-func (r KmsKeys) GetHeaders() []string {
-	return []string{
-		"ID",
-		"ALIASES",
-		"ENABLED",
-		"STATE",
-		"SPEC",
-		"USAGE",
-		"REGIONALITY",
-	}
-}
-
-func (r *KmsKeys) Render() ([][]string, error) {
+func (k KmsKeys) Render() {
 	aliasMap := make(map[string][]string)
-	aliasesPaginator := kms.NewListAliasesPaginator(r.client, &kms.ListAliasesInput{})
+	aliasesPaginator := kms.NewListAliasesPaginator(k.kmsClient, &kms.ListAliasesInput{})
 	for aliasesPaginator.HasMorePages() {
 		out, err := aliasesPaginator.NextPage(context.TODO())
 		if err != nil {
-			return nil, err
+			panic(err)
 		}
 		for _, v := range out.Aliases {
 			if v.TargetKeyId != nil {
@@ -53,16 +71,16 @@ func (r *KmsKeys) Render() ([][]string, error) {
 	}
 
 	var keys []kmsTypes.KeyListEntry
-	keysPaginator := kms.NewListKeysPaginator(r.client, &kms.ListKeysInput{})
+	keysPaginator := kms.NewListKeysPaginator(k.kmsClient, &kms.ListKeysInput{})
 	for keysPaginator.HasMorePages() {
 		out, err := keysPaginator.NextPage(context.TODO())
 		if err != nil {
-			return nil, err
+			panic(err)
 		}
 		keys = append(keys, out.Keys...)
 	}
 
-	var ret [][]string
+	var data [][]string
 	for _, v := range keys {
 		aliases, ok := aliasMap[*v.KeyId]
 		var alias string
@@ -73,18 +91,30 @@ func (r *KmsKeys) Render() ([][]string, error) {
 			}
 		}
 
-		out, err := r.client.DescribeKey(context.TODO(), &kms.DescribeKeyInput{KeyId: v.KeyId})
+		out, err := k.kmsClient.DescribeKey(context.TODO(), &kms.DescribeKeyInput{KeyId: v.KeyId})
 		if err != nil {
-			return nil, err
+			// panic(err)
+			data = append(data, []string{
+				*v.KeyId,
+				"Unauthorized",
+				"-",
+				"-",
+				"-",
+				"-",
+				"-",
+				"-",
+			})
+			continue
 		}
 		var regionality string
 		if *out.KeyMetadata.MultiRegion && out.KeyMetadata.MultiRegionConfiguration != nil {
 			regionality = string(out.KeyMetadata.MultiRegionConfiguration.MultiRegionKeyType)
 		}
 
-		ret = append(ret, []string{
+		data = append(data, []string{
 			*v.KeyId,
 			alias,
+			*out.KeyMetadata.Description,
 			strconv.FormatBool(out.KeyMetadata.Enabled),
 			string(out.KeyMetadata.KeyState),
 			string(out.KeyMetadata.KeySpec),
@@ -92,5 +122,5 @@ func (r *KmsKeys) Render() ([][]string, error) {
 			regionality,
 		})
 	}
-	return ret, nil
+	k.SetData(data)
 }

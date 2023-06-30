@@ -1,49 +1,43 @@
 package main
 
 import (
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-type TableRenderable interface {
-	GetHeaders() []string
-	Render() ([][]string, error)
+type Table struct {
+	*tview.Table
+	headers []string
 }
 
-type TableView struct {
-	table   *tview.Table
-	name    string
-	content TableRenderable
-}
-
-func NewTableView(name string, content TableRenderable) *TableView {
-	t := &TableView{
-		table:   tview.NewTable(),
-		name:    name,
-		content: content,
+func NewTable(headers []string, fixedRows, fixedCols int) *Table {
+	tt := tview.NewTable()
+	tt.SetFixed(fixedRows, fixedCols)
+	tt.SetSelectable(true, false)
+	tt.Select(1, 0)
+	tt.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		// TODO handle ctrl b
+		if event.Key() == tcell.KeyHome || (event.Key() == tcell.KeyRune && event.Rune() == 'g') {
+			tt.Select(1, 0)
+			return nil
+		}
+		return event
+	})
+	for i, v := range headers {
+		tt.SetCell(0, i, tview.NewTableCell(v))
 	}
-	t.table.SetFixed(1, 0)
-	t.table.SetSelectable(true, false)
-	t.table.SetBorder(true)
-	t.table.Box.SetTitle(" " + name + " ")
-	for i, v := range content.GetHeaders() {
-		t.table.SetCell(0, i, tview.NewTableCell(v))
+	t := &Table{
+		Table:   tt,
+		headers: headers,
 	}
-	t.Update()
 	return t
 }
 
-func (t TableView) GetTable() *tview.Table {
-	return t.table
-}
-
-func (t TableView) Update() {
-	data, err := t.content.Render()
-	if err != nil {
-		panic(err)
-	}
+func (t *Table) SetData(data [][]string) {
+	// TODO handle changing data size
 	for r, v := range data {
 		for c, vv := range v {
-			t.table.SetCell(r+1, c, tview.NewTableCell(vv))
+			t.SetCell(r+1, c, tview.NewTableCell(vv))
 		}
 	}
 }
