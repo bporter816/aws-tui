@@ -38,7 +38,7 @@ func (e ElasticacheEvents) GetKeyActions() []KeyAction {
 }
 
 func (e ElasticacheEvents) Render() {
-	oneWeekAgo := time.Now().AddDate(0, 0, -13)
+	oneWeekAgo := time.Now().AddDate(0, 0, -13) // TODO get this closer to the max 14 days
 	eventsPaginator := ec.NewDescribeEventsPaginator(
 		e.ecClient,
 		&ec.DescribeEventsInput{

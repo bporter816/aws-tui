@@ -21,7 +21,6 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 	s := &Services{
 		Table: NewTable([]string{
 			"SERVICE",
-			"DESCRIPTION",
 		}, 1, 0),
 		clients: clients,
 		app:     app,
@@ -69,12 +68,12 @@ func (s Services) GetKeyActions() []KeyAction {
 
 func (s Services) Render() {
 	data := [][]string{
-		[]string{"Cloudfront", "CDN"},
-		[]string{"DynamoDB", "NoSQL Database"},
-		[]string{"Elasticache", "Redis / Memcached"},
-		[]string{"KMS", "Key Management Service"},
-		[]string{"Route 53", "DNS"},
-		[]string{"Secrets Manager", "Secrets"},
+		[]string{"Cloudfront"},
+		[]string{"DynamoDB"},
+		[]string{"Elasticache"},
+		[]string{"KMS"},
+		[]string{"Route 53"},
+		[]string{"Secrets Manager"},
 	}
 	s.SetData(data)
 }
