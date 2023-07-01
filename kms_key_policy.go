@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -20,9 +19,6 @@ func NewKmsKeyPolicy(kmsClient *kms.Client, keyId string) *KmsKeyPolicy {
 		kmsClient: kmsClient,
 		keyId:     keyId,
 	}
-	k.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		return event
-	})
 	k.Render() // TODO fix
 	return k
 }

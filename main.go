@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
+	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	// awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	// "github.com/aws/smithy-go/aws"
@@ -37,14 +38,16 @@ func NewApplication() *Application {
 	iamClient := iam.NewFromConfig(cfg)
 	r53Client := route53.NewFromConfig(cfg)
 	kmsClient := kms.NewFromConfig(cfg)
+	smClient := sm.NewFromConfig(cfg)
 
 	a := &Application{}
 
 	clients := map[string]interface{}{
-		"KMS":      kmsClient,
-		"Route 53": r53Client,
-		"STS":      stsClient,
-		"IAM":      iamClient,
+		"KMS":             kmsClient,
+		"Route 53":        r53Client,
+		"STS":             stsClient,
+		"IAM":             iamClient,
+		"Secrets Manager": smClient,
 	}
 
 	services := NewServices(clients, a)

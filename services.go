@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
+	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -39,6 +40,8 @@ func (s Services) selectHandler() {
 		item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 	case "Route 53":
 		item = NewRoute53HostedZones(s.clients["Route 53"].(*route53.Client), s.app)
+	case "Secrets Manager":
+		item = NewSecretsManagerSecrets(s.clients["Secrets Manager"].(*sm.Client), s.app)
 	default:
 		panic("unknown service")
 	}
@@ -59,6 +62,7 @@ func (s Services) Render() {
 	data := [][]string{
 		[]string{"KMS", "Key Management Service"},
 		[]string{"Route 53", "DNS"},
+		[]string{"Secrets Manager", "Secrets"},
 	}
 	s.SetData(data)
 }
