@@ -9,6 +9,7 @@ import (
 	// "net/http"
 	"github.com/aws/aws-sdk-go-v2/config"
 	// "github.com/aws/aws-sdk-go-v2/service/ec2"
+	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
@@ -39,10 +40,12 @@ func NewApplication() *Application {
 	r53Client := route53.NewFromConfig(cfg)
 	kmsClient := kms.NewFromConfig(cfg)
 	smClient := sm.NewFromConfig(cfg)
+	cfClient := cf.NewFromConfig(cfg)
 
 	a := &Application{}
 
 	clients := map[string]interface{}{
+		"Cloudfront":      cfClient,
 		"KMS":             kmsClient,
 		"Route 53":        r53Client,
 		"STS":             stsClient,

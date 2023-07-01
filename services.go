@@ -1,6 +1,7 @@
 package main
 
 import (
+	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
@@ -36,6 +37,8 @@ func (s Services) selectHandler() {
 	service := s.GetCell(r, 0).Text
 	var item tview.Primitive
 	switch service {
+	case "Cloudfront":
+		item = NewCloudfrontDistributions(s.clients["Cloudfront"].(*cf.Client), s.app)
 	case "KMS":
 		item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 	case "Route 53":
@@ -60,6 +63,7 @@ func (s Services) GetKeyActions() []KeyAction {
 
 func (s Services) Render() {
 	data := [][]string{
+		[]string{"Cloudfront", "CDN"},
 		[]string{"KMS", "Key Management Service"},
 		[]string{"Route 53", "DNS"},
 		[]string{"Secrets Manager", "Secrets"},
