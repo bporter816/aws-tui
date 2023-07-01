@@ -32,7 +32,7 @@ func (k KmsKeyPolicy) GetKeyActions() []KeyAction {
 }
 
 func (k KmsKeyPolicy) Render() {
-	policy, err := k.kmsClient.GetKeyPolicy(
+	out, err := k.kmsClient.GetKeyPolicy(
 		context.TODO(),
 		&kms.GetKeyPolicyInput{
 			KeyId:      aws.String(k.keyId),
@@ -42,5 +42,9 @@ func (k KmsKeyPolicy) Render() {
 	if err != nil {
 		panic(err)
 	}
-	k.SetText(*policy.Policy)
+	var policy string
+	if out.Policy != nil {
+		policy = *out.Policy
+	}
+	k.SetText(policy)
 }

@@ -32,7 +32,7 @@ func (s SecretsManagerSecretResourcePolicy) GetKeyActions() []KeyAction {
 }
 
 func (s SecretsManagerSecretResourcePolicy) Render() {
-	policy, err := s.smClient.GetResourcePolicy(
+	out, err := s.smClient.GetResourcePolicy(
 		context.TODO(),
 		&sm.GetResourcePolicyInput{
 			SecretId: aws.String(s.secretId),
@@ -41,5 +41,9 @@ func (s SecretsManagerSecretResourcePolicy) Render() {
 	if err != nil {
 		panic(err)
 	}
-	s.SetText(*policy.ResourcePolicy)
+	var policy string
+	if out.ResourcePolicy != nil {
+		policy = *out.ResourcePolicy
+	}
+	s.SetText(policy)
 }
