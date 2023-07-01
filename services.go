@@ -2,6 +2,8 @@ package main
 
 import (
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
@@ -39,6 +41,10 @@ func (s Services) selectHandler() {
 	switch service {
 	case "Cloudfront":
 		item = NewCloudfrontDistributions(s.clients["Cloudfront"].(*cf.Client), s.app)
+	case "DynamoDB":
+		item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
+	case "Elasticache":
+		item = NewElasticacheEvents(s.clients["Elasticache"].(*ec.Client), s.app)
 	case "KMS":
 		item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 	case "Route 53":
@@ -64,6 +70,8 @@ func (s Services) GetKeyActions() []KeyAction {
 func (s Services) Render() {
 	data := [][]string{
 		[]string{"Cloudfront", "CDN"},
+		[]string{"DynamoDB", "NoSQL Database"},
+		[]string{"Elasticache", "Redis / Memcached"},
 		[]string{"KMS", "Key Management Service"},
 		[]string{"Route 53", "DNS"},
 		[]string{"Secrets Manager", "Secrets"},

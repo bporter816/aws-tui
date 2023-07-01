@@ -10,6 +10,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	// "github.com/aws/aws-sdk-go-v2/service/ec2"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
@@ -41,11 +43,15 @@ func NewApplication() *Application {
 	kmsClient := kms.NewFromConfig(cfg)
 	smClient := sm.NewFromConfig(cfg)
 	cfClient := cf.NewFromConfig(cfg)
+	ddbClient := ddb.NewFromConfig(cfg)
+	ecClient := ec.NewFromConfig(cfg)
 
 	a := &Application{}
 
 	clients := map[string]interface{}{
 		"Cloudfront":      cfClient,
+		"DynamoDB":        ddbClient,
+		"Elasticache":     ecClient,
 		"KMS":             kmsClient,
 		"Route 53":        r53Client,
 		"STS":             stsClient,

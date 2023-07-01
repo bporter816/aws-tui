@@ -64,10 +64,8 @@ func (s SecretsManagerSecrets) Render() {
 
 	var data [][]string
 	for _, v := range secrets {
-		var name string
-		var primaryRegion string
+		var name, primaryRegion, desc string
 		var rotationEnabled bool
-		var desc string
 		if v.Name != nil {
 			name = *v.Name
 		}
