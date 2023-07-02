@@ -45,7 +45,7 @@ func (r Route53HostedZones) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyEnter, 0, tcell.ModNone),
-			Description: "",
+			Description: "Records",
 			Action:      r.selectHandler,
 		},
 	}

@@ -44,7 +44,7 @@ func (s SecretsManagerSecrets) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
-			Description: "",
+			Description: "Resource Policy",
 			Action:      s.resourcePolicyHandler,
 		},
 	}

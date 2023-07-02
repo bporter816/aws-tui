@@ -11,16 +11,29 @@ import (
 )
 
 type Header struct {
-	*tview.TextView
-	stsClient *sts.Client
-	iamClient *iam.Client
+	*tview.Flex
+	stsClient                *sts.Client
+	iamClient                *iam.Client
+	accountInfo, keybindInfo *tview.TextView
+	app                      *Application
 }
 
-func NewHeader(s *sts.Client, i *iam.Client) *Header {
+func NewHeader(s *sts.Client, i *iam.Client, app *Application) *Header {
+	accountInfo := tview.NewTextView().SetDynamicColors(true)
+	keybindInfo := tview.NewTextView().SetDynamicColors(true) // TODO make this a grid
+
+	flex := tview.NewFlex()
+	flex.SetDirection(tview.FlexColumn)
+	flex.AddItem(accountInfo, 0, 1, true) // TODO make this fixed size
+	flex.AddItem(keybindInfo, 0, 1, true)
+
 	h := &Header{
-		TextView:  tview.NewTextView().SetDynamicColors(true),
-		stsClient: s,
-		iamClient: i,
+		Flex:        flex,
+		stsClient:   s,
+		iamClient:   i,
+		accountInfo: accountInfo,
+		keybindInfo: keybindInfo,
+		app:         app,
 	}
 	return h
 }
@@ -48,9 +61,20 @@ func (h Header) Render() {
 		aliases = fmt.Sprintf(" (%v)", strings.Join(aliasesOutput.AccountAliases, ", "))
 	}
 
-	str := "[orange]Account:[white] " + *identityOutput.Account + aliases + "\n"
-	str += "[orange]ARN:[white]     " + *identityOutput.Arn + "\n"
-	str += "[orange]User ID:[white] " + *identityOutput.UserId + "\n"
-	str += "[orange]Region:[white]  " + string(regionOutput)
-	h.SetText(str)
+	accountInfoStr := "[orange::b]Account:[white::-] " + *identityOutput.Account + aliases + "\n"
+	accountInfoStr += "[orange::b]ARN:[white::-]     " + *identityOutput.Arn + "\n"
+	accountInfoStr += "[orange::b]User ID:[white::-] " + *identityOutput.UserId + "\n"
+	accountInfoStr += "[orange::b]Region:[white::-]  " + string(regionOutput)
+	h.accountInfo.SetText(accountInfoStr)
+
+	keybindInfoStr := ""
+	actions := h.app.GetActiveKeyActions()
+	for _, v := range actions {
+		name := v.Key.Name()
+		if strings.HasPrefix(name, "Rune[") {
+			name = string(name[5])
+		}
+		keybindInfoStr += fmt.Sprintf("[pink::b]<%v>[white::-] %v", name, v.Description)
+	}
+	h.keybindInfo.SetText(keybindInfoStr)
 }

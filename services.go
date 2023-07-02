@@ -58,7 +58,7 @@ func (s Services) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyEnter, 0, tcell.ModNone),
-			Description: "",
+			Description: "Select",
 			Action:      s.selectHandler,
 		},
 	}

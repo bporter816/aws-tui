@@ -27,6 +27,7 @@ type Application struct {
 	app       *tview.Application
 	pages     *tview.Pages
 	pageNames []string
+	header    *Header
 }
 
 func NewApplication() *Application {
@@ -62,8 +63,7 @@ func NewApplication() *Application {
 	services := NewServices(clients, a)
 	pages := tview.NewPages()
 
-	header := NewHeader(stsClient, iamClient)
-	header.Render()
+	header := NewHeader(stsClient, iamClient, a)
 
 	flex := tview.NewFlex()
 	flex.SetDirection(tview.FlexRow)
@@ -74,6 +74,7 @@ func NewApplication() *Application {
 	app.SetRoot(flex, true).SetFocus(pages)
 	a.app = app
 	a.pages = pages
+	a.header = header
 	a.AddAndSwitch("services", services)
 	a.pageNames = []string{"services"}
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
@@ -96,15 +97,26 @@ func NewApplication() *Application {
 	return a
 }
 
+func (a Application) GetActiveKeyActions() []KeyAction {
+	// TODO check that front page exists
+	_, primitive := a.pages.GetFrontPage()
+	// TODO avoid type coercion
+	return primitive.(Component).GetKeyActions()
+}
+
 func (a *Application) AddAndSwitch(name string, v Component) {
 	v.Render()
 	a.pages.AddAndSwitchToPage(name, v, true)
 	a.pageNames = append(a.pageNames, name)
+	a.header.Render() // this has to happen after we update the pages view
 }
 
 func (a *Application) Close() {
+	lastPageName := a.pageNames[len(a.pageNames)-1]
 	a.pageNames = a.pageNames[:len(a.pageNames)-1]
+	a.pages.RemovePage(lastPageName)
 	a.pages.SwitchToPage(a.pageNames[len(a.pageNames)-1])
+	a.header.Render()
 }
 
 func (a Application) Run() error {
