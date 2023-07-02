@@ -68,31 +68,30 @@ func (d DynamoDBTables) Render() {
 		if err != nil {
 			panic(err)
 		}
-		var partitionKey, sortKey string
-		for _, ks := range out.Table.KeySchema {
-			if ks.KeyType == ddbTypes.KeyTypeHash {
-				partitionKey = *ks.AttributeName
-			} else if ks.KeyType == ddbTypes.KeyTypeRange {
-				sortKey = *ks.AttributeName
-			}
-		}
+		partitionKey, sortKey := getPartitionAndSortKeys(out.Table.KeySchema)
 		if partitionKeyType, ok := getAttributeType(partitionKey, out.Table.AttributeDefinitions); ok {
 			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
 		}
 		if sortKeyType, ok := getAttributeType(sortKey, out.Table.AttributeDefinitions); ok {
 			sortKey = fmt.Sprintf("%v (%v)", sortKey, sortKeyType)
 		}
-		var billingMode string
+		var billingMode ddbTypes.BillingMode
 		if out.Table.BillingModeSummary != nil {
-			billingMode = string(out.Table.BillingModeSummary.BillingMode)
+			billingMode = out.Table.BillingModeSummary.BillingMode
+		} else {
+			// tables that have never had on-demand capacity set appear to not return this part of the response at all
+			billingMode = ddbTypes.BillingModeProvisioned
 		}
-		var readCap, writeCap, itemCount, tableSize int64
-		if out.Table.ProvisionedThroughput != nil {
+		var readCap, writeCap string
+		var itemCount, tableSize int64
+		if billingMode == ddbTypes.BillingModePayPerRequest {
+			readCap, writeCap = "-", "-"
+		} else if out.Table.ProvisionedThroughput != nil {
 			if out.Table.ProvisionedThroughput.ReadCapacityUnits != nil {
-				readCap = *out.Table.ProvisionedThroughput.ReadCapacityUnits
+				readCap = strconv.FormatInt(*out.Table.ProvisionedThroughput.ReadCapacityUnits, 10)
 			}
 			if out.Table.ProvisionedThroughput.WriteCapacityUnits != nil {
-				writeCap = *out.Table.ProvisionedThroughput.WriteCapacityUnits
+				writeCap = strconv.FormatInt(*out.Table.ProvisionedThroughput.WriteCapacityUnits, 10)
 			}
 		}
 		if out.Table.ItemCount != nil {
@@ -107,21 +106,12 @@ func (d DynamoDBTables) Render() {
 			partitionKey,
 			sortKey,
 			strconv.Itoa(len(out.Table.GlobalSecondaryIndexes) + len(out.Table.LocalSecondaryIndexes)),
-			billingMode,
-			strconv.FormatInt(readCap, 10),
-			strconv.FormatInt(writeCap, 10),
+			string(billingMode),
+			readCap,
+			writeCap,
 			strconv.FormatInt(itemCount, 10),
 			strconv.FormatInt(tableSize, 10),
 		})
 	}
 	d.SetData(data)
-}
-
-func getAttributeType(attribute string, defs []ddbTypes.AttributeDefinition) (string, bool) {
-	for _, v := range defs {
-		if attribute == *v.AttributeName {
-			return string(v.AttributeType), true
-		}
-	}
-	return "", false
 }
