@@ -52,12 +52,15 @@ func (r Route53Records) Render() {
 	var nextRecordType route53Types.RRType
 	var nextRecordIdentifier *string = nil
 	for good {
-		out, err := r.r53Client.ListResourceRecordSets(context.TODO(), &route53.ListResourceRecordSetsInput{
-			HostedZoneId:          aws.String(r.hostedZoneId),
-			StartRecordName:       nextRecordName,
-			StartRecordType:       nextRecordType,
-			StartRecordIdentifier: nextRecordIdentifier,
-		})
+		out, err := r.r53Client.ListResourceRecordSets(
+			context.TODO(),
+			&route53.ListResourceRecordSetsInput{
+				HostedZoneId:          aws.String(r.hostedZoneId),
+				StartRecordName:       nextRecordName,
+				StartRecordType:       nextRecordType,
+				StartRecordIdentifier: nextRecordIdentifier,
+			},
+		)
 		if err != nil {
 			panic(err)
 		}

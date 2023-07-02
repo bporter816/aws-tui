@@ -52,10 +52,13 @@ func (r Route53HostedZones) GetKeyActions() []KeyAction {
 }
 
 func (r Route53HostedZones) Render() {
-	hostedZonesPaginator := route53.NewListHostedZonesPaginator(r.r53Client, &route53.ListHostedZonesInput{})
+	pg := route53.NewListHostedZonesPaginator(
+		r.r53Client,
+		&route53.ListHostedZonesInput{},
+	)
 	var hostedZones []route53Types.HostedZone
-	for hostedZonesPaginator.HasMorePages() {
-		out, err := hostedZonesPaginator.NextPage(context.TODO())
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}

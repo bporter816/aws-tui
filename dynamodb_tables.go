@@ -44,10 +44,13 @@ func (d DynamoDBTables) GetKeyActions() []KeyAction {
 }
 
 func (d DynamoDBTables) Render() {
-	tablesPaginator := ddb.NewListTablesPaginator(d.ddbClient, &ddb.ListTablesInput{})
+	pg := ddb.NewListTablesPaginator(
+		d.ddbClient,
+		&ddb.ListTablesInput{},
+	)
 	var tableNames []string
-	for tablesPaginator.HasMorePages() {
-		out, err := tablesPaginator.NextPage(context.TODO())
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}

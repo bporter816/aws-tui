@@ -38,15 +38,15 @@ func (e ElasticacheEvents) GetKeyActions() []KeyAction {
 
 func (e ElasticacheEvents) Render() {
 	oneWeekAgo := time.Now().AddDate(0, 0, -13) // TODO get this closer to the max 14 days
-	eventsPaginator := ec.NewDescribeEventsPaginator(
+	pg := ec.NewDescribeEventsPaginator(
 		e.ecClient,
 		&ec.DescribeEventsInput{
 			StartTime: aws.Time(oneWeekAgo),
 		},
 	)
 	var events []ecTypes.Event
-	for eventsPaginator.HasMorePages() {
-		out, err := eventsPaginator.NextPage(context.TODO())
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}

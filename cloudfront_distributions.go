@@ -35,10 +35,13 @@ func (c CloudfrontDistributions) GetKeyActions() []KeyAction {
 }
 
 func (c CloudfrontDistributions) Render() {
-	distributionsPaginator := cf.NewListDistributionsPaginator(c.cfClient, &cf.ListDistributionsInput{})
+	pg := cf.NewListDistributionsPaginator(
+		c.cfClient,
+		&cf.ListDistributionsInput{},
+	)
 	var distributions []cfTypes.DistributionSummary
-	for distributionsPaginator.HasMorePages() {
-		out, err := distributionsPaginator.NextPage(context.TODO())
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}

@@ -56,9 +56,12 @@ func (k KmsKeys) GetKeyActions() []KeyAction {
 
 func (k KmsKeys) Render() {
 	aliasMap := make(map[string][]string)
-	aliasesPaginator := kms.NewListAliasesPaginator(k.kmsClient, &kms.ListAliasesInput{})
-	for aliasesPaginator.HasMorePages() {
-		out, err := aliasesPaginator.NextPage(context.TODO())
+	aliasesPg := kms.NewListAliasesPaginator(
+		k.kmsClient,
+		&kms.ListAliasesInput{},
+	)
+	for aliasesPg.HasMorePages() {
+		out, err := aliasesPg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}
@@ -70,9 +73,12 @@ func (k KmsKeys) Render() {
 	}
 
 	var keys []kmsTypes.KeyListEntry
-	keysPaginator := kms.NewListKeysPaginator(k.kmsClient, &kms.ListKeysInput{})
-	for keysPaginator.HasMorePages() {
-		out, err := keysPaginator.NextPage(context.TODO())
+	keysPg := kms.NewListKeysPaginator(
+		k.kmsClient,
+		&kms.ListKeysInput{},
+	)
+	for keysPg.HasMorePages() {
+		out, err := keysPg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}
@@ -90,7 +96,12 @@ func (k KmsKeys) Render() {
 			}
 		}
 
-		out, err := k.kmsClient.DescribeKey(context.TODO(), &kms.DescribeKeyInput{KeyId: v.KeyId})
+		out, err := k.kmsClient.DescribeKey(
+			context.TODO(),
+			&kms.DescribeKeyInput{
+				KeyId: v.KeyId,
+			},
+		)
 		if err != nil {
 			// panic(err)
 			data = append(data, []string{

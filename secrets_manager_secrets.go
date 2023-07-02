@@ -51,10 +51,15 @@ func (s SecretsManagerSecrets) GetKeyActions() []KeyAction {
 }
 
 func (s SecretsManagerSecrets) Render() {
-	secretsPaginator := sm.NewListSecretsPaginator(s.smClient, &sm.ListSecretsInput{IncludePlannedDeletion: aws.Bool(true)})
+	pg := sm.NewListSecretsPaginator(
+		s.smClient,
+		&sm.ListSecretsInput{
+			IncludePlannedDeletion: aws.Bool(true),
+		},
+	)
 	var secrets []smTypes.SecretListEntry
-	for secretsPaginator.HasMorePages() {
-		out, err := secretsPaginator.NextPage(context.TODO())
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}
