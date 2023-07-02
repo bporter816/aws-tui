@@ -33,7 +33,6 @@ func NewRoute53Records(client *route53.Client, zoneId string) *Route53Records {
 		r53Client:    client,
 		hostedZoneId: zoneId,
 	}
-	r.Render() // TODO fix
 	return r
 }
 

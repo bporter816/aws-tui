@@ -19,7 +19,6 @@ func NewKmsKeyPolicy(kmsClient *kms.Client, keyId string) *KmsKeyPolicy {
 		kmsClient: kmsClient,
 		keyId:     keyId,
 	}
-	k.Render() // TODO fix
 	return k
 }
 

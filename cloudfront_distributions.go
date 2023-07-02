@@ -23,7 +23,6 @@ func NewCloudfrontDistributions(cfClient *cf.Client, app *Application) *Cloudfro
 		cfClient: cfClient,
 		app:      app,
 	}
-	c.Render() // TODO fix
 	return c
 }
 

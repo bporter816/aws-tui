@@ -26,7 +26,6 @@ func NewSecretsManagerSecrets(smClient *sm.Client, app *Application) *SecretsMan
 		smClient: smClient,
 		app:      app,
 	}
-	s.Render() // TODO fix
 	return s
 }
 

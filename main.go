@@ -61,18 +61,20 @@ func NewApplication() *Application {
 
 	services := NewServices(clients, a)
 	pages := tview.NewPages()
-	pages.AddPage("services", services, true, true)
-	pages.SwitchToPage("services")
+
+	header := NewHeader(stsClient, iamClient)
+	header.Render()
 
 	flex := tview.NewFlex()
 	flex.SetDirection(tview.FlexRow)
-	flex.AddItem(NewHeader(stsClient, iamClient), 4, 0, false) // header is 4 rows
+	flex.AddItem(header, 4, 0, false)                          // header is 4 rows
 	flex.AddItem(pages, 0, 1, true)                            // main viewport is resizable
 	flex.AddItem(tview.NewTextView().SetText(""), 1, 0, false) // footer is 1 row
 
 	app.SetRoot(flex, true).SetFocus(pages)
 	a.app = app
 	a.pages = pages
+	a.AddAndSwitch("services", services)
 	a.pageNames = []string{"services"}
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEscape && len(a.pageNames) > 1 {
@@ -94,7 +96,8 @@ func NewApplication() *Application {
 	return a
 }
 
-func (a *Application) AddAndSwitch(name string, v tview.Primitive) {
+func (a *Application) AddAndSwitch(name string, v Component) {
+	v.Render()
 	a.pages.AddAndSwitchToPage(name, v, true)
 	a.pageNames = append(a.pageNames, name)
 }

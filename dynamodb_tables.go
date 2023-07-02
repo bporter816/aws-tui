@@ -32,7 +32,6 @@ func NewDynamoDBTables(ddbClient *ddb.Client, app *Application) *DynamoDBTables 
 		ddbClient: ddbClient,
 		app:       app,
 	}
-	d.Render() // TODO fix
 	return d
 }
 

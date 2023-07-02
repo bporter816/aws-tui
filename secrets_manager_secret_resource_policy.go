@@ -19,7 +19,6 @@ func NewSecretsManagerSecretResourcePolicy(smClient *sm.Client, secretId string)
 		smClient: smClient,
 		secretId: secretId,
 	}
-	s.Render() // TODO fix
 	return s
 }
 

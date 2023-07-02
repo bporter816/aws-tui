@@ -22,7 +22,6 @@ func NewHeader(s *sts.Client, i *iam.Client) *Header {
 		stsClient: s,
 		iamClient: i,
 	}
-	h.Render() // TODO fix
 	return h
 }
 

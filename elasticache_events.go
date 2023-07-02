@@ -25,7 +25,6 @@ func NewElasticacheEvents(ecClient *ec.Client, app *Application) *ElasticacheEve
 		ecClient: ecClient,
 		app:      app,
 	}
-	e.Render() // TODO fix
 	return e
 }
 

@@ -27,7 +27,6 @@ func NewRoute53HostedZones(client *route53.Client, app *Application) *Route53Hos
 		r53Client: client,
 		app:       app,
 	}
-	r.Render() // TODO fix
 	return r
 }
 

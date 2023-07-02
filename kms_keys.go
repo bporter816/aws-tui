@@ -30,7 +30,6 @@ func NewKmsKeys(kmsClient *kms.Client, app *Application) *KmsKeys {
 		kmsClient: kmsClient,
 		app:       app,
 	}
-	k.Render() // TODO fix
 	return k
 }
 

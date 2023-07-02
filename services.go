@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 )
 
 type Services struct {
@@ -25,7 +24,6 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		clients: clients,
 		app:     app,
 	}
-	s.Render() // TODO fix
 	return s
 }
 
@@ -36,7 +34,7 @@ func (s Services) GetName() string {
 func (s Services) selectHandler() {
 	r, _ := s.GetSelection()
 	service := s.GetCell(r, 0).Text
-	var item tview.Primitive
+	var item Component
 	switch service {
 	case "Cloudfront":
 		item = NewCloudfrontDistributions(s.clients["Cloudfront"].(*cf.Client), s.app)
