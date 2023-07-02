@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -71,14 +70,15 @@ func (d DynamoDBTables) Render() {
 		for _, ks := range out.Table.KeySchema {
 			if ks.KeyType == ddbTypes.KeyTypeHash {
 				partitionKey = *ks.AttributeName
-			} else {
-				// TODO explicitly check if this is a range key?
+			} else if ks.KeyType == ddbTypes.KeyTypeRange {
 				sortKey = *ks.AttributeName
 			}
 		}
-		partitionKeyType, err := getAttributeType(partitionKey, out.Table.AttributeDefinitions)
-		if err != nil {
-			panic(err)
+		if partitionKeyType, ok := getAttributeType(partitionKey, out.Table.AttributeDefinitions); ok {
+			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
+		}
+		if sortKeyType, ok := getAttributeType(sortKey, out.Table.AttributeDefinitions); ok {
+			sortKey = fmt.Sprintf("%v (%v)", sortKey, sortKeyType)
 		}
 		var billingMode string
 		if out.Table.BillingModeSummary != nil {
@@ -102,7 +102,7 @@ func (d DynamoDBTables) Render() {
 		data = append(data, []string{
 			v,
 			string(out.Table.TableStatus),
-			fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType),
+			partitionKey,
 			sortKey,
 			strconv.Itoa(len(out.Table.GlobalSecondaryIndexes) + len(out.Table.LocalSecondaryIndexes)),
 			billingMode,
@@ -115,11 +115,11 @@ func (d DynamoDBTables) Render() {
 	d.SetData(data)
 }
 
-func getAttributeType(attribute string, defs []ddbTypes.AttributeDefinition) (string, error) {
+func getAttributeType(attribute string, defs []ddbTypes.AttributeDefinition) (string, bool) {
 	for _, v := range defs {
 		if attribute == *v.AttributeName {
-			return string(v.AttributeType), nil
+			return string(v.AttributeType), true
 		}
 	}
-	return "", errors.New("no matching attribute")
+	return "", false
 }
