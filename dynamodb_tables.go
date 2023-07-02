@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
@@ -39,8 +40,22 @@ func (d DynamoDBTables) GetName() string {
 	return "DynamoDB"
 }
 
+func (d DynamoDBTables) indexesHandler() {
+	// TODO check if any indexes exist
+	r, _ := d.GetSelection()
+	tableName := d.GetCell(r, 0).Text
+	indexesView := NewDynamoDBTableIndexes(d.ddbClient, tableName)
+	d.app.AddAndSwitch("ddb.table.indexes", indexesView)
+}
+
 func (d DynamoDBTables) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'i', tcell.ModNone),
+			Description: "Indexes",
+			Action:      d.indexesHandler,
+		},
+	}
 }
 
 func (d DynamoDBTables) Render() {
