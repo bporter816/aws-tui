@@ -30,7 +30,7 @@ func NewSecretsManagerSecrets(smClient *sm.Client, app *Application) *SecretsMan
 }
 
 func (s SecretsManagerSecrets) GetName() string {
-	return "Secrets Manager"
+	return "Secrets Manager | Secrets"
 }
 
 func (s SecretsManagerSecrets) resourcePolicyHandler() {

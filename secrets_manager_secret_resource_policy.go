@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/rivo/tview"
@@ -23,7 +24,7 @@ func NewSecretsManagerSecretResourcePolicy(smClient *sm.Client, secretId string)
 }
 
 func (s SecretsManagerSecretResourcePolicy) GetName() string {
-	return "Secrets Manager " + s.secretId + " Resource Policy"
+	return fmt.Sprintf("Secrets Manager | %v | Resource Policy", s.secretId)
 }
 
 func (s SecretsManagerSecretResourcePolicy) GetKeyActions() []KeyAction {

@@ -37,7 +37,7 @@ func NewRoute53Records(client *route53.Client, zoneId string) *Route53Records {
 }
 
 func (r Route53Records) GetName() string {
-	return "Route 53 Records"
+	return fmt.Sprintf("Route 53 | %v | Records", r.hostedZoneId)
 }
 
 func (r Route53Records) GetKeyActions() []KeyAction {

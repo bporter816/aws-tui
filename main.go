@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	// "fmt"
+	"fmt"
 	// "os/exec"
 	// "sort"
 	// "strings"
@@ -62,6 +62,7 @@ func NewApplication() *Application {
 
 	services := NewServices(clients, a)
 	pages := tview.NewPages()
+	pages.SetBorder(true)
 
 	header := NewHeader(stsClient, iamClient, a)
 
@@ -109,6 +110,8 @@ func (a *Application) AddAndSwitch(name string, v Component) {
 	a.pages.AddAndSwitchToPage(name, v, true)
 	a.pageNames = append(a.pageNames, name)
 	a.header.Render() // this has to happen after we update the pages view
+	_, primitive := a.pages.GetFrontPage()
+	a.pages.SetTitle(fmt.Sprintf(" %v ", primitive.(Component).GetName()))
 }
 
 func (a *Application) Close() {
@@ -117,6 +120,8 @@ func (a *Application) Close() {
 	a.pages.RemovePage(lastPageName)
 	a.pages.SwitchToPage(a.pageNames[len(a.pageNames)-1])
 	a.header.Render()
+	_, primitive := a.pages.GetFrontPage()
+	a.pages.SetTitle(fmt.Sprintf(" %v ", primitive.(Component).GetName()))
 }
 
 func (a Application) Run() error {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/rivo/tview"
@@ -23,7 +24,7 @@ func NewKmsKeyPolicy(kmsClient *kms.Client, keyId string) *KmsKeyPolicy {
 }
 
 func (k KmsKeyPolicy) GetName() string {
-	return "KMS - Key Policy"
+	return fmt.Sprintf("KMS | %v | Key Policy", k.keyId)
 }
 
 func (k KmsKeyPolicy) GetKeyActions() []KeyAction {

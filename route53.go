@@ -31,7 +31,7 @@ func NewRoute53HostedZones(client *route53.Client, app *Application) *Route53Hos
 }
 
 func (r Route53HostedZones) GetName() string {
-	return "Route 53"
+	return "Route 53 | Hosted Zones"
 }
 
 func (r Route53HostedZones) selectHandler() {

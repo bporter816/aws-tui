@@ -37,7 +37,7 @@ func NewDynamoDBTables(ddbClient *ddb.Client, app *Application) *DynamoDBTables 
 }
 
 func (d DynamoDBTables) GetName() string {
-	return "DynamoDB"
+	return "DynamoDB | Tables"
 }
 
 func (d DynamoDBTables) indexesHandler() {

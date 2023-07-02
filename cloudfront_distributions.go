@@ -27,7 +27,7 @@ func NewCloudfrontDistributions(cfClient *cf.Client, app *Application) *Cloudfro
 }
 
 func (c CloudfrontDistributions) GetName() string {
-	return "Cloudfront"
+	return "Cloudfront | Distributions"
 }
 
 func (c CloudfrontDistributions) GetKeyActions() []KeyAction {

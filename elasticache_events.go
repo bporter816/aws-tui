@@ -29,7 +29,7 @@ func NewElasticacheEvents(ecClient *ec.Client, app *Application) *ElasticacheEve
 }
 
 func (e ElasticacheEvents) GetName() string {
-	return "Elasticache Events"
+	return "Elasticache | Events"
 }
 
 func (e ElasticacheEvents) GetKeyActions() []KeyAction {
