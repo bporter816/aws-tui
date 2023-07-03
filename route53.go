@@ -35,8 +35,10 @@ func (r Route53HostedZones) GetName() string {
 }
 
 func (r Route53HostedZones) selectHandler() {
-	row, _ := r.GetSelection()
-	hostedZoneId := r.GetCell(row, 0).Text
+	hostedZoneId, err := r.GetColSelection("ID")
+	if err != nil {
+		panic(err)
+	}
 	recordsView := NewRoute53Records(r.r53Client, hostedZoneId)
 	r.app.AddAndSwitch("r53.records", recordsView)
 }

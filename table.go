@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -40,4 +41,14 @@ func (t *Table) SetData(data [][]string) {
 			t.SetCell(r+1, c, tview.NewTableCell(vv))
 		}
 	}
+}
+
+func (t Table) GetColSelection(col string) (string, error) {
+	for i := 0; i < len(t.headers); i++ {
+		if t.headers[i] == col {
+			r, _ := t.GetSelection()
+			return t.GetCell(r, i).Text, nil
+		}
+	}
+	return "", errors.New("column not found")
 }

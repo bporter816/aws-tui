@@ -32,8 +32,10 @@ func (s Services) GetName() string {
 }
 
 func (s Services) selectHandler() {
-	r, _ := s.GetSelection()
-	service := s.GetCell(r, 0).Text
+	service, err := s.GetColSelection("SERVICE")
+	if err != nil {
+		panic(err)
+	}
 	var item Component
 	switch service {
 	case "Cloudfront":

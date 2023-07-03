@@ -34,8 +34,10 @@ func (s SecretsManagerSecrets) GetName() string {
 }
 
 func (s SecretsManagerSecrets) resourcePolicyHandler() {
-	r, _ := s.GetSelection()
-	secretId := s.GetCell(r, 0).Text
+	secretId, err := s.GetColSelection("NAME")
+	if err != nil {
+		panic(err)
+	}
 	resourcePolicyView := NewSecretsManagerSecretResourcePolicy(s.smClient, secretId)
 	s.app.AddAndSwitch("sm.resourcepolicy", resourcePolicyView)
 }
