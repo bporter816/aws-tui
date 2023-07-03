@@ -20,7 +20,10 @@ type Header struct {
 }
 
 func NewHeader(s *sts.Client, i *iam.Client, app *Application) *Header {
-	accountInfo := tview.NewTextView().SetDynamicColors(true)
+	accountInfo := tview.NewTextView()
+	accountInfo.SetDynamicColors(true)
+	accountInfo.SetWrap(false)
+
 	keybindInfo := tview.NewGrid()
 	keybindInfo.SetRows(1, 1, 1, 1) // header is 4 rows
 	keybindInfo.SetColumns(0)       // start with one column, but it will resize itself if it overflows

@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
-	"github.com/rivo/tview"
 	"github.com/alecthomas/chroma/quick"
+	"github.com/rivo/tview"
 )
 
 type Text struct {
