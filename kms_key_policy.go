@@ -5,18 +5,17 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
-	"github.com/rivo/tview"
 )
 
 type KmsKeyPolicy struct {
-	*tview.TextView
+	*Text
 	kmsClient *kms.Client
 	keyId     string
 }
 
 func NewKmsKeyPolicy(kmsClient *kms.Client, keyId string) *KmsKeyPolicy {
 	k := &KmsKeyPolicy{
-		TextView:  tview.NewTextView().SetDynamicColors(true),
+		Text:      NewText(true, "json"),
 		kmsClient: kmsClient,
 		keyId:     keyId,
 	}

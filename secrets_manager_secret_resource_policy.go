@@ -5,18 +5,17 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	"github.com/rivo/tview"
 )
 
 type SecretsManagerSecretResourcePolicy struct {
-	*tview.TextView
+	*Text
 	smClient *sm.Client
 	secretId string
 }
 
 func NewSecretsManagerSecretResourcePolicy(smClient *sm.Client, secretId string) *SecretsManagerSecretResourcePolicy {
 	s := &SecretsManagerSecretResourcePolicy{
-		TextView: tview.NewTextView().SetDynamicColors(true),
+		Text:     NewText(true, "json"),
 		smClient: smClient,
 		secretId: secretId,
 	}
