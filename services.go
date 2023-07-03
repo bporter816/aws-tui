@@ -34,7 +34,7 @@ func (s Services) GetName() string {
 func (s Services) selectHandler() {
 	service, err := s.GetColSelection("SERVICE")
 	if err != nil {
-		panic(err)
+		return
 	}
 	var item Component
 	switch service {

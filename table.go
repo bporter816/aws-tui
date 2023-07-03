@@ -44,9 +44,12 @@ func (t *Table) SetData(data [][]string) {
 }
 
 func (t Table) GetColSelection(col string) (string, error) {
+	r, _ := t.GetSelection()
+	if r == 0 {
+		return "", errors.New("cannot select row 0")
+	}
 	for i := 0; i < len(t.headers); i++ {
 		if t.headers[i] == col {
-			r, _ := t.GetSelection()
 			return t.GetCell(r, i).Text, nil
 		}
 	}

@@ -44,7 +44,7 @@ func (d DynamoDBTables) indexesHandler() {
 	// TODO check if any indexes exist
 	tableName, err := d.GetColSelection("NAME")
 	if err != nil {
-		panic(err)
+		return
 	}
 	indexesView := NewDynamoDBTableIndexes(d.ddbClient, tableName)
 	d.app.AddAndSwitch("ddb.table.indexes", indexesView)

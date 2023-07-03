@@ -40,7 +40,7 @@ func (k KmsKeys) GetName() string {
 func (k KmsKeys) keyPolicyHandler() {
 	keyId, err := k.GetColSelection("ID")
 	if err != nil {
-		panic(err)
+		return
 	}
 	policyView := NewKmsKeyPolicy(k.kmsClient, keyId)
 	k.app.AddAndSwitch("kms.policy", policyView)
