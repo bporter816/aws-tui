@@ -12,15 +12,18 @@ import (
 
 type Header struct {
 	*tview.Flex
-	stsClient                *sts.Client
-	iamClient                *iam.Client
-	accountInfo, keybindInfo *tview.TextView
-	app                      *Application
+	stsClient   *sts.Client
+	iamClient   *iam.Client
+	accountInfo *tview.TextView
+	keybindInfo *tview.Grid
+	app         *Application
 }
 
 func NewHeader(s *sts.Client, i *iam.Client, app *Application) *Header {
 	accountInfo := tview.NewTextView().SetDynamicColors(true)
-	keybindInfo := tview.NewTextView().SetDynamicColors(true) // TODO make this a grid
+	keybindInfo := tview.NewGrid()
+	keybindInfo.SetRows(1, 1, 1, 1) // header is 4 rows
+	keybindInfo.SetColumns(0)       // start with one column, but it will resize itself if it overflows
 
 	flex := tview.NewFlex()
 	flex.SetDirection(tview.FlexColumn)
@@ -67,14 +70,27 @@ func (h Header) Render() {
 	accountInfoStr += "[orange::b]Region:[white::-]  " + string(regionOutput)
 	h.accountInfo.SetText(accountInfoStr)
 
-	keybindInfoStr := ""
+	h.keybindInfo.Clear()
 	actions := h.app.GetActiveKeyActions()
+	row, col := 0, 0
 	for _, v := range actions {
 		name := v.Key.Name()
 		if strings.HasPrefix(name, "Rune[") {
 			name = string(name[5])
 		}
-		keybindInfoStr += fmt.Sprintf("[pink::b]<%v>[white::-] %v", name, v.Description)
+		entry := tview.NewTextView().SetDynamicColors(true).SetText(fmt.Sprintf("[pink::b]<%v>[white::-] %v", name, v.Description))
+		h.keybindInfo.AddItem(entry, row, col, 1, 1, 1, 1, false)
+
+		row++
+		if row == 4 {
+			row = 0
+			col++
+		}
 	}
-	h.keybindInfo.SetText(keybindInfoStr)
+	// cleanup empty rows so they're the same color
+	// TODO see if this can be avoided
+	for row < 4 {
+		h.keybindInfo.AddItem(tview.NewTextView(), row, col, 1, 1, 1, 1, false)
+		row++
+	}
 }

@@ -90,6 +90,7 @@ func NewApplication() *Application {
 			for _, action := range actions {
 				if event.Name() == action.Key.Name() {
 					action.Action()
+					return nil
 				}
 			}
 		}
