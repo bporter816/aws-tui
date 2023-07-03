@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/service/route53"
-	route53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
+	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 	"strings"
@@ -11,11 +11,11 @@ import (
 
 type Route53HostedZones struct {
 	*Table
-	r53Client *route53.Client
+	r53Client *r53.Client
 	app       *Application
 }
 
-func NewRoute53HostedZones(client *route53.Client, app *Application) *Route53HostedZones {
+func NewRoute53HostedZones(client *r53.Client, app *Application) *Route53HostedZones {
 	r := &Route53HostedZones{
 		Table: NewTable([]string{
 			"ID",
@@ -54,11 +54,11 @@ func (r Route53HostedZones) GetKeyActions() []KeyAction {
 }
 
 func (r Route53HostedZones) Render() {
-	pg := route53.NewListHostedZonesPaginator(
+	pg := r53.NewListHostedZonesPaginator(
 		r.r53Client,
-		&route53.ListHostedZonesInput{},
+		&r53.ListHostedZonesInput{},
 	)
-	var hostedZones []route53Types.HostedZone
+	var hostedZones []r53Types.HostedZone
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {

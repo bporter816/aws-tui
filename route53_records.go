@@ -4,19 +4,19 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/route53"
-	route53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
+	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"strconv"
 	"strings"
 )
 
 type Route53Records struct {
 	*Table
-	r53Client    *route53.Client
+	r53Client    *r53.Client
 	hostedZoneId string
 }
 
-func NewRoute53Records(client *route53.Client, zoneId string) *Route53Records {
+func NewRoute53Records(client *r53.Client, zoneId string) *Route53Records {
 	r := &Route53Records{
 		Table: NewTable([]string{
 			"RECORD NAME",
@@ -47,14 +47,14 @@ func (r Route53Records) GetKeyActions() []KeyAction {
 func (r Route53Records) Render() {
 	// ListResourceRecordSets doesn't have a paginator :'(
 	good := true
-	var resourceRecordSets []route53Types.ResourceRecordSet
+	var resourceRecordSets []r53Types.ResourceRecordSet
 	var nextRecordName *string = nil
-	var nextRecordType route53Types.RRType
+	var nextRecordType r53Types.RRType
 	var nextRecordIdentifier *string = nil
 	for good {
 		out, err := r.r53Client.ListResourceRecordSets(
 			context.TODO(),
-			&route53.ListResourceRecordSetsInput{
+			&r53.ListResourceRecordSetsInput{
 				HostedZoneId:          aws.String(r.hostedZoneId),
 				StartRecordName:       nextRecordName,
 				StartRecordType:       nextRecordType,
@@ -148,7 +148,7 @@ func (r Route53Records) Render() {
 	r.SetData(data)
 }
 
-func fmtResourceRecords(items []route53Types.ResourceRecord) string {
+func fmtResourceRecords(items []r53Types.ResourceRecord) string {
 	if len(items) == 0 {
 		return ""
 	} else if len(items) == 1 {
@@ -158,7 +158,7 @@ func fmtResourceRecords(items []route53Types.ResourceRecord) string {
 	}
 }
 
-func joinRoute53ResourceRecords(items []route53Types.ResourceRecord, sep string) string {
+func joinRoute53ResourceRecords(items []r53Types.ResourceRecord, sep string) string {
 	if len(items) == 0 {
 		return ""
 	}

@@ -14,7 +14,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
-	"github.com/aws/aws-sdk-go-v2/service/route53"
+	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	// awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
@@ -40,7 +40,7 @@ func NewApplication() *Application {
 
 	stsClient := sts.NewFromConfig(cfg)
 	iamClient := iam.NewFromConfig(cfg)
-	r53Client := route53.NewFromConfig(cfg)
+	r53Client := r53.NewFromConfig(cfg)
 	kmsClient := kms.NewFromConfig(cfg)
 	smClient := sm.NewFromConfig(cfg)
 	cfClient := cf.NewFromConfig(cfg)

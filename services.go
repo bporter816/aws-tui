@@ -5,7 +5,7 @@ import (
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
-	"github.com/aws/aws-sdk-go-v2/service/route53"
+	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/gdamore/tcell/v2"
 )
@@ -47,7 +47,7 @@ func (s Services) selectHandler() {
 	case "KMS":
 		item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 	case "Route 53":
-		item = NewRoute53HostedZones(s.clients["Route 53"].(*route53.Client), s.app)
+		item = NewRoute53HostedZones(s.clients["Route 53"].(*r53.Client), s.app)
 	case "Secrets Manager":
 		item = NewSecretsManagerSecrets(s.clients["Secrets Manager"].(*sm.Client), s.app)
 	default:
