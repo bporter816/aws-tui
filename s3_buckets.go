@@ -22,11 +22,21 @@ func NewS3Buckets(s3Client *s3.Client, app *Application) *S3Buckets {
 		s3Client: s3Client,
 		app:      app,
 	}
+	s.SetSelectedFunc(s.selectHandler)
 	return s
 }
 
 func (s S3Buckets) GetName() string {
 	return "S3 | Buckets"
+}
+
+func (s S3Buckets) selectHandler(row, col int) {
+	bucket, err := s.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	objectsView := NewS3Objects(s.s3Client, bucket, s.app)
+	s.app.AddAndSwitch(objectsView)
 }
 
 func (s S3Buckets) bucketPolicyHandler() {
