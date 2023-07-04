@@ -15,6 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	// awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
@@ -37,14 +38,15 @@ func NewApplication() *Application {
 
 	app := tview.NewApplication()
 
-	stsClient := sts.NewFromConfig(cfg)
-	iamClient := iam.NewFromConfig(cfg)
-	r53Client := r53.NewFromConfig(cfg)
-	kmsClient := kms.NewFromConfig(cfg)
-	smClient := sm.NewFromConfig(cfg)
 	cfClient := cf.NewFromConfig(cfg)
 	ddbClient := ddb.NewFromConfig(cfg)
 	ecClient := ec.NewFromConfig(cfg)
+	iamClient := iam.NewFromConfig(cfg)
+	kmsClient := kms.NewFromConfig(cfg)
+	r53Client := r53.NewFromConfig(cfg)
+	s3Client := s3.NewFromConfig(cfg)
+	stsClient := sts.NewFromConfig(cfg)
+	smClient := sm.NewFromConfig(cfg)
 
 	a := &Application{}
 
@@ -52,10 +54,11 @@ func NewApplication() *Application {
 		"Cloudfront":      cfClient,
 		"DynamoDB":        ddbClient,
 		"Elasticache":     ecClient,
+		"IAM":             iamClient,
 		"KMS":             kmsClient,
 		"Route 53":        r53Client,
+		"S3":              s3Client,
 		"STS":             stsClient,
-		"IAM":             iamClient,
 		"Secrets Manager": smClient,
 	}
 

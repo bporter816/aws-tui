@@ -6,6 +6,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/gdamore/tcell/v2"
 )
@@ -48,6 +49,8 @@ func (s Services) selectHandler() {
 		item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 	case "Route 53":
 		item = NewRoute53HostedZones(s.clients["Route 53"].(*r53.Client), s.app)
+	case "S3":
+		item = NewS3Buckets(s.clients["S3"].(*s3.Client), s.app)
 	case "Secrets Manager":
 		item = NewSecretsManagerSecrets(s.clients["Secrets Manager"].(*sm.Client), s.app)
 	default:
@@ -73,6 +76,7 @@ func (s Services) Render() {
 		[]string{"Elasticache"},
 		[]string{"KMS"},
 		[]string{"Route 53"},
+		[]string{"S3"},
 		[]string{"Secrets Manager"},
 	}
 	s.SetData(data)
