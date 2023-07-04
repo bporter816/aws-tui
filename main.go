@@ -85,6 +85,11 @@ func NewApplication() *Application {
 			return nil
 		}
 
+		// pass down Enter keypress to the component
+		if event.Key() == tcell.KeyEnter {
+			return event
+		}
+
 		_, primitive := a.pages.GetFrontPage()
 		if primitive != nil {
 			actions := primitive.(Component).GetKeyActions()

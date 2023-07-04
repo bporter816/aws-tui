@@ -4,7 +4,6 @@ import (
 	"context"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
-	"github.com/gdamore/tcell/v2"
 	"strconv"
 	"strings"
 )
@@ -27,6 +26,7 @@ func NewRoute53HostedZones(client *r53.Client, app *Application) *Route53HostedZ
 		r53Client: client,
 		app:       app,
 	}
+	r.SetSelectedFunc(r.selectHandler)
 	return r
 }
 
@@ -34,7 +34,7 @@ func (r Route53HostedZones) GetName() string {
 	return "Route 53 | Hosted Zones"
 }
 
-func (r Route53HostedZones) selectHandler() {
+func (r Route53HostedZones) selectHandler(row, col int) {
 	hostedZoneId, err := r.GetColSelection("ID")
 	if err != nil {
 		return
@@ -44,13 +44,7 @@ func (r Route53HostedZones) selectHandler() {
 }
 
 func (r Route53HostedZones) GetKeyActions() []KeyAction {
-	return []KeyAction{
-		KeyAction{
-			Key:         tcell.NewEventKey(tcell.KeyEnter, 0, tcell.ModNone),
-			Description: "Records",
-			Action:      r.selectHandler,
-		},
-	}
+	return []KeyAction{}
 }
 
 func (r Route53HostedZones) Render() {
