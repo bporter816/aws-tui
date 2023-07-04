@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/alecthomas/chroma/quick"
 	"github.com/rivo/tview"
 )
@@ -9,30 +10,39 @@ import (
 type Text struct {
 	*tview.TextView
 	highlightSyntax bool
-	highlightLang   string
+	lang            string
 }
 
-func NewText(highlightSyntax bool, highlightLang string) *Text {
+func NewText(highlightSyntax bool, lang string) *Text {
 	tv := tview.NewTextView()
 	tv.SetDynamicColors(highlightSyntax)
 	t := &Text{
 		TextView:        tv,
 		highlightSyntax: highlightSyntax,
-		highlightLang:   highlightLang,
+		lang:            lang,
 	}
 	return t
 }
 
 func (t *Text) SetText(data string) {
-	// TODO handle [ ] characters in input
+	if t.lang == "json" {
+		var buf bytes.Buffer
+		err := json.Indent(&buf, []byte(data), "", "  ")
+		if err != nil {
+			panic(err)
+		}
+		data = buf.String()
+	}
+
 	if t.highlightSyntax {
 		var buf bytes.Buffer
-		err := quick.Highlight(&buf, data, t.highlightLang, "terminal256", "solarized-dark256")
+		err := quick.Highlight(&buf, data, t.lang, "terminal256", "solarized-dark256")
 		if err != nil {
 			panic(err)
 		}
 		data = buf.String()
 		data = tview.TranslateANSI(data)
 	}
+
 	t.TextView.SetText(data)
 }
