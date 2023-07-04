@@ -53,7 +53,7 @@ func (s Services) selectHandler() {
 	default:
 		panic("unknown service")
 	}
-	s.app.AddAndSwitch(service, item)
+	s.app.AddAndSwitch(item)
 }
 
 func (s Services) GetKeyActions() []KeyAction {

@@ -39,7 +39,7 @@ func (s SecretsManagerSecrets) resourcePolicyHandler() {
 		return
 	}
 	resourcePolicyView := NewSecretsManagerSecretResourcePolicy(s.smClient, secretId)
-	s.app.AddAndSwitch("sm.resourcepolicy", resourcePolicyView)
+	s.app.AddAndSwitch(resourcePolicyView)
 }
 
 func (s SecretsManagerSecrets) GetKeyActions() []KeyAction {

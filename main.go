@@ -24,10 +24,9 @@ import (
 )
 
 type Application struct {
-	app       *tview.Application
-	pages     *tview.Pages
-	pageNames []string
-	header    *Header
+	app    *tview.Application
+	pages  *tview.Pages
+	header *Header
 }
 
 func NewApplication() *Application {
@@ -76,10 +75,9 @@ func NewApplication() *Application {
 	a.app = app
 	a.pages = pages
 	a.header = header
-	a.AddAndSwitch("services", services)
-	a.pageNames = []string{"services"}
+	a.AddAndSwitch(services)
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyEscape && len(a.pageNames) > 1 {
+		if event.Key() == tcell.KeyEscape {
 			a.Close()
 			return nil
 		}
@@ -106,23 +104,27 @@ func (a Application) GetActiveKeyActions() []KeyAction {
 	return primitive.(Component).GetKeyActions()
 }
 
-func (a *Application) AddAndSwitch(name string, v Component) {
+func (a *Application) AddAndSwitch(v Component) {
+	name := v.GetName()
 	v.Render()
 	a.pages.AddAndSwitchToPage(name, v, true)
-	a.pageNames = append(a.pageNames, name)
 	a.header.Render() // this has to happen after we update the pages view
-	_, primitive := a.pages.GetFrontPage()
-	a.pages.SetTitle(fmt.Sprintf(" %v ", primitive.(Component).GetName()))
+	a.pages.SetTitle(fmt.Sprintf(" %v ", name))
 }
 
 func (a *Application) Close() {
-	lastPageName := a.pageNames[len(a.pageNames)-1]
-	a.pageNames = a.pageNames[:len(a.pageNames)-1]
-	a.pages.RemovePage(lastPageName)
-	a.pages.SwitchToPage(a.pageNames[len(a.pageNames)-1])
+	// don't close if we're at the root page
+	if a.pages.GetPageCount() == 1 {
+		return
+	}
+
+	oldName, _ := a.pages.GetFrontPage()
+	a.pages.RemovePage(oldName)
+	// this assumes pages are retrieved in reverse order that they were added
+	newName, _ := a.pages.GetFrontPage()
+	a.pages.SwitchToPage(newName)
 	a.header.Render()
-	_, primitive := a.pages.GetFrontPage()
-	a.pages.SetTitle(fmt.Sprintf(" %v ", primitive.(Component).GetName()))
+	a.pages.SetTitle(fmt.Sprintf(" %v ", newName))
 }
 
 func (a Application) Run() error {

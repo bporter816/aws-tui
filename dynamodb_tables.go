@@ -47,7 +47,7 @@ func (d DynamoDBTables) indexesHandler() {
 		return
 	}
 	indexesView := NewDynamoDBTableIndexes(d.ddbClient, tableName)
-	d.app.AddAndSwitch("ddb.table.indexes", indexesView)
+	d.app.AddAndSwitch(indexesView)
 }
 
 func (d DynamoDBTables) GetKeyActions() []KeyAction {

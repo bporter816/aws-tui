@@ -40,7 +40,7 @@ func (r Route53HostedZones) selectHandler() {
 		return
 	}
 	recordsView := NewRoute53Records(r.r53Client, hostedZoneId)
-	r.app.AddAndSwitch("r53.records", recordsView)
+	r.app.AddAndSwitch(recordsView)
 }
 
 func (r Route53HostedZones) GetKeyActions() []KeyAction {
