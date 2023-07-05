@@ -36,6 +36,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		},
 		"Route 53": []string{
 			"Hosted Zones",
+			"Health Checks",
 		},
 		"S3": []string{
 			"Buckets",
@@ -99,6 +100,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 			case "Route 53.Hosted Zones":
 				item = NewRoute53HostedZones(s.clients["Route 53"].(*r53.Client), s.app)
+			case "Route 53.Health Checks":
+				item = NewRoute53HealthChecks(s.clients["Route 53"].(*r53.Client), s.app)
 			case "S3.Buckets":
 				item = NewS3Buckets(s.clients["S3"].(*s3.Client), s.app)
 			case "Secrets Manager.Secrets":
