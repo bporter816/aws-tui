@@ -19,6 +19,7 @@ func NewRoute53HealthChecks(r53Client *r53.Client, app *Application) *Route53Hea
 			"ID",
 			"NAME",
 			"TYPE",
+			"DESCRIPTION",
 		}, 1, 0),
 		r53Client: r53Client,
 		app:       app,
@@ -62,18 +63,19 @@ func (r Route53HealthChecks) Render() {
 			panic(err)
 		}
 
-		var name, checkType string
+		var name, checkType, description string
 		if out.ResourceTagSet != nil {
 			name, _ = getTag(out.ResourceTagSet.Tags, "Name")
 		}
-
 		if v.HealthCheckConfig != nil {
 			checkType = string(v.HealthCheckConfig.Type)
+			description = getHealthCheckDescription(*v.HealthCheckConfig)
 		}
 		data = append(data, []string{
 			*v.Id,
 			name,
 			checkType,
+			description,
 		})
 	}
 	r.SetData(data)
