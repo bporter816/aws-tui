@@ -28,6 +28,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		},
 		"Elasticache": []string{
 			"Events",
+			"Reserved Nodes",
 		},
 		"KMS": []string{
 			"Keys",
@@ -89,6 +90,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
 			case "Elasticache.Events":
 				item = NewElasticacheEvents(s.clients["Elasticache"].(*ec.Client), s.app)
+			case "Elasticache.Reserved Nodes":
+				item = NewElasticacheReservedCacheNodes(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "KMS.Keys":
 				item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 			case "Route 53.Hosted Zones":
