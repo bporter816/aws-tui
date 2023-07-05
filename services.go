@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/rivo/tview"
+	"sort"
 )
 
 type Services struct {
@@ -51,7 +52,14 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		clients: clients,
 		app:     app,
 	}
-	for k, v := range m {
+	// sort the keys
+	var keys []string
+	for k, _ := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		v := m[k]
 		n := tview.NewTreeNode(k)
 		root.AddChild(n)
 		for _, view := range v {
