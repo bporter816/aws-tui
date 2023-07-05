@@ -27,6 +27,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 			"Tables",
 		},
 		"Elasticache": []string{
+			"Clusters",
 			"Events",
 			"Reserved Nodes",
 		},
@@ -88,6 +89,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewCloudfrontDistributions(s.clients["Cloudfront"].(*cf.Client), s.app)
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
+			case "Elasticache.Clusters":
+				item = NewElasticacheClusters(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":
 				item = NewElasticacheEvents(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Reserved Nodes":

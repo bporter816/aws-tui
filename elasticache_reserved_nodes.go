@@ -5,6 +5,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"strconv"
+	"strings"
 )
 
 type ElasticacheReservedCacheNodes struct {
@@ -56,10 +57,10 @@ func (e ElasticacheReservedCacheNodes) Render() {
 		data = append(data, []string{
 			*v.ReservedCacheNodeId,
 			*v.OfferingType,
-			*v.ProductDescription,
+			strings.Title(*v.ProductDescription),
 			*v.CacheNodeType,
 			strconv.Itoa(int(v.CacheNodeCount)),
-			*v.State,
+			strings.Title(*v.State),
 		})
 	}
 	e.SetData(data)
