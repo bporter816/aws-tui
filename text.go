@@ -25,23 +25,26 @@ func NewText(highlightSyntax bool, lang string) *Text {
 }
 
 func (t *Text) SetText(data string) {
+	if data == "" {
+		t.TextView.SetText("<empty>")
+		return
+	}
+
 	if t.lang == "json" {
 		var buf bytes.Buffer
 		err := json.Indent(&buf, []byte(data), "", "  ")
-		if err != nil {
-			panic(err)
+		if err == nil {
+			data = buf.String()
 		}
-		data = buf.String()
 	}
 
 	if t.highlightSyntax {
 		var buf bytes.Buffer
 		err := quick.Highlight(&buf, data, t.lang, "terminal256", "solarized-dark256")
-		if err != nil {
-			panic(err)
+		if err == nil {
+			data = buf.String()
+			data = tview.TranslateANSI(data)
 		}
-		data = buf.String()
-		data = tview.TranslateANSI(data)
 	}
 
 	t.TextView.SetText(data)
