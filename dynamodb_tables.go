@@ -7,7 +7,10 @@ import (
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/gdamore/tcell/v2"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"strconv"
+	"strings"
 )
 
 type DynamoDBTables struct {
@@ -74,6 +77,7 @@ func (d DynamoDBTables) Render() {
 		tableNames = append(tableNames, out.TableNames...)
 	}
 
+	caser := cases.Title(language.English)
 	var data [][]string
 	for _, v := range tableNames {
 		out, err := d.ddbClient.DescribeTable(
@@ -119,11 +123,11 @@ func (d DynamoDBTables) Render() {
 		}
 		data = append(data, []string{
 			v,
-			string(out.Table.TableStatus),
+			caser.String(string(out.Table.TableStatus)),
 			partitionKey,
 			sortKey,
 			strconv.Itoa(len(out.Table.GlobalSecondaryIndexes) + len(out.Table.LocalSecondaryIndexes)),
-			string(billingMode),
+			caser.String(strings.ReplaceAll(string(billingMode), "_", " ")),
 			readCap,
 			writeCap,
 			strconv.FormatInt(itemCount, 10),

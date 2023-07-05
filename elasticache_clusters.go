@@ -4,8 +4,9 @@ import (
 	"context"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"strconv"
-	"strings"
 )
 
 type ElasticacheClusters struct {
@@ -70,6 +71,7 @@ func (e ElasticacheClusters) Render() {
 		replicationGroups = append(replicationGroups, out.ReplicationGroups...)
 	}
 
+	caser := cases.Title(language.English)
 	var data [][]string
 	for _, v := range clusters {
 		// skip clusters in replication groups as those are retrieved from DescribeReplicationGroups
@@ -83,11 +85,11 @@ func (e ElasticacheClusters) Render() {
 		}
 		data = append(data, []string{
 			*v.CacheClusterId,
-			strings.Title(*v.CacheClusterStatus),
-			strings.Title(*v.Engine),
+			caser.String(*v.CacheClusterStatus),
+			caser.String(*v.Engine),
 			*v.EngineVersion,
 			*v.CacheNodeType,
-			strings.Title(clusterMode),
+			caser.String(clusterMode),
 			"-",
 			strconv.Itoa(int(*v.NumCacheNodes)),
 		})
@@ -96,11 +98,11 @@ func (e ElasticacheClusters) Render() {
 		firstMemberCluster := v.MemberClusters[0]
 		data = append(data, []string{
 			*v.ReplicationGroupId,
-			strings.Title(*v.Status),
+			caser.String(*v.Status),
 			"Redis",
 			clusterToEngineVersion[firstMemberCluster],
 			*v.CacheNodeType,
-			strings.Title(string(v.ClusterMode)),
+			caser.String(string(v.ClusterMode)),
 			strconv.Itoa(len(v.NodeGroups)),
 			strconv.Itoa(len(v.MemberClusters)),
 		})
