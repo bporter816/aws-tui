@@ -4,6 +4,7 @@ import (
 	"context"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"strconv"
@@ -14,6 +15,7 @@ type ElasticacheSnapshots struct {
 	*Table
 	ecClient *ec.Client
 	app      *Application
+	arns     []string
 }
 
 func NewElasticacheSnapshots(ecClient *ec.Client, app *Application) *ElasticacheSnapshots {
@@ -37,11 +39,23 @@ func (e ElasticacheSnapshots) GetName() string {
 	return "Elasticache | Snapshots"
 }
 
-func (e ElasticacheSnapshots) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (e ElasticacheSnapshots) tagsHandler() {
+	row, _ := e.GetSelection()
+	tagsView := NewElasticacheTags(e.ecClient, e.arns[row-1], e.app)
+	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheSnapshots) Render() {
+func (e ElasticacheSnapshots) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
+}
+
+func (e *ElasticacheSnapshots) Render() {
 	pg := ec.NewDescribeSnapshotsPaginator(
 		e.ecClient,
 		&ec.DescribeSnapshotsInput{},
@@ -57,7 +71,9 @@ func (e ElasticacheSnapshots) Render() {
 
 	caser := cases.Title(language.English)
 	var data [][]string
-	for _, v := range snapshots {
+	e.arns = make([]string, len(snapshots))
+	for i, v := range snapshots {
+		e.arns[i] = *v.ARN
 		var name, cluster, snapshotType, created, status, size string
 		shards := "-"
 		if v.SnapshotName != nil {

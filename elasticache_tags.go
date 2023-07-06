@@ -29,11 +29,22 @@ func NewElasticacheTags(ecClient *ec.Client, resourceName string, app *Applicati
 }
 
 func (e ElasticacheTags) GetName() string {
-	// TODO generalize for other resources
-	// extract id from arn
+	// extract resource type and id from arn
 	parts := strings.Split(e.resourceName, ":")
-	id := parts[len(parts)-1]
-	return fmt.Sprintf("Elasticache | Clusters | %v | Tags", id)
+	resourceType, id := parts[len(parts)-2], parts[len(parts)-1]
+	var resourceTypeStr string
+	switch resourceType {
+	case "cluster":
+		resourceTypeStr = "Clusters"
+	case "reserved-instance":
+		resourceTypeStr = "Reserved Nodes"
+	case "snapshot":
+		resourceTypeStr = "Snapshots"
+	default:
+		resourceTypeStr = "<unknown>"
+
+	}
+	return fmt.Sprintf("Elasticache | %v | %v | Tags", resourceTypeStr, id)
 }
 
 func (e ElasticacheTags) GetKeyActions() []KeyAction {
