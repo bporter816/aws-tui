@@ -113,7 +113,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "S3.Buckets":
 				item = NewS3Buckets(s.clients["S3"].(*s3.Client), s.app)
 			case "Secrets Manager.Secrets":
-				item = NewSecretsManagerSecrets(s.clients["Secrets Manager"].(*sm.Client), s.app)
+				item = NewSMSecrets(s.clients["Secrets Manager"].(*sm.Client), s.app)
 			default:
 				panic("unknown service")
 			}

@@ -9,14 +9,14 @@ import (
 	"strconv"
 )
 
-type SecretsManagerSecrets struct {
+type SMSecrets struct {
 	*Table
 	smClient *sm.Client
 	app      *Application
 }
 
-func NewSecretsManagerSecrets(smClient *sm.Client, app *Application) *SecretsManagerSecrets {
-	s := &SecretsManagerSecrets{
+func NewSMSecrets(smClient *sm.Client, app *Application) *SMSecrets {
+	s := &SMSecrets{
 		Table: NewTable([]string{
 			"NAME",
 			"PRIMARY REGION",
@@ -29,20 +29,20 @@ func NewSecretsManagerSecrets(smClient *sm.Client, app *Application) *SecretsMan
 	return s
 }
 
-func (s SecretsManagerSecrets) GetName() string {
+func (s SMSecrets) GetName() string {
 	return "Secrets Manager | Secrets"
 }
 
-func (s SecretsManagerSecrets) resourcePolicyHandler() {
+func (s SMSecrets) resourcePolicyHandler() {
 	secretId, err := s.GetColSelection("NAME")
 	if err != nil {
 		return
 	}
-	resourcePolicyView := NewSecretsManagerSecretResourcePolicy(s.smClient, secretId)
+	resourcePolicyView := NewSMSecretResourcePolicy(s.smClient, secretId)
 	s.app.AddAndSwitch(resourcePolicyView)
 }
 
-func (s SecretsManagerSecrets) tagsHandler() {
+func (s SMSecrets) tagsHandler() {
 	secretId, err := s.GetColSelection("NAME")
 	if err != nil {
 		return
@@ -51,7 +51,7 @@ func (s SecretsManagerSecrets) tagsHandler() {
 	s.app.AddAndSwitch(tagsView)
 }
 
-func (s SecretsManagerSecrets) GetKeyActions() []KeyAction {
+func (s SMSecrets) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
@@ -66,7 +66,7 @@ func (s SecretsManagerSecrets) GetKeyActions() []KeyAction {
 	}
 }
 
-func (s SecretsManagerSecrets) Render() {
+func (s SMSecrets) Render() {
 	pg := sm.NewListSecretsPaginator(
 		s.smClient,
 		&sm.ListSecretsInput{

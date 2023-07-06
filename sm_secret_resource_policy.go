@@ -7,14 +7,14 @@ import (
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
-type SecretsManagerSecretResourcePolicy struct {
+type SMSecretResourcePolicy struct {
 	*Text
 	smClient *sm.Client
 	secretId string
 }
 
-func NewSecretsManagerSecretResourcePolicy(smClient *sm.Client, secretId string) *SecretsManagerSecretResourcePolicy {
-	s := &SecretsManagerSecretResourcePolicy{
+func NewSMSecretResourcePolicy(smClient *sm.Client, secretId string) *SMSecretResourcePolicy {
+	s := &SMSecretResourcePolicy{
 		Text:     NewText(true, "json"),
 		smClient: smClient,
 		secretId: secretId,
@@ -22,15 +22,15 @@ func NewSecretsManagerSecretResourcePolicy(smClient *sm.Client, secretId string)
 	return s
 }
 
-func (s SecretsManagerSecretResourcePolicy) GetName() string {
+func (s SMSecretResourcePolicy) GetName() string {
 	return fmt.Sprintf("Secrets Manager | %v | Resource Policy", s.secretId)
 }
 
-func (s SecretsManagerSecretResourcePolicy) GetKeyActions() []KeyAction {
+func (s SMSecretResourcePolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SecretsManagerSecretResourcePolicy) Render() {
+func (s SMSecretResourcePolicy) Render() {
 	out, err := s.smClient.GetResourcePolicy(
 		context.TODO(),
 		&sm.GetResourcePolicyInput{
