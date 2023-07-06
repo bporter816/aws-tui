@@ -32,6 +32,24 @@ func (c CFDistributions) GetName() string {
 	return "Cloudfront | Distributions"
 }
 
+func (c CFDistributions) originsHandler() {
+	id, err := c.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	originsView := NewCFDistributionOrigins(c.cfClient, id, c.app)
+	c.app.AddAndSwitch(originsView)
+}
+
+func (c CFDistributions) cacheBehaviorsHandler() {
+	id, err := c.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	cacheBehaviorsView := NewCFDistributionCacheBehaviors(c.cfClient, id, c.app)
+	c.app.AddAndSwitch(cacheBehaviorsView)
+}
+
 func (c CFDistributions) tagsHandler() {
 	row, _ := c.GetSelection()
 	tagsView := NewCFTags(c.cfClient, c.arns[row-1], c.app)
@@ -40,6 +58,16 @@ func (c CFDistributions) tagsHandler() {
 
 func (c CFDistributions) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'o', tcell.ModNone),
+			Description: "Origins",
+			Action:      c.originsHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
+			Description: "Cache Behaviors",
+			Action:      c.cacheBehaviorsHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
