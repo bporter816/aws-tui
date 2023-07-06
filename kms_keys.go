@@ -46,12 +46,26 @@ func (k KmsKeys) keyPolicyHandler() {
 	k.app.AddAndSwitch(policyView)
 }
 
+func (k KmsKeys) tagsHandler() {
+	keyId, err := k.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	tagsView := NewKmsKeyTags(k.kmsClient, keyId, k.app)
+	k.app.AddAndSwitch(tagsView)
+}
+
 func (k KmsKeys) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Key Policy",
 			Action:      k.keyPolicyHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      k.tagsHandler,
 		},
 	}
 }

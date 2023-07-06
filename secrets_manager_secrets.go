@@ -42,12 +42,26 @@ func (s SecretsManagerSecrets) resourcePolicyHandler() {
 	s.app.AddAndSwitch(resourcePolicyView)
 }
 
+func (s SecretsManagerSecrets) tagsHandler() {
+	secretId, err := s.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tagsView := NewSMSecretTags(s.smClient, secretId, s.app)
+	s.app.AddAndSwitch(tagsView)
+}
+
 func (s SecretsManagerSecrets) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Resource Policy",
 			Action:      s.resourcePolicyHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      s.tagsHandler,
 		},
 	}
 }
