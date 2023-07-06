@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/gdamore/tcell/v2"
 )
 
 type Route53HealthChecks struct {
@@ -31,8 +32,23 @@ func (r Route53HealthChecks) GetName() string {
 	return "Route 53 | Health Checks"
 }
 
+func (r Route53HealthChecks) tagsHandler() {
+	healthCheckId, err := r.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	tagsView := NewRoute53Tags(r.r53Client, healthCheckId, r53Types.TagResourceTypeHealthcheck, r.app)
+	r.app.AddAndSwitch(tagsView)
+}
+
 func (r Route53HealthChecks) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      r.tagsHandler,
+		},
+	}
 }
 
 func (r Route53HealthChecks) Render() {

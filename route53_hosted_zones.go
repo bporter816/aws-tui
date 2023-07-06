@@ -4,6 +4,7 @@ import (
 	"context"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
 	"strings"
 )
@@ -43,8 +44,23 @@ func (r Route53HostedZones) selectHandler(row, col int) {
 	r.app.AddAndSwitch(recordsView)
 }
 
+func (r Route53HostedZones) tagsHandler() {
+	hostedZoneId, err := r.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	tagsView := NewRoute53Tags(r.r53Client, hostedZoneId, r53Types.TagResourceTypeHostedzone, r.app)
+	r.app.AddAndSwitch(tagsView)
+}
+
 func (r Route53HostedZones) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      r.tagsHandler,
+		},
+	}
 }
 
 func (r Route53HostedZones) Render() {
