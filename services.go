@@ -23,6 +23,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 	m := map[string][]string{
 		"Cloudfront": []string{
 			"Distributions",
+			"Functions",
 		},
 		"DynamoDB": []string{
 			"Tables",
@@ -96,6 +97,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			switch view {
 			case "Cloudfront.Distributions":
 				item = NewCFDistributions(s.clients["Cloudfront"].(*cf.Client), s.app)
+			case "Cloudfront.Functions":
+				item = NewCFFunctions(s.clients["Cloudfront"].(*cf.Client), s.app)
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
 			case "Elasticache.Clusters":
