@@ -95,7 +95,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			var item Component
 			switch view {
 			case "Cloudfront.Distributions":
-				item = NewCloudfrontDistributions(s.clients["Cloudfront"].(*cf.Client), s.app)
+				item = NewCFDistributions(s.clients["Cloudfront"].(*cf.Client), s.app)
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
 			case "Elasticache.Clusters":

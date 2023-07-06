@@ -6,14 +6,14 @@ import (
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 )
 
-type CloudfrontDistributions struct {
+type CFDistributions struct {
 	*Table
 	cfClient *cf.Client
 	app      *Application
 }
 
-func NewCloudfrontDistributions(cfClient *cf.Client, app *Application) *CloudfrontDistributions {
-	c := &CloudfrontDistributions{
+func NewCFDistributions(cfClient *cf.Client, app *Application) *CFDistributions {
+	c := &CFDistributions{
 		Table: NewTable([]string{
 			"ID",
 			"DESCRIPTION",
@@ -26,15 +26,15 @@ func NewCloudfrontDistributions(cfClient *cf.Client, app *Application) *Cloudfro
 	return c
 }
 
-func (c CloudfrontDistributions) GetName() string {
+func (c CFDistributions) GetName() string {
 	return "Cloudfront | Distributions"
 }
 
-func (c CloudfrontDistributions) GetKeyActions() []KeyAction {
+func (c CFDistributions) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (c CloudfrontDistributions) Render() {
+func (c CFDistributions) Render() {
 	pg := cf.NewListDistributionsPaginator(
 		c.cfClient,
 		&cf.ListDistributionsInput{},
