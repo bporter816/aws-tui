@@ -4,6 +4,7 @@ import (
 	"context"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"strconv"
@@ -13,6 +14,7 @@ type ElasticacheClusters struct {
 	*Table
 	ecClient *ec.Client
 	app      *Application
+	arns     []string
 }
 
 func NewElasticacheClusters(ecClient *ec.Client, app *Application) *ElasticacheClusters {
@@ -37,13 +39,26 @@ func (e ElasticacheClusters) GetName() string {
 	return "Elasticache | Clusters"
 }
 
-func (e ElasticacheClusters) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (e ElasticacheClusters) tagsHandler() {
+	row, _ := e.GetSelection()
+	tagsView := NewElasticacheTags(e.ecClient, e.arns[row-1], e.app)
+	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheClusters) Render() {
+func (e ElasticacheClusters) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
+}
+
+func (e *ElasticacheClusters) Render() {
 	// DescribeReplicationGroups doesn't return engine version, so we have to get it from the list of member cluster names
 	clusterToEngineVersion := make(map[string]string)
+	e.arns = make([]string, 0)
 
 	clustersPg := ec.NewDescribeCacheClustersPaginator(
 		e.ecClient,
@@ -93,6 +108,7 @@ func (e ElasticacheClusters) Render() {
 			"-",
 			strconv.Itoa(int(*v.NumCacheNodes)),
 		})
+		e.arns = append(e.arns, *v.ARN)
 	}
 	for _, v := range replicationGroups {
 		firstMemberCluster := v.MemberClusters[0]
@@ -106,6 +122,7 @@ func (e ElasticacheClusters) Render() {
 			strconv.Itoa(len(v.NodeGroups)),
 			strconv.Itoa(len(v.MemberClusters)),
 		})
+		e.arns = append(e.arns, *v.ARN)
 	}
 	e.SetData(data)
 }
