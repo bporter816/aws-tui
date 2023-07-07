@@ -90,14 +90,11 @@ func NewApplication() *Application {
 			return event
 		}
 
-		_, primitive := a.pages.GetFrontPage()
-		if primitive != nil {
-			actions := primitive.(Component).GetKeyActions()
-			for _, action := range actions {
-				if event.Name() == action.Key.Name() {
-					action.Action()
-					return nil
-				}
+		actions := a.GetActiveKeyActions()
+		for _, action := range actions {
+			if event.Name() == action.Key.Name() {
+				action.Action()
+				return nil
 			}
 		}
 		return event
@@ -105,11 +102,24 @@ func NewApplication() *Application {
 	return a
 }
 
+func (a Application) refreshHandler() {
+	_, primitive := a.pages.GetFrontPage()
+	primitive.(Component).Render()
+}
+
 func (a Application) GetActiveKeyActions() []KeyAction {
 	// TODO check that front page exists
 	_, primitive := a.pages.GetFrontPage()
 	// TODO avoid type coercion
-	return primitive.(Component).GetKeyActions()
+	localActions := primitive.(Component).GetKeyActions()
+	globalActions := []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'r', tcell.ModNone),
+			Description: "Refresh",
+			Action:      a.refreshHandler,
+		},
+	}
+	return append(localActions, globalActions...)
 }
 
 func (a *Application) AddAndSwitch(v Component) {
