@@ -32,6 +32,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		},
 		"EC2": []string{
 			"VPCs",
+			"Security Groups",
 		},
 		"Elasticache": []string{
 			"Clusters",
@@ -113,6 +114,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
 			case "EC2.VPCs":
 				item = NewEC2VPCs(s.clients["EC2"].(*ec2.Client), s.app)
+			case "EC2.Security Groups":
+				item = NewEC2SecurityGroups(s.clients["EC2"].(*ec2.Client), s.app)
 			case "Elasticache.Clusters":
 				item = NewElasticacheClusters(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":
