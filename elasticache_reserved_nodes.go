@@ -38,7 +38,10 @@ func (e ElasticacheReservedCacheNodes) GetName() string {
 }
 
 func (e ElasticacheReservedCacheNodes) tagsHandler() {
-	row, _ := e.GetSelection()
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
 	tagsView := NewElasticacheTags(e.ecClient, e.arns[row-1], e.app)
 	e.app.AddAndSwitch(tagsView)
 }

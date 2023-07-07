@@ -55,7 +55,10 @@ func (d DynamoDBTables) indexesHandler() {
 }
 
 func (d DynamoDBTables) tagsHandler() {
-	row, _ := d.GetSelection()
+	row, err := d.GetRowSelection()
+	if err != nil {
+		return
+	}
 	tagsView := NewDynamoDBTags(d.ddbClient, d.arns[row-1], d.app)
 	d.app.AddAndSwitch(tagsView)
 }

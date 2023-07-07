@@ -51,7 +51,10 @@ func (c CFDistributions) cacheBehaviorsHandler() {
 }
 
 func (c CFDistributions) tagsHandler() {
-	row, _ := c.GetSelection()
+	row, err := c.GetRowSelection()
+	if err != nil {
+		return
+	}
 	tagsView := NewCFTags(c.cfClient, c.arns[row-1], c.app)
 	c.app.AddAndSwitch(tagsView)
 }
