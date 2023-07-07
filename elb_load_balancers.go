@@ -4,6 +4,7 @@ import (
 	"context"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -12,6 +13,7 @@ type ELBLoadBalancers struct {
 	*Table
 	elbClient *elb.Client
 	app       *Application
+	arns      []string
 }
 
 func NewELBLoadBalancers(elbClient *elb.Client, app *Application) *ELBLoadBalancers {
@@ -32,12 +34,31 @@ func (e ELBLoadBalancers) GetName() string {
 	return "ELB | Load Balancers"
 }
 
-func (e ELBLoadBalancers) GetKeyActions() []KeyAction {
-	// TODO add security groups hotkey
-	return []KeyAction{}
+func (e ELBLoadBalancers) tagsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	name, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tagsView := NewELBTags(e.elbClient, ELBResourceTypeLoadBalancer, e.arns[row-1], name, e.app)
+	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ELBLoadBalancers) Render() {
+func (e ELBLoadBalancers) GetKeyActions() []KeyAction {
+	// TODO add security groups hotkey
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
+}
+
+func (e *ELBLoadBalancers) Render() {
 	pg := elb.NewDescribeLoadBalancersPaginator(
 		e.elbClient,
 		&elb.DescribeLoadBalancersInput{},
@@ -53,7 +74,9 @@ func (e ELBLoadBalancers) Render() {
 
 	caser := cases.Title(language.English)
 	var data [][]string
-	for _, v := range loadBalancers {
+	e.arns = make([]string, len(loadBalancers))
+	for i, v := range loadBalancers {
+		e.arns[i] = *v.LoadBalancerArn
 		var name, dnsName, lbType, vpcId string
 		if v.LoadBalancerName != nil {
 			name = *v.LoadBalancerName

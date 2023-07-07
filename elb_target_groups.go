@@ -4,6 +4,7 @@ import (
 	"context"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
@@ -11,6 +12,7 @@ type ELBTargetGroups struct {
 	*Table
 	elbClient *elb.Client
 	app       *Application
+	arns      []string
 }
 
 func NewELBTargetGroups(elbClient *elb.Client, app *Application) *ELBTargetGroups {
@@ -32,11 +34,30 @@ func (e ELBTargetGroups) GetName() string {
 	return "ELB | Target Groups"
 }
 
-func (e ELBTargetGroups) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (e ELBTargetGroups) tagsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	name, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tagsView := NewELBTags(e.elbClient, ELBResourceTypeTargetGroup, e.arns[row-1], name, e.app)
+	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ELBTargetGroups) Render() {
+func (e ELBTargetGroups) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
+}
+
+func (e *ELBTargetGroups) Render() {
 	pg := elb.NewDescribeTargetGroupsPaginator(
 		e.elbClient,
 		&elb.DescribeTargetGroupsInput{},
@@ -51,7 +72,9 @@ func (e ELBTargetGroups) Render() {
 	}
 
 	var data [][]string
-	for _, v := range targetGroups {
+	e.arns = make([]string, len(targetGroups))
+	for i, v := range targetGroups {
+		e.arns[i] = *v.TargetGroupArn
 		// TODO add attached load balancer
 		var name, protocol, targetType, vpcId string
 		port := "-"
