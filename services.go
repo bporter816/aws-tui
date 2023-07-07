@@ -5,6 +5,7 @@ import (
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
+	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -33,6 +34,10 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 			"Events",
 			"Reserved Nodes",
 			"Snapshots",
+		},
+		"ELB": []string{
+			"Load Balancers",
+			"Target Groups",
 		},
 		"KMS": []string{
 			"Keys",
@@ -110,6 +115,10 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewElasticacheReservedCacheNodes(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Snapshots":
 				item = NewElasticacheSnapshots(s.clients["Elasticache"].(*ec.Client), s.app)
+			case "ELB.Load Balancers":
+				item = NewELBLoadBalancers(s.clients["ELB"].(*elb.Client), s.app)
+			case "ELB.Target Groups":
+				item = NewELBTargetGroups(s.clients["ELB"].(*elb.Client), s.app)
 			case "KMS.Keys":
 				item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 			case "Route 53.Hosted Zones":
