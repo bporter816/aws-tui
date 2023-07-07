@@ -6,35 +6,37 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
-type EC2SecurityGroupTags struct {
+type EC2SecurityGroupRuleTags struct {
 	*Table
 	ec2Client *ec2.Client
 	sgId      string
+	ruleId    string
 	app       *Application
 }
 
-func NewEC2SecurityGroupTags(ec2Client *ec2.Client, sgId string, app *Application) *EC2SecurityGroupTags {
-	e := &EC2SecurityGroupTags{
+func NewEC2SecurityGroupRuleTags(ec2Client *ec2.Client, sgId string, ruleId string, app *Application) *EC2SecurityGroupRuleTags {
+	e := &EC2SecurityGroupRuleTags{
 		Table: NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
 		ec2Client: ec2Client,
 		sgId:      sgId,
+		ruleId:    ruleId,
 		app:       app,
 	}
 	return e
 }
 
-func (e EC2SecurityGroupTags) GetName() string {
-	return fmt.Sprintf("EC2 | Security Groups | %v | Tags", e.sgId)
+func (e EC2SecurityGroupRuleTags) GetName() string {
+	return fmt.Sprintf("EC2 | Security Groups | %v | Rules | %v | Tags", e.sgId, e.ruleId)
 }
 
-func (e EC2SecurityGroupTags) GetKeyActions() []KeyAction {
+func (e EC2SecurityGroupRuleTags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2SecurityGroupTags) Render() {
+func (e EC2SecurityGroupRuleTags) Render() {
 	out, err := e.ec2Client.DescribeSecurityGroups(
 		context.TODO(),
 		&ec2.DescribeSecurityGroupsInput{
@@ -46,7 +48,7 @@ func (e EC2SecurityGroupTags) Render() {
 	}
 
 	if len(out.SecurityGroups) != 1 {
-		panic("should get exactly 1 security group")
+		panic("should get exactly 1 rule")
 	}
 	var data [][]string
 	for _, v := range out.SecurityGroups[0].Tags {

@@ -71,11 +71,11 @@ func (e EC2VPCs) Render() {
 	for _, v := range vpcs {
 		name := "-"
 		var id, state, ipv4CIDR string
+		if vpcName, ok := lookupTag(v.Tags, "Name"); ok {
+			name = vpcName
+		}
 		if v.VpcId != nil {
 			id = *v.VpcId
-			if vpcName, ok := lookupTag(v.Tags, "Name"); ok {
-				name = vpcName
-			}
 		}
 		state = caser.String(string(v.State))
 		if v.CidrBlock != nil {
@@ -89,13 +89,4 @@ func (e EC2VPCs) Render() {
 		})
 	}
 	e.SetData(data)
-}
-
-func lookupTag(tags []ec2Types.Tag, key string) (string, bool) {
-	for _, v := range tags {
-		if *v.Key == key {
-			return *v.Value, true
-		}
-	}
-	return "", false
 }
