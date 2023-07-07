@@ -17,6 +17,7 @@ type DynamoDBTables struct {
 	*Table
 	ddbClient *ddb.Client
 	app       *Application
+	arns      []string
 }
 
 func NewDynamoDBTables(ddbClient *ddb.Client, app *Application) *DynamoDBTables {
@@ -53,6 +54,12 @@ func (d DynamoDBTables) indexesHandler() {
 	d.app.AddAndSwitch(indexesView)
 }
 
+func (d DynamoDBTables) tagsHandler() {
+	row, _ := d.GetSelection()
+	tagsView := NewDynamoDBTags(d.ddbClient, d.arns[row-1], d.app)
+	d.app.AddAndSwitch(tagsView)
+}
+
 func (d DynamoDBTables) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
@@ -60,10 +67,15 @@ func (d DynamoDBTables) GetKeyActions() []KeyAction {
 			Description: "Indexes",
 			Action:      d.indexesHandler,
 		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      d.tagsHandler,
+		},
 	}
 }
 
-func (d DynamoDBTables) Render() {
+func (d *DynamoDBTables) Render() {
 	pg := ddb.NewListTablesPaginator(
 		d.ddbClient,
 		&ddb.ListTablesInput{},
@@ -79,7 +91,8 @@ func (d DynamoDBTables) Render() {
 
 	caser := cases.Title(language.English)
 	var data [][]string
-	for _, v := range tableNames {
+	d.arns = make([]string, len(tableNames))
+	for i, v := range tableNames {
 		out, err := d.ddbClient.DescribeTable(
 			context.TODO(),
 			&ddb.DescribeTableInput{
@@ -89,6 +102,7 @@ func (d DynamoDBTables) Render() {
 		if err != nil {
 			panic(err)
 		}
+		d.arns[i] = *out.Table.TableArn
 		partitionKey, sortKey := getPartitionAndSortKeys(out.Table.KeySchema)
 		if partitionKeyType, ok := getAttributeType(partitionKey, out.Table.AttributeDefinitions); ok {
 			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
