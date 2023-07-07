@@ -11,6 +11,7 @@ import (
 	// "github.com/aws/aws-sdk-go-v2/service/ec2"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
@@ -42,6 +43,7 @@ func NewApplication() *Application {
 	cfClient := cf.NewFromConfig(cfg)
 	ddbClient := ddb.NewFromConfig(cfg)
 	ecClient := ec.NewFromConfig(cfg)
+	ec2Client := ec2.NewFromConfig(cfg)
 	elbClient := elb.NewFromConfig(cfg)
 	iamClient := iam.NewFromConfig(cfg)
 	kmsClient := kms.NewFromConfig(cfg)
@@ -56,6 +58,7 @@ func NewApplication() *Application {
 		"Cloudfront":      cfClient,
 		"DynamoDB":        ddbClient,
 		"Elasticache":     ecClient,
+		"EC2":             ec2Client,
 		"ELB":             elbClient,
 		"IAM":             iamClient,
 		"KMS":             kmsClient,

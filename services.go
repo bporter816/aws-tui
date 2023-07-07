@@ -4,6 +4,7 @@ import (
 	"fmt"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
@@ -28,6 +29,9 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		},
 		"DynamoDB": []string{
 			"Tables",
+		},
+		"EC2": []string{
+			"VPCs",
 		},
 		"Elasticache": []string{
 			"Clusters",
@@ -107,6 +111,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewCFFunctions(s.clients["Cloudfront"].(*cf.Client), s.app)
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
+			case "EC2.VPCs":
+				item = NewEC2VPCs(s.clients["EC2"].(*ec2.Client), s.app)
 			case "Elasticache.Clusters":
 				item = NewElasticacheClusters(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":
