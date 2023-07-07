@@ -10,34 +10,34 @@ import (
 
 type Route53Tags struct {
 	*Table
-	r53Client *r53.Client
-	id        string
-	resType   r53Types.TagResourceType
-	app       *Application
+	r53Client    *r53.Client
+	resourceType r53Types.TagResourceType
+	resourceName string
+	app          *Application
 }
 
-func NewRoute53Tags(r53Client *r53.Client, id string, resType r53Types.TagResourceType, app *Application) *Route53Tags {
+func NewRoute53Tags(r53Client *r53.Client, resourceType r53Types.TagResourceType, resourceName string, app *Application) *Route53Tags {
 	r := &Route53Tags{
 		Table: NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		r53Client: r53Client,
-		id:        id,
-		resType:   resType,
-		app:       app,
+		r53Client:    r53Client,
+		resourceType: resourceType,
+		resourceName: resourceName,
+		app:          app,
 	}
 	return r
 }
 
 func (r Route53Tags) GetName() string {
-	switch r.resType {
+	switch r.resourceType {
 	case r53Types.TagResourceTypeHostedzone:
-		return fmt.Sprintf("Route 53 | Hosted Zones | %v | Tags", r.id)
+		return fmt.Sprintf("Route 53 | Hosted Zones | %v | Tags", r.resourceName)
 	case r53Types.TagResourceTypeHealthcheck:
-		return fmt.Sprintf("Route 53 | Health Checks | %v | Tags", r.id)
+		return fmt.Sprintf("Route 53 | Health Checks | %v | Tags", r.resourceName)
 	default:
-		return fmt.Sprintf("Route 53 | <unknown> | %v | Tags", r.id)
+		return fmt.Sprintf("Route 53 | <unknown> | %v | Tags", r.resourceName)
 	}
 }
 
@@ -49,8 +49,8 @@ func (r Route53Tags) Render() {
 	out, err := r.r53Client.ListTagsForResource(
 		context.TODO(),
 		&r53.ListTagsForResourceInput{
-			ResourceId:   aws.String(r.id),
-			ResourceType: r.resType,
+			ResourceId:   aws.String(r.resourceName),
+			ResourceType: r.resourceType,
 		},
 	)
 	if err != nil {

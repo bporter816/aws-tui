@@ -44,7 +44,11 @@ func (e ElasticacheSnapshots) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.ecClient, e.arns[row-1], e.app)
+	name, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tagsView := NewElasticacheTags(e.ecClient, ElasticacheResourceTypeSnapshot, e.arns[row-1], name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

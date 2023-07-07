@@ -37,7 +37,7 @@ func (r Route53HealthChecks) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewRoute53Tags(r.r53Client, healthCheckId, r53Types.TagResourceTypeHealthcheck, r.app)
+	tagsView := NewRoute53Tags(r.r53Client, r53Types.TagResourceTypeHealthcheck, healthCheckId, r.app)
 	r.app.AddAndSwitch(tagsView)
 }
 

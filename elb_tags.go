@@ -10,19 +10,19 @@ type ELBTags struct {
 	*Table
 	elbClient    *elb.Client
 	resourceType ELBResourceType
-	id           string
-	name         string
+	resourceArn  string
+	resourceName string
 	app          *Application
 }
 
 type ELBResourceType string
 
 const (
-	ELBResourceTypeLoadBalancer = "Load Balancers"
-	ELBResourceTypeTargetGroup  = "Target Groups"
+	ELBResourceTypeLoadBalancer ELBResourceType = "Load Balancers"
+	ELBResourceTypeTargetGroup  ELBResourceType = "Target Groups"
 )
 
-func NewELBTags(elbClient *elb.Client, resourceType ELBResourceType, id string, name string, app *Application) *ELBTags {
+func NewELBTags(elbClient *elb.Client, resourceType ELBResourceType, resourceArn string, resourceName string, app *Application) *ELBTags {
 	e := &ELBTags{
 		Table: NewTable([]string{
 			"KEY",
@@ -30,15 +30,15 @@ func NewELBTags(elbClient *elb.Client, resourceType ELBResourceType, id string, 
 		}, 1, 0),
 		elbClient:    elbClient,
 		resourceType: resourceType,
-		id:           id,
-		name:         name,
+		resourceArn:  resourceArn,
+		resourceName: resourceName,
 		app:          app,
 	}
 	return e
 }
 
 func (e ELBTags) GetName() string {
-	return fmt.Sprintf("ELB | %v | %v | Tags", e.resourceType, e.name)
+	return fmt.Sprintf("ELB | %v | %v | Tags", e.resourceType, e.resourceName)
 }
 
 func (e ELBTags) GetKeyActions() []KeyAction {
@@ -49,7 +49,7 @@ func (e ELBTags) Render() {
 	out, err := e.elbClient.DescribeTags(
 		context.TODO(),
 		&elb.DescribeTagsInput{
-			ResourceArns: []string{e.id},
+			ResourceArns: []string{e.resourceArn},
 		},
 	)
 	if err != nil {

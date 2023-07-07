@@ -49,7 +49,7 @@ func (r Route53HostedZones) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewRoute53Tags(r.r53Client, hostedZoneId, r53Types.TagResourceTypeHostedzone, r.app)
+	tagsView := NewRoute53Tags(r.r53Client, r53Types.TagResourceTypeHostedzone, hostedZoneId, r.app)
 	r.app.AddAndSwitch(tagsView)
 }
 
