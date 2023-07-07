@@ -48,12 +48,26 @@ func (s S3Buckets) bucketPolicyHandler() {
 	s.app.AddAndSwitch(policyView)
 }
 
+func (s S3Buckets) tagsHandler() {
+	bucket, err := s.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tagsView := NewS3BucketTags(s.s3Client, bucket, s.app)
+	s.app.AddAndSwitch(tagsView)
+}
+
 func (s S3Buckets) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Bucket Policy",
 			Action:      s.bucketPolicyHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      s.tagsHandler,
 		},
 	}
 }
