@@ -33,8 +33,12 @@ func NewKmsKeys(kmsClient *kms.Client, app *Application) *KmsKeys {
 	return k
 }
 
-func (k KmsKeys) GetName() string {
-	return "KMS | Keys"
+func (k KmsKeys) GetService() string {
+	return "KMS"
+}
+
+func (k KmsKeys) GetLabels() []string {
+	return []string{"Keys"}
 }
 
 func (k KmsKeys) keyPolicyHandler() {

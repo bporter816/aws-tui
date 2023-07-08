@@ -40,8 +40,12 @@ func NewDynamoDBTables(ddbClient *ddb.Client, app *Application) *DynamoDBTables 
 	return d
 }
 
-func (d DynamoDBTables) GetName() string {
-	return "DynamoDB | Tables"
+func (d DynamoDBTables) GetService() string {
+	return "DynamoDB"
+}
+
+func (d DynamoDBTables) GetLabels() []string {
+	return []string{"Tables"}
 }
 
 func (d DynamoDBTables) indexesHandler() {

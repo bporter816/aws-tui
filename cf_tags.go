@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"strings"
@@ -28,12 +27,15 @@ func NewCFTags(cfClient *cf.Client, id string, app *Application) *CFTags {
 	return c
 }
 
-func (c CFTags) GetName() string {
+func (c CFTags) GetService() string {
+	return "Cloudfront"
+}
+func (c CFTags) GetLabels() []string {
 	// TODO generalize for other resources
 	// extract id from arn
 	parts := strings.Split(c.id, "/")
 	id := parts[len(parts)-1]
-	return fmt.Sprintf("Cloudfront | Distributions | %v | Tags", id)
+	return []string{"Distributions", id, "Tags"}
 }
 
 func (c CFTags) GetKeyActions() []KeyAction {

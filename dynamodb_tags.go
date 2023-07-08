@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"strings"
@@ -28,12 +27,16 @@ func NewDynamoDBTags(ddbClient *ddb.Client, id string, app *Application) *Dynamo
 	return d
 }
 
-func (d DynamoDBTags) GetName() string {
+func (d DynamoDBTags) GetService() string {
+	return "Cloudfront"
+}
+
+func (d DynamoDBTags) GetLabels() []string {
 	// TODO generalize for other resources
 	// extract id from arn
 	parts := strings.Split(d.id, "/")
 	id := parts[len(parts)-1]
-	return fmt.Sprintf("Cloudfront | Tables | %v | Tags", id)
+	return []string{"Tables", id, "Tags"}
 }
 
 func (d DynamoDBTags) GetKeyActions() []KeyAction {

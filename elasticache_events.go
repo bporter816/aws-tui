@@ -28,8 +28,12 @@ func NewElasticacheEvents(ecClient *ec.Client, app *Application) *ElasticacheEve
 	return e
 }
 
-func (e ElasticacheEvents) GetName() string {
-	return "Elasticache | Events"
+func (e ElasticacheEvents) GetService() string {
+	return "Elasticache"
+}
+
+func (e ElasticacheEvents) GetLabels() []string {
+	return []string{"Events"}
 }
 
 func (e ElasticacheEvents) GetKeyActions() []KeyAction {

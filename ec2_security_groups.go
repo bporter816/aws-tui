@@ -30,8 +30,12 @@ func NewEC2SecurityGroups(ec2Client *ec2.Client, app *Application) *EC2SecurityG
 	return e
 }
 
-func (e EC2SecurityGroups) GetName() string {
-	return "EC2 | Security Groups"
+func (e EC2SecurityGroups) GetService() string {
+	return "EC2"
+}
+
+func (e EC2SecurityGroups) GetLabels() []string {
+	return []string{"Security Groups"}
 }
 
 func (e EC2SecurityGroups) rulesHandler() {

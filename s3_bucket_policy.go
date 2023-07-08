@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
@@ -22,8 +21,12 @@ func NewS3BucketPolicy(s3Client *s3.Client, bucket string) *S3BucketPolicy {
 	return s
 }
 
-func (s S3BucketPolicy) GetName() string {
-	return fmt.Sprintf("S3 | %v | Bucket Policy", s.bucket)
+func (s S3BucketPolicy) GetService() string {
+	return "S3"
+}
+
+func (s S3BucketPolicy) GetLabels() []string {
+	return []string{s.bucket, "Bucket Policy"}
 }
 
 func (s S3BucketPolicy) GetKeyActions() []KeyAction {

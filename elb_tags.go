@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 )
 
@@ -37,8 +36,12 @@ func NewELBTags(elbClient *elb.Client, resourceType ELBResourceType, resourceArn
 	return e
 }
 
-func (e ELBTags) GetName() string {
-	return fmt.Sprintf("ELB | %v | %v | Tags", e.resourceType, e.resourceName)
+func (e ELBTags) GetService() string {
+	return "ELB"
+}
+
+func (e ELBTags) GetLabels() []string {
+	return []string{string(e.resourceType), e.resourceName, "Tags"}
 }
 
 func (e ELBTags) GetKeyActions() []KeyAction {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -28,8 +27,12 @@ func NewEC2SecurityGroupRuleTags(ec2Client *ec2.Client, sgId string, ruleId stri
 	return e
 }
 
-func (e EC2SecurityGroupRuleTags) GetName() string {
-	return fmt.Sprintf("EC2 | Security Groups | %v | Rules | %v | Tags", e.sgId, e.ruleId)
+func (e EC2SecurityGroupRuleTags) GetService() string {
+	return "EC2"
+}
+
+func (e EC2SecurityGroupRuleTags) GetLabels() []string {
+	return []string{"Security Groups", e.sgId, "Rules", e.ruleId, "Tags"}
 }
 
 func (e EC2SecurityGroupRuleTags) GetKeyActions() []KeyAction {

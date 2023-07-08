@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 )
@@ -26,8 +25,12 @@ func NewCFDistributionOrigins(cfClient *cf.Client, distributionId string, app *A
 	return c
 }
 
-func (c CFDistributionOrigins) GetName() string {
-	return fmt.Sprintf("Cloudfront | Distributions | %v | Origins", c.distributionId)
+func (c CFDistributionOrigins) GetService() string {
+	return "Cloudfront"
+}
+
+func (c CFDistributionOrigins) GetLabels() []string {
+	return []string{c.distributionId, "Origins"}
 }
 
 func (c CFDistributionOrigins) GetKeyActions() []KeyAction {

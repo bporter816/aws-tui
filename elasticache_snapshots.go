@@ -35,8 +35,12 @@ func NewElasticacheSnapshots(ecClient *ec.Client, app *Application) *Elasticache
 	return e
 }
 
-func (e ElasticacheSnapshots) GetName() string {
-	return "Elasticache | Snapshots"
+func (e ElasticacheSnapshots) GetService() string {
+	return "Elasticache"
+}
+
+func (e ElasticacheSnapshots) GetLabels() []string {
+	return []string{"Snapshots"}
 }
 
 func (e ElasticacheSnapshots) tagsHandler() {

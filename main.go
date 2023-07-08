@@ -5,7 +5,7 @@ import (
 	"fmt"
 	// "os/exec"
 	// "sort"
-	// "strings"
+	"strings"
 	// "net/http"
 	"github.com/aws/aws-sdk-go-v2/config"
 	// "github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -27,9 +27,11 @@ import (
 )
 
 type Application struct {
-	app    *tview.Application
-	pages  *tview.Pages
-	header *Header
+	app        *tview.Application
+	pages      *tview.Pages
+	header     *Header
+	footer     *Footer
+	components []Component
 }
 
 func NewApplication() *Application {
@@ -73,17 +75,19 @@ func NewApplication() *Application {
 	pages.SetBorder(true)
 
 	header := NewHeader(stsClient, iamClient, a)
+	footer := NewFooter(a)
 
 	flex := tview.NewFlex()
 	flex.SetDirection(tview.FlexRow)
-	flex.AddItem(header, 4, 0, false)                          // header is 4 rows
-	flex.AddItem(pages, 0, 1, true)                            // main viewport is resizable
-	flex.AddItem(tview.NewTextView().SetText(""), 1, 0, false) // footer is 1 row
+	flex.AddItem(header, 4, 0, false) // header is 4 rows
+	flex.AddItem(pages, 0, 1, true)   // main viewport is resizable
+	flex.AddItem(footer, 1, 0, false) // footer is 1 row
 
 	app.SetRoot(flex, true).SetFocus(pages)
 	a.app = app
 	a.pages = pages
 	a.header = header
+	a.footer = footer
 	a.AddAndSwitch(services)
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEscape {
@@ -129,11 +133,14 @@ func (a Application) GetActiveKeyActions() []KeyAction {
 }
 
 func (a *Application) AddAndSwitch(v Component) {
-	name := v.GetName()
 	v.Render()
+	// create a unique name for the tview pages element
+	name := fmt.Sprintf(" %v > %v ", v.GetService(), strings.Join(v.GetLabels(), " > "))
+	a.components = append(a.components, v)
 	a.pages.AddAndSwitchToPage(name, v, true)
 	a.header.Render() // this has to happen after we update the pages view
-	a.pages.SetTitle(fmt.Sprintf(" %v ", name))
+	a.footer.Render()
+	a.pages.SetTitle(fmt.Sprintf(" %v ", v.GetService()))
 }
 
 func (a *Application) Close() {
@@ -141,14 +148,16 @@ func (a *Application) Close() {
 	if a.pages.GetPageCount() == 1 {
 		return
 	}
+	a.components = a.components[:len(a.components)-1]
 
 	oldName, _ := a.pages.GetFrontPage()
 	a.pages.RemovePage(oldName)
 	// this assumes pages are retrieved in reverse order that they were added
 	newName, _ := a.pages.GetFrontPage()
 	a.pages.SwitchToPage(newName)
+	a.pages.SetTitle(fmt.Sprintf(" %v ", a.components[len(a.components)-1].GetService()))
 	a.header.Render()
-	a.pages.SetTitle(fmt.Sprintf(" %v ", newName))
+	a.footer.Render()
 }
 
 func (a Application) Run() error {

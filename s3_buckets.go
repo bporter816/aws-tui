@@ -26,8 +26,12 @@ func NewS3Buckets(s3Client *s3.Client, app *Application) *S3Buckets {
 	return s
 }
 
-func (s S3Buckets) GetName() string {
-	return "S3 | Buckets"
+func (s S3Buckets) GetService() string {
+	return "S3"
+}
+
+func (s S3Buckets) GetLabels() []string {
+	return []string{"Buckets"}
 }
 
 func (s S3Buckets) selectHandler(row, col int) {

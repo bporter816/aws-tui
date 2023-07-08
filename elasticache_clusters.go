@@ -35,8 +35,12 @@ func NewElasticacheClusters(ecClient *ec.Client, app *Application) *ElasticacheC
 	return e
 }
 
-func (e ElasticacheClusters) GetName() string {
-	return "Elasticache | Clusters"
+func (e ElasticacheClusters) GetService() string {
+	return "Elasticache"
+}
+
+func (e ElasticacheClusters) GetLabels() []string {
+	return []string{"Clusters"}
 }
 
 func (e ElasticacheClusters) tagsHandler() {

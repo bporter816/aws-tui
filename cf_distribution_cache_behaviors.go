@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 )
@@ -27,8 +26,12 @@ func NewCFDistributionCacheBehaviors(cfClient *cf.Client, distributionId string,
 	return c
 }
 
-func (c CFDistributionCacheBehaviors) GetName() string {
-	return fmt.Sprintf("Cloudfront | Distributions | %v | Cache Behaviors", c.distributionId)
+func (c CFDistributionCacheBehaviors) GetService() string {
+	return "Cloudfront"
+}
+
+func (c CFDistributionCacheBehaviors) GetLabels() []string {
+	return []string{"Distributions", c.distributionId, "Cache Behaviors"}
 }
 
 func (c CFDistributionCacheBehaviors) GetKeyActions() []KeyAction {

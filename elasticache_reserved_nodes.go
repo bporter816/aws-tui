@@ -33,8 +33,12 @@ func NewElasticacheReservedCacheNodes(ecClient *ec.Client, app *Application) *El
 	return e
 }
 
-func (e ElasticacheReservedCacheNodes) GetName() string {
-	return "Elasticache | Reserved Nodes"
+func (e ElasticacheReservedCacheNodes) GetService() string {
+	return "Elasticache"
+}
+
+func (e ElasticacheReservedCacheNodes) GetLabels() []string {
+	return []string{"Reserved Nodes"}
 }
 
 func (e ElasticacheReservedCacheNodes) tagsHandler() {

@@ -29,8 +29,12 @@ func NewSMSecrets(smClient *sm.Client, app *Application) *SMSecrets {
 	return s
 }
 
-func (s SMSecrets) GetName() string {
-	return "Secrets Manager | Secrets"
+func (s SMSecrets) GetService() string {
+	return "Secrets Manager"
+}
+
+func (s SMSecrets) GetLabels() []string {
+	return []string{"Secrets"}
 }
 
 func (s SMSecrets) resourcePolicyHandler() {

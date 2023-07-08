@@ -36,8 +36,12 @@ func NewEC2SecurityGroupRules(ec2Client *ec2.Client, sgId string, app *Applicati
 	return e
 }
 
-func (e EC2SecurityGroupRules) GetName() string {
-	return fmt.Sprintf("EC2 | Security Groups | %v | Rules", e.sgId)
+func (e EC2SecurityGroupRules) GetService() string {
+	return "EC2"
+}
+
+func (e EC2SecurityGroupRules) GetLabels() []string {
+	return []string{"Security Groups", e.sgId, "Rules"}
 }
 
 func (e EC2SecurityGroupRules) tagsHandler() {

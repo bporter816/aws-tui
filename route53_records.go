@@ -36,8 +36,12 @@ func NewRoute53Records(client *r53.Client, zoneId string) *Route53Records {
 	return r
 }
 
-func (r Route53Records) GetName() string {
-	return fmt.Sprintf("Route 53 | %v | Records", r.hostedZoneId)
+func (r Route53Records) GetService() string {
+	return "Route 53"
+}
+
+func (r Route53Records) GetLabels() []string {
+	return []string{r.hostedZoneId, "Records"}
 }
 
 func (r Route53Records) GetKeyActions() []KeyAction {

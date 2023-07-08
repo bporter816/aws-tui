@@ -30,8 +30,12 @@ func NewCFFunctions(cfClient *cf.Client, app *Application) *CFFunctions {
 	return c
 }
 
-func (c CFFunctions) GetName() string {
-	return "Cloudfront | Functions"
+func (c CFFunctions) GetService() string {
+	return "Cloudfront"
+}
+
+func (c CFFunctions) GetLabels() []string {
+	return []string{"Functions"}
 }
 
 func (c CFFunctions) GetKeyActions() []KeyAction {

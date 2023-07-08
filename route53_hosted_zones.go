@@ -31,8 +31,12 @@ func NewRoute53HostedZones(client *r53.Client, app *Application) *Route53HostedZ
 	return r
 }
 
-func (r Route53HostedZones) GetName() string {
-	return "Route 53 | Hosted Zones"
+func (r Route53HostedZones) GetService() string {
+	return "Route 53"
+}
+
+func (r Route53HostedZones) GetLabels() []string {
+	return []string{"Hosted Zones"}
 }
 
 func (r Route53HostedZones) selectHandler(row, col int) {

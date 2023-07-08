@@ -30,8 +30,12 @@ func NewELBTargetGroups(elbClient *elb.Client, app *Application) *ELBTargetGroup
 	return e
 }
 
-func (e ELBTargetGroups) GetName() string {
-	return "ELB | Target Groups"
+func (e ELBTargetGroups) GetService() string {
+	return "ELB"
+}
+
+func (e ELBTargetGroups) GetLabels() []string {
+	return []string{"Target Groups"}
 }
 
 func (e ELBTargetGroups) tagsHandler() {

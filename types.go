@@ -13,7 +13,8 @@ type KeyAction struct {
 
 type Component interface {
 	tview.Primitive
-	GetName() string // TODO maybe []string?
+	GetService() string
+	GetLabels() []string
 	GetKeyActions() []KeyAction
 	Render()
 }

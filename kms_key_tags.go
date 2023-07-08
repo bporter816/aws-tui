@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
@@ -28,8 +27,12 @@ func NewKmsKeyTags(kmsClient *kms.Client, keyId string, app *Application) *KmsKe
 	return k
 }
 
-func (k KmsKeyTags) GetName() string {
-	return fmt.Sprintf("KMS | %v | Tags", k.keyId)
+func (k KmsKeyTags) GetService() string {
+	return "KMS"
+}
+
+func (k KmsKeyTags) GetLabels() []string {
+	return []string{k.keyId, "Tags"}
 }
 
 func (k KmsKeyTags) GetKeyActions() []KeyAction {

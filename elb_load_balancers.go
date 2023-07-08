@@ -30,8 +30,12 @@ func NewELBLoadBalancers(elbClient *elb.Client, app *Application) *ELBLoadBalanc
 	return e
 }
 
-func (e ELBLoadBalancers) GetName() string {
-	return "ELB | Load Balancers"
+func (e ELBLoadBalancers) GetService() string {
+	return "ELB"
+}
+
+func (e ELBLoadBalancers) GetLabels() []string {
+	return []string{"Load Balancers"}
 }
 
 func (e ELBLoadBalancers) tagsHandler() {

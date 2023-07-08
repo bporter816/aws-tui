@@ -28,8 +28,12 @@ func NewCFDistributions(cfClient *cf.Client, app *Application) *CFDistributions 
 	return c
 }
 
-func (c CFDistributions) GetName() string {
-	return "Cloudfront | Distributions"
+func (c CFDistributions) GetService() string {
+	return "Cloudfront"
+}
+
+func (c CFDistributions) GetLabels() []string {
+	return []string{"Distributions"}
 }
 
 func (c CFDistributions) originsHandler() {

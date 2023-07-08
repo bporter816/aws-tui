@@ -84,8 +84,12 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 	return s
 }
 
-func (s Services) GetName() string {
+func (s Services) GetService() string {
 	return "Services"
+}
+
+func (s Services) GetLabels() []string {
+	return []string{}
 }
 
 func (s Services) selectHandler(n *tview.TreeNode) {

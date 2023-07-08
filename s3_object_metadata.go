@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
@@ -29,8 +28,12 @@ func NewS3ObjectMetadata(s3Client *s3.Client, bucket string, key string, app *Ap
 	return s
 }
 
-func (s S3ObjectMetadata) GetName() string {
-	return fmt.Sprintf("S3 | Buckets | %v | %v | Metadata", s.bucket, s.key)
+func (s S3ObjectMetadata) GetService() string {
+	return "S3"
+}
+
+func (s S3ObjectMetadata) GetLabels() []string {
+	return []string{"Buckets", s.bucket, s.key, "Metadata"}
 }
 
 func (s S3ObjectMetadata) GetKeyActions() []KeyAction {

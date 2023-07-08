@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 )
@@ -39,8 +38,12 @@ func NewElasticacheTags(ecClient *ec.Client, resourceType ElasticacheResourceTyp
 	return e
 }
 
-func (e ElasticacheTags) GetName() string {
-	return fmt.Sprintf("Elasticache | %v | %v | Tags", e.resourceType, e.resourceName)
+func (e ElasticacheTags) GetService() string {
+	return "Elasticache"
+}
+
+func (e ElasticacheTags) GetLabels() []string {
+	return []string{string(e.resourceType), e.resourceName, "Tags"}
 }
 
 func (e ElasticacheTags) GetKeyActions() []KeyAction {

@@ -29,8 +29,12 @@ func NewEC2VPCs(ec2Client *ec2.Client, app *Application) *EC2VPCs {
 	return e
 }
 
-func (e EC2VPCs) GetName() string {
-	return "EC2 | VPCs"
+func (e EC2VPCs) GetService() string {
+	return "EC2"
+}
+
+func (e EC2VPCs) GetLabels() []string {
+	return []string{"VPCs"}
 }
 
 func (e EC2VPCs) tagsHandler() {

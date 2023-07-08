@@ -34,8 +34,12 @@ func NewDynamoDBTableIndexes(ddbClient *ddb.Client, tableName string) *DynamoDBT
 	return d
 }
 
-func (d DynamoDBTableIndexes) GetName() string {
-	return fmt.Sprintf("DynamoDB | %v | Indexes", d.tableName)
+func (d DynamoDBTableIndexes) GetService() string {
+	return "DynamoDB"
+}
+
+func (d DynamoDBTableIndexes) GetLabels() []string {
+	return []string{"DynamoDB", d.tableName, "Indexes"}
 }
 
 func (d DynamoDBTableIndexes) GetKeyActions() []KeyAction {

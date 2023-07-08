@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
@@ -27,8 +26,12 @@ func NewSMSecretTags(smClient *sm.Client, secretId string, app *Application) *SM
 	return s
 }
 
-func (s SMSecretTags) GetName() string {
-	return fmt.Sprintf("Secrets Manager | %v | Tags", s.secretId)
+func (s SMSecretTags) GetService() string {
+	return "Secrets Manager"
+}
+
+func (s SMSecretTags) GetLabels() []string {
+	return []string{s.secretId, "Tags"}
 }
 
 func (s SMSecretTags) GetKeyActions() []KeyAction {

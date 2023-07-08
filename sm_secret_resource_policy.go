@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
@@ -22,8 +21,12 @@ func NewSMSecretResourcePolicy(smClient *sm.Client, secretId string) *SMSecretRe
 	return s
 }
 
-func (s SMSecretResourcePolicy) GetName() string {
-	return fmt.Sprintf("Secrets Manager | %v | Resource Policy", s.secretId)
+func (s SMSecretResourcePolicy) GetService() string {
+	return "Secrets Manager"
+}
+
+func (s SMSecretResourcePolicy) GetLabels() []string {
+	return []string{s.secretId, "Resource Policy"}
 }
 
 func (s SMSecretResourcePolicy) GetKeyActions() []KeyAction {

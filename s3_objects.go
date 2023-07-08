@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
@@ -31,8 +30,12 @@ func NewS3Objects(s3Client *s3.Client, bucket string, app *Application) *S3Objec
 	return s
 }
 
-func (s S3Objects) GetName() string {
-	return fmt.Sprintf("S3 | %v | Objects", s.bucket)
+func (s S3Objects) GetService() string {
+	return "S3"
+}
+
+func (s S3Objects) GetLabels() []string {
+	return []string{s.bucket, "Objects"}
 }
 
 func (s S3Objects) selectHandler(n *tview.TreeNode) {

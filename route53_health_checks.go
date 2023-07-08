@@ -28,8 +28,12 @@ func NewRoute53HealthChecks(r53Client *r53.Client, app *Application) *Route53Hea
 	return r
 }
 
-func (r Route53HealthChecks) GetName() string {
-	return "Route 53 | Health Checks"
+func (r Route53HealthChecks) GetService() string {
+	return "Route 53"
+}
+
+func (r Route53HealthChecks) GetLabels() []string {
+	return []string{"Health Checks"}
 }
 
 func (r Route53HealthChecks) tagsHandler() {

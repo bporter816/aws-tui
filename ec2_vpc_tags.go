@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -26,8 +25,12 @@ func NewEC2VPCTags(ec2Client *ec2.Client, vpcId string, app *Application) *EC2VP
 	return e
 }
 
-func (e EC2VPCTags) GetName() string {
-	return fmt.Sprintf("EC2 | VPCs | %v | Tags", e.vpcId)
+func (e EC2VPCTags) GetService() string {
+	return "EC2"
+}
+
+func (e EC2VPCTags) GetLabels() []string {
+	return []string{"VPCs", e.vpcId, "Tags"}
 }
 
 func (e EC2VPCTags) GetKeyActions() []KeyAction {
