@@ -30,7 +30,7 @@ func (e EC2VPCTags) GetService() string {
 }
 
 func (e EC2VPCTags) GetLabels() []string {
-	return []string{"VPCs", e.vpcId, "Tags"}
+	return []string{e.vpcId, "Tags"}
 }
 
 func (e EC2VPCTags) GetKeyActions() []KeyAction {

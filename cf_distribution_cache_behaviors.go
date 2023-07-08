@@ -31,7 +31,7 @@ func (c CFDistributionCacheBehaviors) GetService() string {
 }
 
 func (c CFDistributionCacheBehaviors) GetLabels() []string {
-	return []string{"Distributions", c.distributionId, "Cache Behaviors"}
+	return []string{c.distributionId, "Cache Behaviors"}
 }
 
 func (c CFDistributionCacheBehaviors) GetKeyActions() []KeyAction {

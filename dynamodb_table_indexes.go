@@ -39,7 +39,7 @@ func (d DynamoDBTableIndexes) GetService() string {
 }
 
 func (d DynamoDBTableIndexes) GetLabels() []string {
-	return []string{"DynamoDB", d.tableName, "Indexes"}
+	return []string{d.tableName, "Indexes"}
 }
 
 func (d DynamoDBTableIndexes) GetKeyActions() []KeyAction {

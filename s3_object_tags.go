@@ -33,7 +33,7 @@ func (s S3ObjectTags) GetService() string {
 }
 
 func (s S3ObjectTags) GetLabels() []string {
-	return []string{"Buckets", s.bucket, s.key, "Tags"}
+	return []string{s.key, "Tags"}
 }
 
 func (s S3ObjectTags) GetKeyActions() []KeyAction {

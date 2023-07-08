@@ -33,7 +33,7 @@ func (s S3ObjectMetadata) GetService() string {
 }
 
 func (s S3ObjectMetadata) GetLabels() []string {
-	return []string{"Buckets", s.bucket, s.key, "Metadata"}
+	return []string{s.key, "Metadata"}
 }
 
 func (s S3ObjectMetadata) GetKeyActions() []KeyAction {

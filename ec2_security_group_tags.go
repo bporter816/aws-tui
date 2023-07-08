@@ -30,7 +30,7 @@ func (e EC2SecurityGroupTags) GetService() string {
 }
 
 func (e EC2SecurityGroupTags) GetLabels() []string {
-	return []string{"Security Groups", e.sgId, "Tags"}
+	return []string{e.sgId, "Tags"}
 }
 
 func (e EC2SecurityGroupTags) GetKeyActions() []KeyAction {

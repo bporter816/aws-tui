@@ -43,7 +43,7 @@ func (e ElasticacheTags) GetService() string {
 }
 
 func (e ElasticacheTags) GetLabels() []string {
-	return []string{string(e.resourceType), e.resourceName, "Tags"}
+	return []string{e.resourceName, "Tags"}
 }
 
 func (e ElasticacheTags) GetKeyActions() []KeyAction {

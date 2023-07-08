@@ -32,7 +32,7 @@ func (e EC2SecurityGroupRuleTags) GetService() string {
 }
 
 func (e EC2SecurityGroupRuleTags) GetLabels() []string {
-	return []string{"Security Groups", e.sgId, "Rules", e.ruleId, "Tags"}
+	return []string{e.ruleId, "Tags"}
 }
 
 func (e EC2SecurityGroupRuleTags) GetKeyActions() []KeyAction {

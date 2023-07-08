@@ -41,7 +41,7 @@ func (e ELBTags) GetService() string {
 }
 
 func (e ELBTags) GetLabels() []string {
-	return []string{string(e.resourceType), e.resourceName, "Tags"}
+	return []string{e.resourceName, "Tags"}
 }
 
 func (e ELBTags) GetKeyActions() []KeyAction {

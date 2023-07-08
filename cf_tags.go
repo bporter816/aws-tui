@@ -35,7 +35,7 @@ func (c CFTags) GetLabels() []string {
 	// extract id from arn
 	parts := strings.Split(c.id, "/")
 	id := parts[len(parts)-1]
-	return []string{"Distributions", id, "Tags"}
+	return []string{id, "Tags"}
 }
 
 func (c CFTags) GetKeyActions() []KeyAction {

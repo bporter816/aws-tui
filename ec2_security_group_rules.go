@@ -41,7 +41,7 @@ func (e EC2SecurityGroupRules) GetService() string {
 }
 
 func (e EC2SecurityGroupRules) GetLabels() []string {
-	return []string{"Security Groups", e.sgId, "Rules"}
+	return []string{e.sgId, "Rules"}
 }
 
 func (e EC2SecurityGroupRules) tagsHandler() {

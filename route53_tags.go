@@ -34,16 +34,7 @@ func (r Route53Tags) GetService() string {
 }
 
 func (r Route53Tags) GetLabels() []string {
-	var resourceType string
-	switch r.resourceType {
-	case r53Types.TagResourceTypeHostedzone:
-		resourceType = "Hosted Zones"
-	case r53Types.TagResourceTypeHealthcheck:
-		resourceType = "Health Checks"
-	default:
-		resourceType = "<unknown>"
-	}
-	return []string{resourceType, r.resourceName, "Tags"}
+	return []string{r.resourceName, "Tags"}
 }
 
 func (r Route53Tags) GetKeyActions() []KeyAction {

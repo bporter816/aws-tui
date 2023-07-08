@@ -36,7 +36,7 @@ func (d DynamoDBTags) GetLabels() []string {
 	// extract id from arn
 	parts := strings.Split(d.id, "/")
 	id := parts[len(parts)-1]
-	return []string{"Tables", id, "Tags"}
+	return []string{id, "Tags"}
 }
 
 func (d DynamoDBTags) GetKeyActions() []KeyAction {
