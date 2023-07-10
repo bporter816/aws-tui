@@ -54,6 +54,15 @@ func (c CFDistributions) cacheBehaviorsHandler() {
 	c.app.AddAndSwitch(cacheBehaviorsView)
 }
 
+func (c CFDistributions) customErrorResponsesHandler() {
+	id, err := c.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	cacheBehaviorsView := NewCFDistributionCustomErrorResponses(c.cfClient, id, c.app)
+	c.app.AddAndSwitch(cacheBehaviorsView)
+}
+
 func (c CFDistributions) tagsHandler() {
 	row, err := c.GetRowSelection()
 	if err != nil {
@@ -74,6 +83,11 @@ func (c CFDistributions) GetKeyActions() []KeyAction {
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
 			Description: "Cache Behaviors",
 			Action:      c.cacheBehaviorsHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'e', tcell.ModNone),
+			Description: "Custom Error Responses",
+			Action:      c.customErrorResponsesHandler,
 		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
