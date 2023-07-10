@@ -17,6 +17,9 @@ func NewCFDistributionOrigins(cfClient *cf.Client, distributionId string, app *A
 	c := &CFDistributionOrigins{
 		Table: NewTable([]string{
 			"NAME",
+			"DOMAIN NAME",
+			"PATH",
+			"TYPE",
 		}, 1, 0),
 		cfClient:       cfClient,
 		distributionId: distributionId,
@@ -51,8 +54,26 @@ func (c CFDistributionOrigins) Render() {
 	var data [][]string
 	if out.DistributionConfig != nil && out.DistributionConfig.Origins != nil {
 		for _, v := range out.DistributionConfig.Origins.Items {
+			var id, domainName, originPath, originType string
+			if v.Id != nil {
+				id = *v.Id
+			}
+			if v.DomainName != nil {
+				domainName = *v.DomainName
+			}
+			if v.OriginPath != nil {
+				originPath = *v.OriginPath
+			}
+			if v.S3OriginConfig != nil {
+				originType = "S3"
+			} else if v.CustomOriginConfig != nil {
+				originType = "Custom origin"
+			}
 			data = append(data, []string{
-				*v.Id,
+				id,
+				domainName,
+				originPath,
+				originType,
 			})
 		}
 	}
