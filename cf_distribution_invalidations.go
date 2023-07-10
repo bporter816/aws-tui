@@ -1,0 +1,80 @@
+package main
+
+import (
+	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+)
+
+type CFDistributionInvalidations struct {
+	*Table
+	cfClient       *cf.Client
+	distributionId string
+	app            *Application
+}
+
+func NewCFDistributionInvalidations(cfClient *cf.Client, distributionId string, app *Application) *CFDistributionInvalidations {
+	c := &CFDistributionInvalidations{
+		Table: NewTable([]string{
+			"ID",
+			"STATUS",
+			"CREATED",
+		}, 1, 0),
+		cfClient:       cfClient,
+		distributionId: distributionId,
+		app:            app,
+	}
+	return c
+}
+
+func (c CFDistributionInvalidations) GetService() string {
+	return "Cloudfront"
+}
+
+func (c CFDistributionInvalidations) GetLabels() []string {
+	return []string{c.distributionId, "Invalidations"}
+}
+
+func (c CFDistributionInvalidations) GetKeyActions() []KeyAction {
+	return []KeyAction{}
+}
+
+func (c CFDistributionInvalidations) Render() {
+	pg := cf.NewListInvalidationsPaginator(
+		c.cfClient,
+		&cf.ListInvalidationsInput{
+			DistributionId: aws.String(c.distributionId),
+		},
+	)
+	var invalidations []cfTypes.InvalidationSummary
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			panic(err)
+		}
+		if out.InvalidationList != nil {
+			invalidations = append(invalidations, out.InvalidationList.Items...)
+		}
+	}
+
+	var data [][]string
+	for _, v := range invalidations {
+		var id, status, created string
+		if v.Id != nil {
+			id = *v.Id
+		}
+		if v.Status != nil {
+			status = *v.Status
+		}
+		if v.CreateTime != nil {
+			created = v.CreateTime.Format("2006-01-02 15:04:05")
+		}
+		data = append(data, []string{
+			id,
+			status,
+			created,
+		})
+	}
+	c.SetData(data)
+}

@@ -59,8 +59,17 @@ func (c CFDistributions) customErrorResponsesHandler() {
 	if err != nil {
 		return
 	}
-	cacheBehaviorsView := NewCFDistributionCustomErrorResponses(c.cfClient, id, c.app)
-	c.app.AddAndSwitch(cacheBehaviorsView)
+	customErrorResponsesView := NewCFDistributionCustomErrorResponses(c.cfClient, id, c.app)
+	c.app.AddAndSwitch(customErrorResponsesView)
+}
+
+func (c CFDistributions) invalidationsHandler() {
+	id, err := c.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	invalidationsView := NewCFDistributionInvalidations(c.cfClient, id, c.app)
+	c.app.AddAndSwitch(invalidationsView)
 }
 
 func (c CFDistributions) tagsHandler() {
@@ -88,6 +97,11 @@ func (c CFDistributions) GetKeyActions() []KeyAction {
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'e', tcell.ModNone),
 			Description: "Custom Error Responses",
 			Action:      c.customErrorResponsesHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'i', tcell.ModNone),
+			Description: "Invalidations",
+			Action:      c.invalidationsHandler,
 		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
