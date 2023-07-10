@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+	"github.com/gdamore/tcell/v2"
 )
 
 type CFDistributionInvalidations struct {
@@ -36,8 +37,23 @@ func (c CFDistributionInvalidations) GetLabels() []string {
 	return []string{c.distributionId, "Invalidations"}
 }
 
+func (c CFDistributionInvalidations) pathsHandler() {
+	id, err := c.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	pathsView := NewCFDistributionInvalidationPaths(c.cfClient, c.distributionId, id, c.app)
+	c.app.AddAndSwitch(pathsView)
+}
+
 func (c CFDistributionInvalidations) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
+			Description: "Paths",
+			Action:      c.pathsHandler,
+		},
+	}
 }
 
 func (c CFDistributionInvalidations) Render() {
