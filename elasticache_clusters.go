@@ -12,9 +12,10 @@ import (
 
 type ElasticacheClusters struct {
 	*Table
-	ecClient *ec.Client
-	app      *Application
-	arns     []string
+	ecClient          *ec.Client
+	app               *Application
+	clusters          []ecTypes.CacheCluster
+	replicationGroups []ecTypes.ReplicationGroup
 }
 
 func NewElasticacheClusters(ecClient *ec.Client, app *Application) *ElasticacheClusters {
@@ -52,7 +53,14 @@ func (e ElasticacheClusters) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.ecClient, ElasticacheResourceTypeCluster, e.arns[row-1], name, e.app)
+	var arn string
+	if row <= len(e.clusters) {
+		arn = *e.clusters[row-1].ARN
+	} else {
+		// TODO check bounds
+		arn = *e.replicationGroups[row-1-len(e.clusters)].ARN
+	}
+	tagsView := NewElasticacheTags(e.ecClient, ElasticacheResourceTypeCluster, arn, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
@@ -69,37 +77,36 @@ func (e ElasticacheClusters) GetKeyActions() []KeyAction {
 func (e *ElasticacheClusters) Render() {
 	// DescribeReplicationGroups doesn't return engine version, so we have to get it from the list of member cluster names
 	clusterToEngineVersion := make(map[string]string)
-	e.arns = make([]string, 0)
 
 	clustersPg := ec.NewDescribeCacheClustersPaginator(
 		e.ecClient,
 		&ec.DescribeCacheClustersInput{},
 	)
-	var clusters []ecTypes.CacheCluster
+	e.clusters = make([]ecTypes.CacheCluster, 0)
 	for clustersPg.HasMorePages() {
 		out, err := clustersPg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}
-		clusters = append(clusters, out.CacheClusters...)
+		e.clusters = append(e.clusters, out.CacheClusters...)
 	}
 
 	replicationGroupsPg := ec.NewDescribeReplicationGroupsPaginator(
 		e.ecClient,
 		&ec.DescribeReplicationGroupsInput{},
 	)
-	var replicationGroups []ecTypes.ReplicationGroup
+	e.replicationGroups = make([]ecTypes.ReplicationGroup, 0)
 	for replicationGroupsPg.HasMorePages() {
 		out, err := replicationGroupsPg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}
-		replicationGroups = append(replicationGroups, out.ReplicationGroups...)
+		e.replicationGroups = append(e.replicationGroups, out.ReplicationGroups...)
 	}
 
 	caser := cases.Title(language.English)
 	var data [][]string
-	for _, v := range clusters {
+	for _, v := range e.clusters {
 		// skip clusters in replication groups as those are retrieved from DescribeReplicationGroups
 		if v.ReplicationGroupId != nil {
 			clusterToEngineVersion[*v.CacheClusterId] = *v.EngineVersion
@@ -119,9 +126,8 @@ func (e *ElasticacheClusters) Render() {
 			"-",
 			strconv.Itoa(int(*v.NumCacheNodes)),
 		})
-		e.arns = append(e.arns, *v.ARN)
 	}
-	for _, v := range replicationGroups {
+	for _, v := range e.replicationGroups {
 		firstMemberCluster := v.MemberClusters[0]
 		data = append(data, []string{
 			*v.ReplicationGroupId,
@@ -133,7 +139,6 @@ func (e *ElasticacheClusters) Render() {
 			strconv.Itoa(len(v.NodeGroups)),
 			strconv.Itoa(len(v.MemberClusters)),
 		})
-		e.arns = append(e.arns, *v.ARN)
 	}
 	e.SetData(data)
 }

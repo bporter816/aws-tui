@@ -12,9 +12,10 @@ type EC2SecurityGroups struct {
 	*Table
 	ec2Client *ec2.Client
 	app       *Application
+	filters   []ec2Types.Filter
 }
 
-func NewEC2SecurityGroups(ec2Client *ec2.Client, app *Application) *EC2SecurityGroups {
+func NewEC2SecurityGroups(ec2Client *ec2.Client, app *Application, filters ...ec2Types.Filter) *EC2SecurityGroups {
 	e := &EC2SecurityGroups{
 		Table: NewTable([]string{
 			"NAME",
@@ -26,6 +27,7 @@ func NewEC2SecurityGroups(ec2Client *ec2.Client, app *Application) *EC2SecurityG
 		}, 1, 0),
 		ec2Client: ec2Client,
 		app:       app,
+		filters:   filters,
 	}
 	return e
 }
@@ -74,7 +76,9 @@ func (e EC2SecurityGroups) GetKeyActions() []KeyAction {
 func (e EC2SecurityGroups) Render() {
 	pg := ec2.NewDescribeSecurityGroupsPaginator(
 		e.ec2Client,
-		&ec2.DescribeSecurityGroupsInput{},
+		&ec2.DescribeSecurityGroupsInput{
+			Filters: e.filters,
+		},
 	)
 	var securityGroups []ec2Types.SecurityGroup
 	for pg.HasMorePages() {
