@@ -83,7 +83,17 @@ func (r Route53HostedZones) Render() {
 
 	var data [][]string
 	for _, v := range hostedZones {
-		var comment, visibility string
+		var id, name, resourceRecordSetCount, visibility, comment string
+		if v.Id != nil {
+			split := strings.Split(*v.Id, "/")
+			id = split[len(split)-1]
+		}
+		if v.Name != nil {
+			name = *v.Name
+		}
+		if v.ResourceRecordSetCount != nil {
+			resourceRecordSetCount = strconv.FormatInt(*v.ResourceRecordSetCount, 10)
+		}
 		if v.Config != nil {
 			if v.Config.Comment != nil {
 				comment = *v.Config.Comment
@@ -94,11 +104,10 @@ func (r Route53HostedZones) Render() {
 				visibility = "Public"
 			}
 		}
-		splitId := strings.Split(*v.Id, "/")
 		data = append(data, []string{
-			splitId[len(splitId)-1],
-			*v.Name,
-			strconv.FormatInt(*v.ResourceRecordSetCount, 10),
+			id,
+			name,
+			resourceRecordSetCount,
 			visibility,
 			comment,
 		})

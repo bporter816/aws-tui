@@ -118,7 +118,7 @@ func (r Route53Records) Render() {
 			differentiator = strconv.FormatInt(*v.Weight, 10)
 		}
 
-		if routingPolicy != "Simple" {
+		if routingPolicy != "Simple" && v.SetIdentifier != nil {
 			label = *v.SetIdentifier
 		}
 

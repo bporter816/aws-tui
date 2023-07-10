@@ -76,7 +76,7 @@ func (c CFDistributionInvalidations) Render() {
 
 	var data [][]string
 	for _, v := range invalidations {
-		var id, status, created string
+		id, status, created := "-", "-", "-"
 		if v.Id != nil {
 			id = *v.Id
 		}

@@ -83,7 +83,10 @@ func (r Route53HealthChecks) Render() {
 			panic(err)
 		}
 
-		var name, checkType, description string
+		var id, name, checkType, description string
+		if v.Id != nil {
+			id = *v.Id
+		}
 		if out.ResourceTagSet != nil {
 			name, _ = getTag(out.ResourceTagSet.Tags, "Name")
 		}
@@ -92,7 +95,7 @@ func (r Route53HealthChecks) Render() {
 			description = getHealthCheckDescription(*v.HealthCheckConfig)
 		}
 		data = append(data, []string{
-			*v.Id,
+			id,
 			name,
 			checkType,
 			description,

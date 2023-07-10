@@ -55,14 +55,14 @@ func (c CFDistributionCustomErrorResponses) Render() {
 	var data [][]string
 	if out.DistributionConfig != nil && out.DistributionConfig.CustomErrorResponses != nil {
 		for _, v := range out.DistributionConfig.CustomErrorResponses.Items {
-			var errorCode, responseCode, responsePagePath, minTTL string
+			errorCode, responseCode, responsePagePath, minTTL := "-", "-", "-", "-"
 			if v.ErrorCode != nil {
 				errorCode = strconv.Itoa(int(*v.ErrorCode))
 			}
-			if v.ResponseCode != nil {
+			if v.ResponseCode != nil && *v.ResponseCode != "" {
 				responseCode = *v.ResponseCode
 			}
-			if v.ResponsePagePath != nil {
+			if v.ResponsePagePath != nil && *v.ResponsePagePath != "" {
 				responsePagePath = *v.ResponsePagePath
 			}
 			if v.ErrorCachingMinTTL != nil {
