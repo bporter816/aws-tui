@@ -18,6 +18,7 @@ func NewCFDistributionCacheBehaviors(cfClient *cf.Client, distributionId string,
 		Table: NewTable([]string{
 			"PATH",
 			"ORIGIN",
+			"VIEWER PROTOCOL POLICY",
 		}, 1, 0),
 		cfClient:       cfClient,
 		distributionId: distributionId,
@@ -53,27 +54,31 @@ func (c CFDistributionCacheBehaviors) Render() {
 	if out.DistributionConfig != nil {
 		if out.DistributionConfig.CacheBehaviors != nil {
 			for _, v := range out.DistributionConfig.CacheBehaviors.Items {
-				var pathPattern, origin string
+				var pathPattern, origin, viewerProtocolPolicy string
 				if v.PathPattern != nil {
 					pathPattern = *v.PathPattern
 				}
 				if v.TargetOriginId != nil {
 					origin = *v.TargetOriginId
 				}
+				viewerProtocolPolicy = viewerProtocolPolicyToString(v.ViewerProtocolPolicy)
 				data = append(data, []string{
 					pathPattern,
 					origin,
+					viewerProtocolPolicy,
 				})
 			}
 		}
 		if d := out.DistributionConfig.DefaultCacheBehavior; d != nil {
-			var defaultOrigin string
+			var defaultOrigin, defaultViewerProtocolPolicy string
 			if d.TargetOriginId != nil {
 				defaultOrigin = *d.TargetOriginId
 			}
+			defaultViewerProtocolPolicy = viewerProtocolPolicyToString(d.ViewerProtocolPolicy)
 			data = append(data, []string{
 				"Default (*)",
 				defaultOrigin,
+				defaultViewerProtocolPolicy,
 			})
 		}
 	}
