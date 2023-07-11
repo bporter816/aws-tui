@@ -19,6 +19,9 @@ func NewCFDistributionCacheBehaviors(cfClient *cf.Client, distributionId string,
 			"PATH",
 			"ORIGIN",
 			"VIEWER PROTOCOL POLICY",
+			"CACHE POLICY",
+			"ORIGIN REQUEST POLICY",
+			"RESPONSE HEADERS POLICY",
 		}, 1, 0),
 		cfClient:       cfClient,
 		distributionId: distributionId,
@@ -55,6 +58,7 @@ func (c CFDistributionCacheBehaviors) Render() {
 		if out.DistributionConfig.CacheBehaviors != nil {
 			for _, v := range out.DistributionConfig.CacheBehaviors.Items {
 				var pathPattern, origin, viewerProtocolPolicy string
+				cachePolicyId, originRequestPolicyId, responseHeadersPolicyId := "-", "-", "-"
 				if v.PathPattern != nil {
 					pathPattern = *v.PathPattern
 				}
@@ -62,23 +66,48 @@ func (c CFDistributionCacheBehaviors) Render() {
 					origin = *v.TargetOriginId
 				}
 				viewerProtocolPolicy = viewerProtocolPolicyToString(v.ViewerProtocolPolicy)
+				if v.CachePolicyId != nil {
+					cachePolicyId = *v.CachePolicyId
+				}
+				if v.OriginRequestPolicyId != nil {
+					originRequestPolicyId = *v.OriginRequestPolicyId
+				}
+				if v.ResponseHeadersPolicyId != nil {
+					responseHeadersPolicyId = *v.ResponseHeadersPolicyId
+				}
 				data = append(data, []string{
 					pathPattern,
 					origin,
 					viewerProtocolPolicy,
+					cachePolicyId,
+					originRequestPolicyId,
+					responseHeadersPolicyId,
 				})
 			}
 		}
 		if d := out.DistributionConfig.DefaultCacheBehavior; d != nil {
-			var defaultOrigin, defaultViewerProtocolPolicy string
+			var origin, viewerProtocolPolicy string
+			cachePolicyId, originRequestPolicyId, responseHeadersPolicyId := "-", "-", "-"
 			if d.TargetOriginId != nil {
-				defaultOrigin = *d.TargetOriginId
+				origin = *d.TargetOriginId
 			}
-			defaultViewerProtocolPolicy = viewerProtocolPolicyToString(d.ViewerProtocolPolicy)
+			viewerProtocolPolicy = viewerProtocolPolicyToString(d.ViewerProtocolPolicy)
+			if d.CachePolicyId != nil {
+				cachePolicyId = *d.CachePolicyId
+			}
+			if d.OriginRequestPolicyId != nil {
+				originRequestPolicyId = *d.OriginRequestPolicyId
+			}
+			if d.ResponseHeadersPolicyId != nil {
+				responseHeadersPolicyId = *d.ResponseHeadersPolicyId
+			}
 			data = append(data, []string{
 				"Default (*)",
-				defaultOrigin,
-				defaultViewerProtocolPolicy,
+				origin,
+				viewerProtocolPolicy,
+				cachePolicyId,
+				originRequestPolicyId,
+				responseHeadersPolicyId,
 			})
 		}
 	}
