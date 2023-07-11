@@ -5,6 +5,7 @@ import (
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 	"github.com/gdamore/tcell/v2"
+	"strings"
 )
 
 type CFDistributions struct {
@@ -19,8 +20,10 @@ func NewCFDistributions(cfClient *cf.Client, app *Application) *CFDistributions 
 		Table: NewTable([]string{
 			"ID",
 			"DESCRIPTION",
+			"TYPE",
 			"STATUS",
 			"DOMAIN",
+			"ALTERNATE DOMAINS",
 		}, 1, 0),
 		cfClient: cfClient,
 		app:      app,
@@ -129,15 +132,36 @@ func (c *CFDistributions) Render() {
 	c.arns = make([]string, len(distributions))
 	for i, v := range distributions {
 		c.arns[i] = *v.ARN
-		var comment string
+		var id, comment, distributionType, status, domainName, alternateDomainNames string
+		if v.Id != nil {
+			id = *v.Id
+		}
 		if v.Comment != nil {
 			comment = *v.Comment
 		}
+		if v.Staging != nil {
+			if *v.Staging {
+				distributionType = "Staging"
+			} else {
+				distributionType = "Production"
+			}
+		}
+		if v.Status != nil {
+			status = *v.Status
+		}
+		if v.DomainName != nil {
+			domainName = *v.DomainName
+		}
+		if v.Aliases != nil && len(v.Aliases.Items) > 0 {
+			alternateDomainNames = strings.Join(v.Aliases.Items, ", ")
+		}
 		data = append(data, []string{
-			*v.Id,
+			id,
 			comment,
-			*v.Status,
-			*v.DomainName,
+			distributionType,
+			status,
+			domainName,
+			alternateDomainNames,
 		})
 	}
 	c.SetData(data)
