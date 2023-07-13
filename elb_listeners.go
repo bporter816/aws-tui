@@ -26,6 +26,8 @@ func NewELBListeners(elbClient *elb.Client, app *Application, lbArn string, lbNa
 			"PROTOCOL",
 			"PORT",
 			"RULES",
+			"SSL POLICY",
+			"DEFAULT CERTIFICATE",
 		}, 1, 0),
 		elbClient: elbClient,
 		app:       app,
@@ -112,16 +114,30 @@ func (e *ELBListeners) Render() {
 	e.arns = make([]string, len(listeners))
 	for i, v := range listeners {
 		e.arns[i] = *v.ListenerArn
-		var protocol, port, rules string
+		var protocol, port, rules, sslPolicy, defaultCertificate string
 		protocol = string(v.Protocol)
 		if v.Port != nil {
 			port = strconv.Itoa(int(*v.Port))
 		}
 		rules = strconv.Itoa(len(listenerToRules[*v.ListenerArn]))
+		if v.SslPolicy != nil {
+			sslPolicy = *v.SslPolicy
+		}
+		for _, c := range v.Certificates {
+			if c.IsDefault != nil && *c.IsDefault && c.CertificateArn != nil {
+				defaultCertificate = *c.CertificateArn
+				break
+			}
+		}
+		if len(v.Certificates) == 1 && v.Certificates[0].CertificateArn != nil {
+			defaultCertificate = *v.Certificates[0].CertificateArn
+		}
 		data = append(data, []string{
 			protocol,
 			port,
 			rules,
+			sslPolicy,
+			defaultCertificate,
 		})
 	}
 	e.SetData(data)
