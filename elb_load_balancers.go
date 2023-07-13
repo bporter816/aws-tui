@@ -38,6 +38,19 @@ func (e ELBLoadBalancers) GetLabels() []string {
 	return []string{"Load Balancers"}
 }
 
+func (e ELBLoadBalancers) listenersHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	name, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	listenersView := NewELBListeners(e.elbClient, e.app, e.arns[row-1], name)
+	e.app.AddAndSwitch(listenersView)
+}
+
 func (e ELBLoadBalancers) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
@@ -54,6 +67,11 @@ func (e ELBLoadBalancers) tagsHandler() {
 func (e ELBLoadBalancers) GetKeyActions() []KeyAction {
 	// TODO add security groups hotkey
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'l', tcell.ModNone),
+			Description: "Listeners",
+			Action:      e.listenersHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",

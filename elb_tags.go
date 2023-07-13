@@ -19,6 +19,7 @@ type ELBResourceType string
 const (
 	ELBResourceTypeLoadBalancer ELBResourceType = "Load Balancers"
 	ELBResourceTypeTargetGroup  ELBResourceType = "Target Groups"
+	ELBResourceTypeListener     ELBResourceType = "Listeners"
 )
 
 func NewELBTags(elbClient *elb.Client, resourceType ELBResourceType, resourceArn string, resourceName string, app *Application) *ELBTags {
