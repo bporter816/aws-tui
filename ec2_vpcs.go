@@ -73,10 +73,11 @@ func (e EC2VPCs) Render() {
 	caser := cases.Title(language.English)
 	var data [][]string
 	for _, v := range vpcs {
-		name := "-"
-		var id, state, ipv4CIDR string
-		if vpcName, ok := lookupTag(v.Tags, "Name"); ok {
-			name = vpcName
+		var name, id, state, ipv4CIDR string
+		if n, ok := lookupTag(v.Tags, "Name"); ok {
+			name = n
+		} else {
+			name = "-"
 		}
 		if v.VpcId != nil {
 			id = *v.VpcId

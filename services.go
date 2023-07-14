@@ -31,6 +31,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 			"Tables",
 		},
 		"EC2": []string{
+			"Instances",
 			"VPCs",
 			"Security Groups",
 		},
@@ -116,6 +117,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewCFFunctions(s.clients["Cloudfront"].(*cf.Client), s.app)
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
+			case "EC2.Instances":
+				item = NewEC2Instances(s.clients["EC2"].(*ec2.Client), s.app)
 			case "EC2.VPCs":
 				item = NewEC2VPCs(s.clients["EC2"].(*ec2.Client), s.app)
 			case "EC2.Security Groups":
