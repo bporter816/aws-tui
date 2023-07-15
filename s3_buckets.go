@@ -4,18 +4,19 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 )
 
 type S3Buckets struct {
-	*Table
+	*ui.Table
 	s3Client *s3.Client
 	app      *Application
 }
 
 func NewS3Buckets(s3Client *s3.Client, app *Application) *S3Buckets {
 	s := &S3Buckets{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"CREATED",
 		}, 1, 0),

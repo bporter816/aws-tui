@@ -4,19 +4,20 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
 type EC2SecurityGroups struct {
-	*Table
+	*ui.Table
 	ec2Client *ec2.Client
 	app       *Application
 }
 
 func NewEC2SecurityGroups(ec2Client *ec2.Client, app *Application) *EC2SecurityGroups {
 	e := &EC2SecurityGroups{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"ID",
 			"VPC ID",

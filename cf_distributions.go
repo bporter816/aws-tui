@@ -4,12 +4,13 @@ import (
 	"context"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strings"
 )
 
 type CFDistributions struct {
-	*Table
+	*ui.Table
 	cfClient *cf.Client
 	app      *Application
 	arns     []string
@@ -17,7 +18,7 @@ type CFDistributions struct {
 
 func NewCFDistributions(cfClient *cf.Client, app *Application) *CFDistributions {
 	c := &CFDistributions{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"ID",
 			"DESCRIPTION",
 			"TYPE",

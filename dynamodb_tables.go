@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -14,7 +15,7 @@ import (
 )
 
 type DynamoDBTables struct {
-	*Table
+	*ui.Table
 	ddbClient *ddb.Client
 	app       *Application
 	arns      []string
@@ -22,7 +23,7 @@ type DynamoDBTables struct {
 
 func NewDynamoDBTables(ddbClient *ddb.Client, app *Application) *DynamoDBTables {
 	d := &DynamoDBTables{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"STATUS",
 			"PARTITION KEY",

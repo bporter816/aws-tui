@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type ELBTags struct {
-	*Table
+	*ui.Table
 	elbClient    *elb.Client
 	resourceType ELBResourceType
 	resourceArn  string
@@ -24,7 +25,7 @@ const (
 
 func NewELBTags(elbClient *elb.Client, resourceType ELBResourceType, resourceArn string, resourceName string, app *Application) *ELBTags {
 	e := &ELBTags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

@@ -4,20 +4,21 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
 type EC2VPCs struct {
-	*Table
+	*ui.Table
 	ec2Client *ec2.Client
 	app       *Application
 }
 
 func NewEC2VPCs(ec2Client *ec2.Client, app *Application) *EC2VPCs {
 	e := &EC2VPCs{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"ID",
 			"STATE",

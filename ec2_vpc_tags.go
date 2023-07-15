@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type EC2VPCTags struct {
-	*Table
+	*ui.Table
 	ec2Client *ec2.Client
 	vpcId     string
 	app       *Application
@@ -14,7 +15,7 @@ type EC2VPCTags struct {
 
 func NewEC2VPCTags(ec2Client *ec2.Client, vpcId string, app *Application) *EC2VPCTags {
 	e := &EC2VPCTags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

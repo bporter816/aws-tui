@@ -4,17 +4,18 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type KmsKeyPolicy struct {
-	*Text
+	*ui.Text
 	kmsClient *kms.Client
 	keyId     string
 }
 
 func NewKmsKeyPolicy(kmsClient *kms.Client, keyId string) *KmsKeyPolicy {
 	k := &KmsKeyPolicy{
-		Text:      NewText(true, "json"),
+		Text:      ui.NewText(true, "json"),
 		kmsClient: kmsClient,
 		keyId:     keyId,
 	}

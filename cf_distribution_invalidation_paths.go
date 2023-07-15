@@ -4,10 +4,11 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type CFDistributionInvalidationPaths struct {
-	*Table
+	*ui.Table
 	cfClient       *cf.Client
 	distributionId string
 	invalidationId string
@@ -16,7 +17,7 @@ type CFDistributionInvalidationPaths struct {
 
 func NewCFDistributionInvalidationPaths(cfClient *cf.Client, distributionId string, invalidationId string, app *Application) *CFDistributionInvalidationPaths {
 	c := &CFDistributionInvalidationPaths{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"PATH",
 		}, 1, 0),
 		cfClient:       cfClient,

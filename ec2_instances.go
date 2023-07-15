@@ -4,17 +4,18 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type EC2Instances struct {
-	*Table
+	*ui.Table
 	ec2Client *ec2.Client
 	app       *Application
 }
 
 func NewEC2Instances(ec2Client *ec2.Client, app *Application) *EC2Instances {
 	e := &EC2Instances{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"ID",
 			"STATE",

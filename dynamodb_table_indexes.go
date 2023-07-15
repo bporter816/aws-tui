@@ -6,19 +6,20 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/bporter816/aws-tui/ui"
 	"strconv"
 	"strings"
 )
 
 type DynamoDBTableIndexes struct {
-	*Table
+	*ui.Table
 	ddbClient *ddb.Client
 	tableName string
 }
 
 func NewDynamoDBTableIndexes(ddbClient *ddb.Client, tableName string) *DynamoDBTableIndexes {
 	d := &DynamoDBTableIndexes{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"TYPE",
 			"STATUS",

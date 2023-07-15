@@ -4,12 +4,13 @@ import (
 	"context"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
 type ELBTargetGroups struct {
-	*Table
+	*ui.Table
 	elbClient *elb.Client
 	app       *Application
 	arns      []string
@@ -17,7 +18,7 @@ type ELBTargetGroups struct {
 
 func NewELBTargetGroups(elbClient *elb.Client, app *Application) *ELBTargetGroups {
 	e := &ELBTargetGroups{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"PORT",
 			"PROTOCOL",

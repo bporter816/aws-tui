@@ -4,17 +4,18 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type SMSecretResourcePolicy struct {
-	*Text
+	*ui.Text
 	smClient *sm.Client
 	secretId string
 }
 
 func NewSMSecretResourcePolicy(smClient *sm.Client, secretId string) *SMSecretResourcePolicy {
 	s := &SMSecretResourcePolicy{
-		Text:     NewText(true, "json"),
+		Text:     ui.NewText(true, "json"),
 		smClient: smClient,
 		secretId: secretId,
 	}

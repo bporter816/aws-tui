@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
@@ -12,7 +13,7 @@ import (
 // TODO support load balancer lists by lb arns
 // TODO better manage name/arn
 type ELBListeners struct {
-	*Table
+	*ui.Table
 	elbClient *elb.Client
 	app       *Application
 	lbArn     string
@@ -22,7 +23,7 @@ type ELBListeners struct {
 
 func NewELBListeners(elbClient *elb.Client, app *Application, lbArn string, lbName string) *ELBListeners {
 	e := &ELBListeners{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"PROTOCOL",
 			"PORT",
 			"RULES",

@@ -4,10 +4,11 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type SMSecretTags struct {
-	*Table
+	*ui.Table
 	smClient *sm.Client
 	secretId string
 	app      *Application
@@ -15,7 +16,7 @@ type SMSecretTags struct {
 
 func NewSMSecretTags(smClient *sm.Client, secretId string, app *Application) *SMSecretTags {
 	s := &SMSecretTags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

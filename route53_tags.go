@@ -5,10 +5,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type Route53Tags struct {
-	*Table
+	*ui.Table
 	r53Client    *r53.Client
 	resourceType r53Types.TagResourceType
 	resourceName string
@@ -17,7 +18,7 @@ type Route53Tags struct {
 
 func NewRoute53Tags(r53Client *r53.Client, resourceType r53Types.TagResourceType, resourceName string, app *Application) *Route53Tags {
 	r := &Route53Tags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

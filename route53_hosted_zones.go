@@ -4,20 +4,21 @@ import (
 	"context"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 	"strings"
 )
 
 type Route53HostedZones struct {
-	*Table
+	*ui.Table
 	r53Client *r53.Client
 	app       *Application
 }
 
 func NewRoute53HostedZones(client *r53.Client, app *Application) *Route53HostedZones {
 	r := &Route53HostedZones{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"ID",
 			"NAME",
 			"RECORDS",

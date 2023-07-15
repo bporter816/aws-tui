@@ -4,10 +4,11 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type ElasticacheTags struct {
-	*Table
+	*ui.Table
 	ecClient     *ec.Client
 	resourceType ElasticacheResourceType
 	resourceArn  string
@@ -25,7 +26,7 @@ const (
 
 func NewElasticacheTags(ecClient *ec.Client, resourceType ElasticacheResourceType, resourceArn string, resourceName string, app *Application) *ElasticacheTags {
 	e := &ElasticacheTags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

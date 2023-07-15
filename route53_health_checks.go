@@ -5,18 +5,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 )
 
 type Route53HealthChecks struct {
-	*Table
+	*ui.Table
 	r53Client *r53.Client
 	app       *Application
 }
 
 func NewRoute53HealthChecks(r53Client *r53.Client, app *Application) *Route53HealthChecks {
 	r := &Route53HealthChecks{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"ID",
 			"NAME",
 			"TYPE",

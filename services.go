@@ -11,12 +11,13 @@ import (
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/rivo/tview"
 	"sort"
 )
 
 type Services struct {
-	*Tree
+	*ui.Tree
 	clients map[string]interface{}
 	app     *Application
 }
@@ -61,7 +62,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 	}
 	root := tview.NewTreeNode("Services")
 	s := &Services{
-		Tree:    NewTree(root),
+		Tree:    ui.NewTree(root),
 		clients: clients,
 		app:     app,
 	}
@@ -106,7 +107,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		return
 	}
 
-	s.root.Walk(func(node, parent *tview.TreeNode) bool {
+	s.Root.Walk(func(node, parent *tview.TreeNode) bool {
 		if node.GetText() == n.GetText() {
 			view := fmt.Sprintf("%v.%v", parent.GetText(), node.GetText())
 			var item Component

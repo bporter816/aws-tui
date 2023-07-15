@@ -4,10 +4,11 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type S3BucketTags struct {
-	*Table
+	*ui.Table
 	s3Client *s3.Client
 	bucket   string
 	app      *Application
@@ -15,7 +16,7 @@ type S3BucketTags struct {
 
 func NewS3BucketTags(s3Client *s3.Client, bucket string, app *Application) *S3BucketTags {
 	s := &S3BucketTags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

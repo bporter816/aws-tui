@@ -4,11 +4,12 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	"github.com/bporter816/aws-tui/ui"
 	"strings"
 )
 
 type CFTags struct {
-	*Table
+	*ui.Table
 	cfClient *cf.Client
 	id       string
 	app      *Application
@@ -16,7 +17,7 @@ type CFTags struct {
 
 func NewCFTags(cfClient *cf.Client, id string, app *Application) *CFTags {
 	c := &CFTags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

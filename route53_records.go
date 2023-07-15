@@ -6,19 +6,20 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/bporter816/aws-tui/ui"
 	"strconv"
 	"strings"
 )
 
 type Route53Records struct {
-	*Table
+	*ui.Table
 	r53Client    *r53.Client
 	hostedZoneId string
 }
 
 func NewRoute53Records(client *r53.Client, zoneId string) *Route53Records {
 	r := &Route53Records{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"RECORD NAME",
 			"TYPE",
 			// "ROUTING POLICY",

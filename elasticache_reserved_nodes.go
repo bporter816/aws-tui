@@ -4,6 +4,7 @@ import (
 	"context"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -11,7 +12,7 @@ import (
 )
 
 type ElasticacheReservedCacheNodes struct {
-	*Table
+	*ui.Table
 	ecClient *ec.Client
 	app      *Application
 	arns     []string
@@ -19,7 +20,7 @@ type ElasticacheReservedCacheNodes struct {
 
 func NewElasticacheReservedCacheNodes(ecClient *ec.Client, app *Application) *ElasticacheReservedCacheNodes {
 	e := &ElasticacheReservedCacheNodes{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"ID",
 			"OFFERING TYPE",
 			"ENGINE",

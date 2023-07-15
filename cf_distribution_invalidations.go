@@ -5,11 +5,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 )
 
 type CFDistributionInvalidations struct {
-	*Table
+	*ui.Table
 	cfClient       *cf.Client
 	distributionId string
 	app            *Application
@@ -17,7 +18,7 @@ type CFDistributionInvalidations struct {
 
 func NewCFDistributionInvalidations(cfClient *cf.Client, distributionId string, app *Application) *CFDistributionInvalidations {
 	c := &CFDistributionInvalidations{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"ID",
 			"STATUS",
 			"CREATED",

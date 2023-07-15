@@ -4,19 +4,20 @@ import (
 	"context"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+	"github.com/bporter816/aws-tui/ui"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
 type CFFunctions struct {
-	*Table
+	*ui.Table
 	cfClient *cf.Client
 	app      *Application
 }
 
 func NewCFFunctions(cfClient *cf.Client, app *Application) *CFFunctions {
 	c := &CFFunctions{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"COMMENT",
 			"STATUS",

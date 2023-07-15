@@ -6,13 +6,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
 type EC2SecurityGroupRules struct {
-	*Table
+	*ui.Table
 	ec2Client *ec2.Client
 	sgId      string
 	app       *Application
@@ -20,7 +21,7 @@ type EC2SecurityGroupRules struct {
 
 func NewEC2SecurityGroupRules(ec2Client *ec2.Client, sgId string, app *Application) *EC2SecurityGroupRules {
 	e := &EC2SecurityGroupRules{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"ID",
 			"TYPE",

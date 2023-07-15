@@ -1,4 +1,4 @@
-package main
+package ui
 
 import (
 	"github.com/rivo/tview"
@@ -6,7 +6,7 @@ import (
 
 type Tree struct {
 	*tview.TreeView
-	root *tview.TreeNode
+	Root *tview.TreeNode
 }
 
 func NewTree(root *tview.TreeNode) *Tree {
@@ -16,7 +16,7 @@ func NewTree(root *tview.TreeNode) *Tree {
 	tv.SetCurrentNode(root)
 	t := &Tree{
 		TreeView: tv,
-		root:     root,
+		Root:     root,
 	}
 	return t
 }

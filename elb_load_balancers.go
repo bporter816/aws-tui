@@ -4,13 +4,14 @@ import (
 	"context"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
 type ELBLoadBalancers struct {
-	*Table
+	*ui.Table
 	elbClient *elb.Client
 	app       *Application
 	arns      []string
@@ -18,7 +19,7 @@ type ELBLoadBalancers struct {
 
 func NewELBLoadBalancers(elbClient *elb.Client, app *Application) *ELBLoadBalancers {
 	e := &ELBLoadBalancers{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"DNS NAME",
 			"TYPE",

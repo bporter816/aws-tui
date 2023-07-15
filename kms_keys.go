@@ -5,19 +5,20 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
 type KmsKeys struct {
-	*Table
+	*ui.Table
 	kmsClient *kms.Client
 	app       *Application
 }
 
 func NewKmsKeys(kmsClient *kms.Client, app *Application) *KmsKeys {
 	k := &KmsKeys{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"ID",
 			"ALIASES",
 			"DESCRIPTION",

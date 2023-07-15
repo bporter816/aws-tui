@@ -4,10 +4,11 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type CFDistributionCacheBehaviors struct {
-	*Table
+	*ui.Table
 	cfClient       *cf.Client
 	distributionId string
 	app            *Application
@@ -15,7 +16,7 @@ type CFDistributionCacheBehaviors struct {
 
 func NewCFDistributionCacheBehaviors(cfClient *cf.Client, distributionId string, app *Application) *CFDistributionCacheBehaviors {
 	c := &CFDistributionCacheBehaviors{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"PATH",
 			"ORIGIN",
 			"VIEWER PROTOCOL POLICY",

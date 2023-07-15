@@ -4,17 +4,18 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type S3BucketPolicy struct {
-	*Text
+	*ui.Text
 	s3Client *s3.Client
 	bucket   string
 }
 
 func NewS3BucketPolicy(s3Client *s3.Client, bucket string) *S3BucketPolicy {
 	s := &S3BucketPolicy{
-		Text:     NewText(true, "json"),
+		Text:     ui.NewText(true, "json"),
 		s3Client: s3Client,
 		bucket:   bucket,
 	}

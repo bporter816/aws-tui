@@ -4,11 +4,12 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/bporter816/aws-tui/ui"
 	"strings"
 )
 
 type DynamoDBTags struct {
-	*Table
+	*ui.Table
 	ddbClient *ddb.Client
 	id        string
 	app       *Application
@@ -16,7 +17,7 @@ type DynamoDBTags struct {
 
 func NewDynamoDBTags(ddbClient *ddb.Client, id string, app *Application) *DynamoDBTags {
 	d := &DynamoDBTags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/bporter816/aws-tui/ui"
 )
 
 type EC2SecurityGroupRuleTags struct {
-	*Table
+	*ui.Table
 	ec2Client *ec2.Client
 	sgId      string
 	ruleId    string
@@ -15,7 +16,7 @@ type EC2SecurityGroupRuleTags struct {
 
 func NewEC2SecurityGroupRuleTags(ec2Client *ec2.Client, sgId string, ruleId string, app *Application) *EC2SecurityGroupRuleTags {
 	e := &EC2SecurityGroupRuleTags{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),

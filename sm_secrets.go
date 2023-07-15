@@ -5,19 +5,20 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	smTypes "github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
 type SMSecrets struct {
-	*Table
+	*ui.Table
 	smClient *sm.Client
 	app      *Application
 }
 
 func NewSMSecrets(smClient *sm.Client, app *Application) *SMSecrets {
 	s := &SMSecrets{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"PRIMARY REGION",
 			"ROTATION",

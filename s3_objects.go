@@ -5,13 +5,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"strings"
 )
 
 type S3Objects struct {
-	*Tree
+	*ui.Tree
 	s3Client *s3.Client
 	bucket   string
 	app      *Application
@@ -21,7 +22,7 @@ func NewS3Objects(s3Client *s3.Client, bucket string, app *Application) *S3Objec
 	root := tview.NewTreeNode("/")
 	root.SetReference("")
 	s := &S3Objects{
-		Tree:     NewTree(root),
+		Tree:     ui.NewTree(root),
 		s3Client: s3Client,
 		bucket:   bucket,
 		app:      app,

@@ -4,6 +4,7 @@ import (
 	"context"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -12,7 +13,7 @@ import (
 )
 
 type ElasticacheSnapshots struct {
-	*Table
+	*ui.Table
 	ecClient *ec.Client
 	app      *Application
 	arns     []string
@@ -20,7 +21,7 @@ type ElasticacheSnapshots struct {
 
 func NewElasticacheSnapshots(ecClient *ec.Client, app *Application) *ElasticacheSnapshots {
 	e := &ElasticacheSnapshots{
-		Table: NewTable([]string{
+		Table: ui.NewTable([]string{
 			"NAME",
 			"CLUSTER",
 			"TYPE",
