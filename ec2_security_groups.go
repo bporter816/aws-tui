@@ -53,8 +53,8 @@ func (e EC2SecurityGroups) tagsHandler() {
 	if err != nil {
 		return
 	}
-	rulesView := NewEC2SecurityGroupTags(e.ec2Client, sgId, e.app)
-	e.app.AddAndSwitch(rulesView)
+	tagsView := NewEC2SecurityGroupTags(e.ec2Client, sgId, e.app)
+	e.app.AddAndSwitch(tagsView)
 }
 
 func (e EC2SecurityGroups) GetKeyActions() []KeyAction {

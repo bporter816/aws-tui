@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/gdamore/tcell/v2"
 )
 
 type EC2Instances struct {
@@ -37,8 +38,23 @@ func (e EC2Instances) GetLabels() []string {
 	return []string{"Instances"}
 }
 
+func (e EC2Instances) tagsHandler() {
+	instanceId, err := e.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	tagsView := NewEC2InstanceTags(e.ec2Client, instanceId, e.app)
+	e.app.AddAndSwitch(tagsView)
+}
+
 func (e EC2Instances) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
 }
 
 func (e EC2Instances) Render() {
