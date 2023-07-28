@@ -5,7 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/ui"
-	// "github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v2"
 )
 
 type IAMUsers struct {
@@ -37,8 +37,23 @@ func (i IAMUsers) GetLabels() []string {
 	return []string{"Users"}
 }
 
+func (i IAMUsers) tagsHandler() {
+	userName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tagsView := NewIAMUserTags(i.iamClient, i.app, userName)
+	i.app.AddAndSwitch(tagsView)
+}
+
 func (i IAMUsers) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      i.tagsHandler,
+		},
+	}
 }
 
 func (i IAMUsers) Render() {
