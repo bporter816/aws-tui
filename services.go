@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
+	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -45,6 +46,9 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		"ELB": []string{
 			"Load Balancers",
 			"Target Groups",
+		},
+		"IAM": []string{
+			"Users",
 		},
 		"KMS": []string{
 			"Keys",
@@ -136,6 +140,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewELBLoadBalancers(s.clients["ELB"].(*elb.Client), s.app)
 			case "ELB.Target Groups":
 				item = NewELBTargetGroups(s.clients["ELB"].(*elb.Client), s.app)
+			case "IAM.Users":
+				item = NewIAMUsers(s.clients["IAM"].(*iam.Client), s.app)
 			case "KMS.Keys":
 				item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
 			case "Route 53.Hosted Zones":
