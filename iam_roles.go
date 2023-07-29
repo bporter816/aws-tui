@@ -6,6 +6,7 @@ import (
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
+	"strconv"
 )
 
 type IAMRoles struct {
@@ -20,6 +21,7 @@ func NewIAMRoles(iamClient *iam.Client, app *Application) *IAMRoles {
 			"ID",
 			"NAME",
 			"PATH",
+			"MAX SESSION",
 			"CREATED",
 			"DESCRIPTION",
 		}, 1, 0),
@@ -72,7 +74,7 @@ func (i IAMRoles) Render() {
 
 	var data [][]string
 	for _, v := range roles {
-		var roleId, roleName, path, created, description string
+		var roleId, roleName, path, maxSession, created, description string
 		if v.RoleId != nil {
 			roleId = *v.RoleId
 		}
@@ -81,6 +83,9 @@ func (i IAMRoles) Render() {
 		}
 		if v.Path != nil {
 			path = *v.Path
+		}
+		if v.MaxSessionDuration != nil {
+			maxSession = strconv.Itoa(int(*v.MaxSessionDuration))
 		}
 		if v.CreateDate != nil {
 			created = v.CreateDate.Format("2006-01-02 15:04:05")
@@ -92,6 +97,7 @@ func (i IAMRoles) Render() {
 			roleId,
 			roleName,
 			path,
+			maxSession,
 			created,
 			description,
 		})
