@@ -44,15 +44,6 @@ func (i IAMUsers) GetLabels() []string {
 	}
 }
 
-func (i IAMUsers) groupsHandler() {
-	userName, err := i.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
-	groupsView := NewIAMGroups(i.iamClient, i.app, userName)
-	i.app.AddAndSwitch(groupsView)
-}
-
 func (i IAMUsers) accessKeysHandler() {
 	userName, err := i.GetColSelection("NAME")
 	if err != nil {
@@ -60,6 +51,15 @@ func (i IAMUsers) accessKeysHandler() {
 	}
 	accessKeysView := NewIAMAccessKeys(i.iamClient, i.app, userName)
 	i.app.AddAndSwitch(accessKeysView)
+}
+
+func (i IAMUsers) groupsHandler() {
+	userName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	groupsView := NewIAMGroups(i.iamClient, i.app, userName)
+	i.app.AddAndSwitch(groupsView)
 }
 
 func (i IAMUsers) tagsHandler() {

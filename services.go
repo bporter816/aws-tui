@@ -49,6 +49,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		},
 		"IAM": []string{
 			"Users",
+			"Roles",
 			"Groups",
 		},
 		"KMS": []string{
@@ -143,6 +144,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewELBTargetGroups(s.clients["ELB"].(*elb.Client), s.app)
 			case "IAM.Users":
 				item = NewIAMUsers(s.clients["IAM"].(*iam.Client), s.app, "")
+			case "IAM.Roles":
+				item = NewIAMRoles(s.clients["IAM"].(*iam.Client), s.app)
 			case "IAM.Groups":
 				item = NewIAMGroups(s.clients["IAM"].(*iam.Client), s.app, "")
 			case "KMS.Keys":
