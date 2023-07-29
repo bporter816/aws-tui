@@ -8,7 +8,6 @@ import (
 	"strings"
 	// "net/http"
 	"github.com/aws/aws-sdk-go-v2/config"
-	// "github.com/aws/aws-sdk-go-v2/service/ec2"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -20,8 +19,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	// awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
-	// "github.com/aws/smithy-go/aws"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -135,7 +132,8 @@ func (a Application) GetActiveKeyActions() []KeyAction {
 func (a *Application) AddAndSwitch(v Component) {
 	v.Render()
 	// create a unique name for the tview pages element
-	name := fmt.Sprintf(" %v > %v ", v.GetService(), strings.Join(v.GetLabels(), " > "))
+	// TODO this hardcodes the index as part of the name to avoid collisions when similar views are chained together
+	name := fmt.Sprintf("%v | %v | %v ", a.pages.GetPageCount(), v.GetService(), strings.Join(v.GetLabels(), " > "))
 	a.components = append(a.components, v)
 	a.pages.AddAndSwitchToPage(name, v, true)
 	a.header.Render() // this has to happen after we update the pages view
