@@ -5,7 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/ui"
-	// "github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v2"
 )
 
 type IAMRoles struct {
@@ -37,8 +37,23 @@ func (i IAMRoles) GetLabels() []string {
 	return []string{"Roles"}
 }
 
+func (i IAMRoles) tagsHandler() {
+	roleName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tagsView := NewIAMRoleTags(i.iamClient, i.app, roleName)
+	i.app.AddAndSwitch(tagsView)
+}
+
 func (i IAMRoles) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      i.tagsHandler,
+		},
+	}
 }
 
 func (i IAMRoles) Render() {
