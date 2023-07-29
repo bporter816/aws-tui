@@ -37,6 +37,15 @@ func (i IAMUsers) GetLabels() []string {
 	return []string{"Users"}
 }
 
+func (i IAMUsers) groupsHandler() {
+	userName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	groupsView := NewIAMGroups(i.iamClient, i.app, userName)
+	i.app.AddAndSwitch(groupsView)
+}
+
 func (i IAMUsers) tagsHandler() {
 	userName, err := i.GetColSelection("NAME")
 	if err != nil {
@@ -48,6 +57,11 @@ func (i IAMUsers) tagsHandler() {
 
 func (i IAMUsers) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'r', tcell.ModNone),
+			Description: "Groups",
+			Action:      i.groupsHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
