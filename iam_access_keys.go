@@ -1,0 +1,104 @@
+package main
+
+import (
+	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/iam"
+	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/ui"
+)
+
+type IAMAccessKeys struct {
+	*ui.Table
+	iamClient *iam.Client
+	app       *Application
+	userName  string
+}
+
+func NewIAMAccessKeys(iamClient *iam.Client, app *Application, userName string) *IAMAccessKeys {
+	i := &IAMAccessKeys{
+		Table: ui.NewTable([]string{
+			"ID",
+			"CREATED",
+			"STATUS",
+			"LAST USED DATE",
+			"LAST USED REGION",
+			"LAST USED SERVICE",
+		}, 1, 0),
+		iamClient: iamClient,
+		app:       app,
+		userName:  userName,
+	}
+	return i
+}
+
+func (i IAMAccessKeys) GetService() string {
+	return "IAM"
+}
+
+func (i IAMAccessKeys) GetLabels() []string {
+	return []string{i.userName, "Access Keys"}
+}
+
+func (i IAMAccessKeys) GetKeyActions() []KeyAction {
+	return []KeyAction{}
+}
+
+func (i IAMAccessKeys) Render() {
+	var accessKeys []iamTypes.AccessKeyMetadata
+	pg := iam.NewListAccessKeysPaginator(
+		i.iamClient,
+		&iam.ListAccessKeysInput{
+			UserName: aws.String(i.userName),
+		},
+	)
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			panic(err)
+		}
+		accessKeys = append(accessKeys, out.AccessKeyMetadata...)
+	}
+
+	var data [][]string
+
+	for _, v := range accessKeys {
+		var id, created, status, lastUsedDate, lastUsedRegion, lastUsedService string
+
+		if v.AccessKeyId != nil {
+			id = *v.AccessKeyId
+
+			out, err := i.iamClient.GetAccessKeyLastUsed(
+				context.TODO(),
+				&iam.GetAccessKeyLastUsedInput{
+					AccessKeyId: aws.String(*v.AccessKeyId),
+				},
+			)
+			if err == nil && out.AccessKeyLastUsed != nil {
+				if out.AccessKeyLastUsed.LastUsedDate != nil {
+					lastUsedDate = out.AccessKeyLastUsed.LastUsedDate.Format("2006-01-02 15:04:05")
+				}
+				if out.AccessKeyLastUsed.Region != nil {
+					lastUsedRegion = *out.AccessKeyLastUsed.Region
+				}
+				if out.AccessKeyLastUsed.ServiceName != nil {
+					lastUsedService = *out.AccessKeyLastUsed.ServiceName
+				}
+			}
+		}
+		if v.CreateDate != nil {
+			created = v.CreateDate.Format("2006-01-02 15:04:05")
+		}
+		status = string(v.Status)
+
+		data = append(data, []string{
+			id,
+			created,
+			status,
+			lastUsedDate,
+			lastUsedRegion,
+			lastUsedService,
+		})
+	}
+	i.SetData(data)
+}

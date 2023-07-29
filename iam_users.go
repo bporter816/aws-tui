@@ -53,6 +53,15 @@ func (i IAMUsers) groupsHandler() {
 	i.app.AddAndSwitch(groupsView)
 }
 
+func (i IAMUsers) accessKeysHandler() {
+	userName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	accessKeysView := NewIAMAccessKeys(i.iamClient, i.app, userName)
+	i.app.AddAndSwitch(accessKeysView)
+}
+
 func (i IAMUsers) tagsHandler() {
 	userName, err := i.GetColSelection("NAME")
 	if err != nil {
@@ -64,6 +73,11 @@ func (i IAMUsers) tagsHandler() {
 
 func (i IAMUsers) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
+			Description: "Access Keys",
+			Action:      i.accessKeysHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'r', tcell.ModNone),
 			Description: "Groups",
