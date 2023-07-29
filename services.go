@@ -142,7 +142,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "ELB.Target Groups":
 				item = NewELBTargetGroups(s.clients["ELB"].(*elb.Client), s.app)
 			case "IAM.Users":
-				item = NewIAMUsers(s.clients["IAM"].(*iam.Client), s.app)
+				item = NewIAMUsers(s.clients["IAM"].(*iam.Client), s.app, "")
 			case "IAM.Groups":
 				item = NewIAMGroups(s.clients["IAM"].(*iam.Client), s.app, "")
 			case "KMS.Keys":

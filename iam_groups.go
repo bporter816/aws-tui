@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/ui"
-	// "github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v2"
 )
 
 type IAMGroups struct {
@@ -43,8 +43,23 @@ func (i IAMGroups) GetLabels() []string {
 	}
 }
 
+func (i IAMGroups) usersHandler() {
+	groupName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	usersView := NewIAMUsers(i.iamClient, i.app, groupName)
+	i.app.AddAndSwitch(usersView)
+}
+
 func (i IAMGroups) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'u', tcell.ModNone),
+			Description: "Users",
+			Action:      i.usersHandler,
+		},
+	}
 }
 
 func (i IAMGroups) Render() {
