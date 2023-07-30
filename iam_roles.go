@@ -48,6 +48,24 @@ func (i IAMRoles) policiesHandler() {
 	i.app.AddAndSwitch(policiesView)
 }
 
+func (i IAMRoles) assumeRolePolicyHandler() {
+	roleName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	assumeRolePolicyView := NewIAMPolicy(i.iamClient, i.app, IAMIdentityTypeRole, IAMPolicyTypeAssumeRolePolicy, roleName, "", "")
+	i.app.AddAndSwitch(assumeRolePolicyView)
+}
+
+func (i IAMRoles) permissionsBoundaryHandler() {
+	roleName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	permissionsBoundaryView := NewIAMPolicy(i.iamClient, i.app, IAMIdentityTypeRole, IAMPolicyTypePermissionsBoundary, roleName, "", "")
+	i.app.AddAndSwitch(permissionsBoundaryView)
+}
+
 func (i IAMRoles) tagsHandler() {
 	roleName, err := i.GetColSelection("NAME")
 	if err != nil {
@@ -63,6 +81,16 @@ func (i IAMRoles) GetKeyActions() []KeyAction {
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Policies",
 			Action:      i.policiesHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
+			Description: "Assume Role Policy",
+			Action:      i.assumeRolePolicyHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'b', tcell.ModNone),
+			Description: "Permissions Boundary",
+			Action:      i.permissionsBoundaryHandler,
 		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),

@@ -62,6 +62,15 @@ func (i IAMUsers) policiesHandler() {
 	i.app.AddAndSwitch(policiesView)
 }
 
+func (i IAMUsers) permissionsBoundaryHandler() {
+	userName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	permissionsBoundaryView := NewIAMPolicy(i.iamClient, i.app, IAMIdentityTypeUser, IAMPolicyTypePermissionsBoundary, userName, "", "")
+	i.app.AddAndSwitch(permissionsBoundaryView)
+}
+
 func (i IAMUsers) groupsHandler() {
 	userName, err := i.GetColSelection("NAME")
 	if err != nil {
@@ -91,6 +100,11 @@ func (i IAMUsers) GetKeyActions() []KeyAction {
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Policies",
 			Action:      i.policiesHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'b', tcell.ModNone),
+			Description: "Permissions Boundary",
+			Action:      i.permissionsBoundaryHandler,
 		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'r', tcell.ModNone),

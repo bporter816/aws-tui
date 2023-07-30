@@ -6,15 +6,17 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/ui"
-	// "github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v2"
 )
 
 type IAMPolicies struct {
 	*ui.Table
-	iamClient    *iam.Client
-	app          *Application
-	identityType IAMIdentityType
-	id           string
+	iamClient         *iam.Client
+	app               *Application
+	identityType      IAMIdentityType
+	id                string
+	managedArns       []string
+	numInlinePolicies int
 }
 
 func NewIAMPolicies(iamClient *iam.Client, app *Application, identityType IAMIdentityType, id string) *IAMPolicies {
@@ -39,11 +41,40 @@ func (i IAMPolicies) GetLabels() []string {
 	return []string{i.id, "Policies"}
 }
 
-func (i IAMPolicies) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (i IAMPolicies) policyDocumentHandler() {
+	row, err := i.GetRowSelection()
+	if err != nil {
+		return
+	}
+	policyName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	policyType, err := i.GetColSelection("TYPE")
+	if err != nil {
+		return
+	}
+	enumVal := IAMPolicyType(policyType)
+	var policyDocumentView *IAMPolicy
+	if enumVal == IAMPolicyTypeManaged {
+		policyDocumentView = NewIAMPolicy(i.iamClient, i.app, i.identityType, enumVal, i.id, policyName, i.managedArns[row-1-i.numInlinePolicies])
+	} else {
+		policyDocumentView = NewIAMPolicy(i.iamClient, i.app, i.identityType, enumVal, i.id, policyName, "")
+	}
+	i.app.AddAndSwitch(policyDocumentView)
 }
 
-func (i IAMPolicies) Render() {
+func (i IAMPolicies) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'd', tcell.ModNone),
+			Description: "Policy Document",
+			Action:      i.policyDocumentHandler,
+		},
+	}
+}
+
+func (i *IAMPolicies) Render() {
 	var data [][]string
 
 	// inline policies
@@ -95,6 +126,7 @@ func (i IAMPolicies) Render() {
 		panic("invalid identity type for policy list")
 	}
 
+	i.numInlinePolicies = len(inlinePolicyNames)
 	for _, v := range inlinePolicyNames {
 		data = append(data, []string{
 			v,
@@ -151,7 +183,9 @@ func (i IAMPolicies) Render() {
 		panic("invalid identity type for policy list")
 	}
 
-	for _, v := range attachedPolicies {
+	i.managedArns = make([]string, len(attachedPolicies))
+	for idx, v := range attachedPolicies {
+		i.managedArns[idx] = *v.PolicyArn
 		var name string
 		if v.PolicyName != nil {
 			name = *v.PolicyName
