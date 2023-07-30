@@ -39,6 +39,15 @@ func (i IAMRoles) GetLabels() []string {
 	return []string{"Roles"}
 }
 
+func (i IAMRoles) policiesHandler() {
+	roleName, err := i.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	policiesView := NewIAMPolicies(i.iamClient, i.app, IAMIdentityTypeRole, roleName)
+	i.app.AddAndSwitch(policiesView)
+}
+
 func (i IAMRoles) tagsHandler() {
 	roleName, err := i.GetColSelection("NAME")
 	if err != nil {
@@ -50,6 +59,11 @@ func (i IAMRoles) tagsHandler() {
 
 func (i IAMRoles) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
+			Description: "Policies",
+			Action:      i.policiesHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
