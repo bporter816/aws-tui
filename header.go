@@ -52,9 +52,19 @@ func (h Header) Render() {
 		panic(err)
 	}
 
+	var account, arn, userId string
 	identityOutput, err := h.stsClient.GetCallerIdentity(context.TODO(), &sts.GetCallerIdentityInput{})
 	if err != nil {
 		panic(err)
+	}
+	if identityOutput.Account != nil {
+		account = *identityOutput.Account
+	}
+	if identityOutput.Arn != nil {
+		arn = *identityOutput.Arn
+	}
+	if identityOutput.UserId != nil {
+		userId = *identityOutput.UserId
 	}
 
 	aliasesOutput, err := h.iamClient.ListAccountAliases(context.TODO(), &iam.ListAccountAliasesInput{})
@@ -67,10 +77,10 @@ func (h Header) Render() {
 		aliases = fmt.Sprintf(" (%v)", strings.Join(aliasesOutput.AccountAliases, ", "))
 	}
 
-	accountInfoStr := "[orange::b]Account:[white::-] " + *identityOutput.Account + aliases + "\n"
-	accountInfoStr += "[orange::b]ARN:[white::-]     " + *identityOutput.Arn + "\n"
-	accountInfoStr += "[orange::b]User ID:[white::-] " + *identityOutput.UserId + "\n"
-	accountInfoStr += "[orange::b]Region:[white::-]  " + string(regionOutput)
+	accountInfoStr := fmt.Sprintf("[orange::b]Account:[white::-] %v%v\n", account, aliases)
+	accountInfoStr += fmt.Sprintf("[orange::b]ARN:[white::-]     %v\n", arn)
+	accountInfoStr += fmt.Sprintf("[orange::b]User ID:[white::-] %v\n", userId)
+	accountInfoStr += fmt.Sprintf("[orange::b]Region:[white::-]  %v", string(regionOutput))
 	h.accountInfo.SetText(accountInfoStr)
 
 	h.keybindInfo.Clear()
