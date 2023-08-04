@@ -80,10 +80,10 @@ func (c CFFunctions) Render() {
 		if v.FunctionMetadata != nil {
 			stage = caser.String(string(v.FunctionMetadata.Stage))
 			if v.FunctionMetadata.CreatedTime != nil {
-				created = v.FunctionMetadata.CreatedTime.Format("2006-01-02 15:04:05")
+				created = v.FunctionMetadata.CreatedTime.Format(DefaultTimeFormat)
 			}
 			if v.FunctionMetadata.LastModifiedTime != nil {
-				modified = v.FunctionMetadata.LastModifiedTime.Format("2006-01-02 15:04:05")
+				modified = v.FunctionMetadata.LastModifiedTime.Format(DefaultTimeFormat)
 			}
 		}
 		data = append(data, []string{

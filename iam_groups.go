@@ -121,7 +121,7 @@ func (i IAMGroups) Render() {
 			path = *v.Path
 		}
 		if v.CreateDate != nil {
-			created = v.CreateDate.Format("2006-01-02 15:04:05")
+			created = v.CreateDate.Format(DefaultTimeFormat)
 		}
 		data = append(data, []string{
 			groupId,

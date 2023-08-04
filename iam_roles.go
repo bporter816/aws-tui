@@ -130,7 +130,7 @@ func (i IAMRoles) Render() {
 			maxSession = strconv.Itoa(int(*v.MaxSessionDuration))
 		}
 		if v.CreateDate != nil {
-			created = v.CreateDate.Format("2006-01-02 15:04:05")
+			created = v.CreateDate.Format(DefaultTimeFormat)
 		}
 		if v.Description != nil {
 			description = *v.Description

@@ -85,7 +85,7 @@ func (c CFDistributionInvalidations) Render() {
 			status = *v.Status
 		}
 		if v.CreateTime != nil {
-			created = v.CreateTime.Format("2006-01-02 15:04:05")
+			created = v.CreateTime.Format(DefaultTimeFormat)
 		}
 		data = append(data, []string{
 			id,

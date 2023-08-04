@@ -163,10 +163,10 @@ func (i IAMUsers) Render() {
 			path = *v.Path
 		}
 		if v.CreateDate != nil {
-			created = v.CreateDate.Format("2006-01-02 15:04:05")
+			created = v.CreateDate.Format(DefaultTimeFormat)
 		}
 		if v.PasswordLastUsed != nil {
-			passwordLastUsed = v.PasswordLastUsed.Format("2006-01-02 15:04:05")
+			passwordLastUsed = v.PasswordLastUsed.Format(DefaultTimeFormat)
 		}
 		data = append(data, []string{
 			userId,

@@ -101,7 +101,7 @@ func (e *ElasticacheSnapshots) Render() {
 			snapshotType = caser.String(*v.SnapshotSource)
 		}
 		if len(v.NodeSnapshots) > 0 && v.NodeSnapshots[0].SnapshotCreateTime != nil {
-			created = v.NodeSnapshots[0].SnapshotCreateTime.Format("2006-01-02 15:04:05")
+			created = v.NodeSnapshots[0].SnapshotCreateTime.Format(DefaultTimeFormat)
 		}
 		if v.SnapshotStatus != nil {
 			status = caser.String(*v.SnapshotStatus)

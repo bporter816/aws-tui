@@ -76,7 +76,7 @@ func (i IAMAccessKeys) Render() {
 			)
 			if err == nil && out.AccessKeyLastUsed != nil {
 				if out.AccessKeyLastUsed.LastUsedDate != nil {
-					lastUsedDate = out.AccessKeyLastUsed.LastUsedDate.Format("2006-01-02 15:04:05")
+					lastUsedDate = out.AccessKeyLastUsed.LastUsedDate.Format(DefaultTimeFormat)
 				}
 				if out.AccessKeyLastUsed.Region != nil {
 					lastUsedRegion = *out.AccessKeyLastUsed.Region
@@ -87,7 +87,7 @@ func (i IAMAccessKeys) Render() {
 			}
 		}
 		if v.CreateDate != nil {
-			created = v.CreateDate.Format("2006-01-02 15:04:05")
+			created = v.CreateDate.Format(DefaultTimeFormat)
 		}
 		status = string(v.Status)
 

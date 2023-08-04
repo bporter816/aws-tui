@@ -95,7 +95,7 @@ func (s S3Buckets) Render() {
 			name = *v.Name
 		}
 		if v.CreationDate != nil {
-			created = v.CreationDate.Format("2006-01-02 15:04:05")
+			created = v.CreationDate.Format(DefaultTimeFormat)
 		}
 		data = append(data, []string{
 			name,

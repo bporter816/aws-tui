@@ -62,7 +62,7 @@ func (e ElasticacheEvents) Render() {
 	for _, v := range events {
 		var date, sourceId, sourceType, message string
 		if v.Date != nil {
-			date = v.Date.Format("2006-01-02 15:04:05")
+			date = v.Date.Format(DefaultTimeFormat)
 		}
 		if v.SourceIdentifier != nil {
 			sourceId = *v.SourceIdentifier
