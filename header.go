@@ -87,11 +87,7 @@ func (h Header) Render() {
 	actions := h.app.GetActiveKeyActions()
 	row, col := 0, 0
 	for _, v := range actions {
-		name := v.Key.Name()
-		if strings.HasPrefix(name, "Rune[") {
-			name = string(name[5])
-		}
-		entry := tview.NewTextView().SetDynamicColors(true).SetText(fmt.Sprintf("[pink::b]<%v>[white::-] %v", name, v.Description))
+		entry := tview.NewTextView().SetDynamicColors(true).SetText(fmt.Sprintf("[pink::b]<%v>[white::-] %v", v.String(), v.Description))
 		h.keybindInfo.AddItem(entry, row, col, 1, 1, 1, 1, false)
 
 		row++
