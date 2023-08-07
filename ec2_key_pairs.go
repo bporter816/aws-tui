@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/gdamore/tcell/v2"
 )
 
 type EC2KeyPairs struct {
@@ -35,8 +36,23 @@ func (e EC2KeyPairs) GetLabels() []string {
 	return []string{"Key Pairs"}
 }
 
+func (e EC2KeyPairs) pubKeyHandler() {
+	keyId, err := e.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	pubKeyView := NewEC2KeyPairPubKey(e.ec2Client, keyId, e.app)
+	e.app.AddAndSwitch(pubKeyView)
+}
+
 func (e EC2KeyPairs) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
+			Description: "Public Key",
+			Action:      e.pubKeyHandler,
+		},
+	}
 }
 
 func (e EC2KeyPairs) Render() {
