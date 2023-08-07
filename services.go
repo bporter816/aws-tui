@@ -36,6 +36,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 			"Instances",
 			"VPCs",
 			"Security Groups",
+			"Key Pairs",
 		},
 		"Elasticache": []string{
 			"Clusters",
@@ -131,6 +132,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewEC2VPCs(s.clients["EC2"].(*ec2.Client), s.app)
 			case "EC2.Security Groups":
 				item = NewEC2SecurityGroups(s.clients["EC2"].(*ec2.Client), s.app)
+			case "EC2.Key Pairs":
+				item = NewEC2KeyPairs(s.clients["EC2"].(*ec2.Client), s.app)
 			case "Elasticache.Clusters":
 				item = NewElasticacheClusters(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":
