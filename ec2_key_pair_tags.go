@@ -8,16 +8,19 @@ import (
 	"github.com/bporter816/aws-tui/ui"
 )
 
-type EC2KeyPairPubKey struct {
-	*ui.Text
+type EC2KeyPairTags struct {
+	*ui.Table
 	ec2Client *ec2.Client
 	keyPairId string
 	app       *Application
 }
 
-func NewEC2KeyPairPubKey(ec2Client *ec2.Client, keyPairId string, app *Application) *EC2KeyPairPubKey {
-	e := &EC2KeyPairPubKey{
-		Text:      ui.NewText(false, ""),
+func NewEC2KeyPairTags(ec2Client *ec2.Client, keyPairId string, app *Application) *EC2KeyPairTags {
+	e := &EC2KeyPairTags{
+		Table: ui.NewTable([]string{
+			"KEY",
+			"VALUE",
+		}, 1, 0),
 		ec2Client: ec2Client,
 		keyPairId: keyPairId,
 		app:       app,
@@ -25,19 +28,19 @@ func NewEC2KeyPairPubKey(ec2Client *ec2.Client, keyPairId string, app *Applicati
 	return e
 }
 
-func (e EC2KeyPairPubKey) GetService() string {
+func (e EC2KeyPairTags) GetService() string {
 	return "EC2"
 }
 
-func (e EC2KeyPairPubKey) GetLabels() []string {
-	return []string{e.keyPairId, "Public Key"}
+func (e EC2KeyPairTags) GetLabels() []string {
+	return []string{e.keyPairId, "Tags"}
 }
 
-func (e EC2KeyPairPubKey) GetKeyActions() []KeyAction {
+func (e EC2KeyPairTags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2KeyPairPubKey) Render() {
+func (e EC2KeyPairTags) Render() {
 	out, err := e.ec2Client.DescribeKeyPairs(
 		context.TODO(),
 		&ec2.DescribeKeyPairsInput{
@@ -58,9 +61,12 @@ func (e EC2KeyPairPubKey) Render() {
 		panic("should get exactly one key pair")
 	}
 
-	var pubKey string
-	if out.KeyPairs[0].PublicKey != nil {
-		pubKey = *out.KeyPairs[0].PublicKey
+	var data [][]string
+	for _, v := range out.KeyPairs[0].Tags {
+		data = append(data, []string{
+			*v.Key,
+			*v.Value,
+		})
 	}
-	e.SetText(pubKey)
+	e.SetData(data)
 }

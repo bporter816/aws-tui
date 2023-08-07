@@ -45,12 +45,26 @@ func (e EC2KeyPairs) pubKeyHandler() {
 	e.app.AddAndSwitch(pubKeyView)
 }
 
+func (e EC2KeyPairs) tagsHandler() {
+	keyId, err := e.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	tagsView := NewEC2KeyPairTags(e.ec2Client, keyId, e.app)
+	e.app.AddAndSwitch(tagsView)
+}
+
 func (e EC2KeyPairs) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Public Key",
 			Action:      e.pubKeyHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
 		},
 	}
 }
