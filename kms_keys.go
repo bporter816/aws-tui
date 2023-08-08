@@ -51,6 +51,15 @@ func (k KmsKeys) keyPolicyHandler() {
 	k.app.AddAndSwitch(policyView)
 }
 
+func (k KmsKeys) grantsHandler() {
+	keyId, err := k.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	grantsView := NewKmsKeyGrants(k.kmsClient, keyId, k.app)
+	k.app.AddAndSwitch(grantsView)
+}
+
 func (k KmsKeys) tagsHandler() {
 	keyId, err := k.GetColSelection("ID")
 	if err != nil {
@@ -66,6 +75,11 @@ func (k KmsKeys) GetKeyActions() []KeyAction {
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Key Policy",
 			Action:      k.keyPolicyHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'r', tcell.ModNone),
+			Description: "Grants",
+			Action:      k.grantsHandler,
 		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
