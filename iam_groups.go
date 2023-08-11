@@ -12,11 +12,11 @@ import (
 type IAMGroups struct {
 	*ui.Table
 	iamClient *iam.Client
-	app       *Application
 	userName  string
+	app       *Application
 }
 
-func NewIAMGroups(iamClient *iam.Client, app *Application, userName string) *IAMGroups {
+func NewIAMGroups(iamClient *iam.Client, userName string, app *Application) *IAMGroups {
 	i := &IAMGroups{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -25,8 +25,8 @@ func NewIAMGroups(iamClient *iam.Client, app *Application, userName string) *IAM
 			"CREATED",
 		}, 1, 0),
 		iamClient: iamClient,
-		app:       app,
 		userName:  userName,
+		app:       app,
 	}
 	return i
 }
@@ -48,7 +48,7 @@ func (i IAMGroups) policiesHandler() {
 	if err != nil {
 		return
 	}
-	policiesView := NewIAMPolicies(i.iamClient, i.app, IAMIdentityTypeGroup, groupName)
+	policiesView := NewIAMPolicies(i.iamClient, IAMIdentityTypeGroup, groupName, i.app)
 	i.app.AddAndSwitch(policiesView)
 }
 
@@ -57,7 +57,7 @@ func (i IAMGroups) usersHandler() {
 	if err != nil {
 		return
 	}
-	usersView := NewIAMUsers(i.iamClient, i.app, groupName)
+	usersView := NewIAMUsers(i.iamClient, groupName, i.app)
 	i.app.AddAndSwitch(usersView)
 }
 

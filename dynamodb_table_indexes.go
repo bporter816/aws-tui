@@ -15,9 +15,10 @@ type DynamoDBTableIndexes struct {
 	*ui.Table
 	ddbClient *ddb.Client
 	tableName string
+	app       *Application
 }
 
-func NewDynamoDBTableIndexes(ddbClient *ddb.Client, tableName string) *DynamoDBTableIndexes {
+func NewDynamoDBTableIndexes(ddbClient *ddb.Client, tableName string, app *Application) *DynamoDBTableIndexes {
 	d := &DynamoDBTableIndexes{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -31,6 +32,7 @@ func NewDynamoDBTableIndexes(ddbClient *ddb.Client, tableName string) *DynamoDBT
 		}, 1, 0),
 		ddbClient: ddbClient,
 		tableName: tableName,
+		app:       app,
 	}
 	return d
 }

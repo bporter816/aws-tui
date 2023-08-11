@@ -47,7 +47,7 @@ func (k KmsKeys) keyPolicyHandler() {
 	if err != nil {
 		return
 	}
-	policyView := NewKmsKeyPolicy(k.kmsClient, keyId)
+	policyView := NewKmsKeyPolicy(k.kmsClient, keyId, k.app)
 	k.app.AddAndSwitch(policyView)
 }
 

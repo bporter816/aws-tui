@@ -11,13 +11,15 @@ type S3BucketPolicy struct {
 	*ui.Text
 	s3Client *s3.Client
 	bucket   string
+	app      *Application
 }
 
-func NewS3BucketPolicy(s3Client *s3.Client, bucket string) *S3BucketPolicy {
+func NewS3BucketPolicy(s3Client *s3.Client, bucket string, app *Application) *S3BucketPolicy {
 	s := &S3BucketPolicy{
 		Text:     ui.NewText(true, "json"),
 		s3Client: s3Client,
 		bucket:   bucket,
+		app:      app,
 	}
 	return s
 }

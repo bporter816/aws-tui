@@ -12,23 +12,23 @@ import (
 type IAMPolicies struct {
 	*ui.Table
 	iamClient         *iam.Client
-	app               *Application
 	identityType      IAMIdentityType
 	id                string
+	app               *Application
 	managedArns       []string
 	numInlinePolicies int
 }
 
-func NewIAMPolicies(iamClient *iam.Client, app *Application, identityType IAMIdentityType, id string) *IAMPolicies {
+func NewIAMPolicies(iamClient *iam.Client, identityType IAMIdentityType, id string, app *Application) *IAMPolicies {
 	i := &IAMPolicies{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"TYPE",
 		}, 1, 0),
 		iamClient:    iamClient,
-		app:          app,
 		identityType: identityType,
 		id:           id,
+		app:          app,
 	}
 	return i
 }
@@ -57,9 +57,9 @@ func (i IAMPolicies) policyDocumentHandler() {
 	enumVal := IAMPolicyType(policyType)
 	var policyDocumentView *IAMPolicy
 	if enumVal == IAMPolicyTypeManaged {
-		policyDocumentView = NewIAMPolicy(i.iamClient, i.app, i.identityType, enumVal, i.id, policyName, i.managedArns[row-1-i.numInlinePolicies])
+		policyDocumentView = NewIAMPolicy(i.iamClient, i.identityType, enumVal, i.id, policyName, i.managedArns[row-1-i.numInlinePolicies], i.app)
 	} else {
-		policyDocumentView = NewIAMPolicy(i.iamClient, i.app, i.identityType, enumVal, i.id, policyName, "")
+		policyDocumentView = NewIAMPolicy(i.iamClient, i.identityType, enumVal, i.id, policyName, "", i.app)
 	}
 	i.app.AddAndSwitch(policyDocumentView)
 }

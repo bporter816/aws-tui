@@ -11,8 +11,8 @@ import (
 type KmsKeyTags struct {
 	*ui.Table
 	kmsClient *kms.Client
-	app       *Application
 	keyId     string
+	app       *Application
 }
 
 func NewKmsKeyTags(kmsClient *kms.Client, keyId string, app *Application) *KmsKeyTags {
@@ -22,8 +22,8 @@ func NewKmsKeyTags(kmsClient *kms.Client, keyId string, app *Application) *KmsKe
 			"VALUE",
 		}, 1, 0),
 		kmsClient: kmsClient,
-		keyId:     keyId,
 		app:       app,
+		keyId:     keyId,
 	}
 	return k
 }

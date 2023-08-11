@@ -11,11 +11,11 @@ import (
 type IAMAccessKeys struct {
 	*ui.Table
 	iamClient *iam.Client
-	app       *Application
 	userName  string
+	app       *Application
 }
 
-func NewIAMAccessKeys(iamClient *iam.Client, app *Application, userName string) *IAMAccessKeys {
+func NewIAMAccessKeys(iamClient *iam.Client, userName string, app *Application) *IAMAccessKeys {
 	i := &IAMAccessKeys{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -26,8 +26,8 @@ func NewIAMAccessKeys(iamClient *iam.Client, app *Application, userName string) 
 			"LAST USED SERVICE",
 		}, 1, 0),
 		iamClient: iamClient,
-		app:       app,
 		userName:  userName,
+		app:       app,
 	}
 	return i
 }

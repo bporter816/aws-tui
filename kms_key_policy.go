@@ -11,13 +11,15 @@ type KmsKeyPolicy struct {
 	*ui.Text
 	kmsClient *kms.Client
 	keyId     string
+	app       *Application
 }
 
-func NewKmsKeyPolicy(kmsClient *kms.Client, keyId string) *KmsKeyPolicy {
+func NewKmsKeyPolicy(kmsClient *kms.Client, keyId string, app *Application) *KmsKeyPolicy {
 	k := &KmsKeyPolicy{
 		Text:      ui.NewText(true, "json"),
 		kmsClient: kmsClient,
 		keyId:     keyId,
+		app:       app,
 	}
 	return k
 }

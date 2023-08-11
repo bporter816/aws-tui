@@ -55,7 +55,7 @@ func (d DynamoDBTables) indexesHandler() {
 	if err != nil {
 		return
 	}
-	indexesView := NewDynamoDBTableIndexes(d.ddbClient, tableName)
+	indexesView := NewDynamoDBTableIndexes(d.ddbClient, tableName, d.app)
 	d.app.AddAndSwitch(indexesView)
 }
 

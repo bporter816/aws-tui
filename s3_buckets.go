@@ -49,7 +49,7 @@ func (s S3Buckets) bucketPolicyHandler() {
 	if err != nil {
 		return
 	}
-	policyView := NewS3BucketPolicy(s.s3Client, bucket)
+	policyView := NewS3BucketPolicy(s.s3Client, bucket, s.app)
 	s.app.AddAndSwitch(policyView)
 }
 

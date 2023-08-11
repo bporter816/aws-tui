@@ -8,32 +8,32 @@ import (
 type IAMPolicy struct {
 	*ui.Text
 	iamClient    *iam.Client
-	app          *Application
 	identityType IAMIdentityType
 	policyType   IAMPolicyType
 	identityName string
 	policyName   string
 	policyArn    string // only for managed policies
+	app          *Application
 }
 
 func NewIAMPolicy(
 	iamClient *iam.Client,
-	app *Application,
 	identityType IAMIdentityType,
 	policyType IAMPolicyType,
 	identityName string,
 	policyName string,
 	policyArn string,
+	app *Application,
 ) *IAMPolicy {
 	i := &IAMPolicy{
 		Text:         ui.NewText(true, "json"),
 		iamClient:    iamClient,
-		app:          app,
 		identityType: identityType,
 		policyType:   policyType,
 		identityName: identityName,
 		policyName:   policyName,
 		policyArn:    policyArn,
+		app:          app,
 	}
 	return i
 }

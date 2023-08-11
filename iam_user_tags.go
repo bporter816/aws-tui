@@ -11,19 +11,19 @@ import (
 type IAMUserTags struct {
 	*ui.Table
 	iamClient *iam.Client
-	app       *Application
 	userName  string
+	app       *Application
 }
 
-func NewIAMUserTags(iamClient *iam.Client, app *Application, userName string) *IAMUserTags {
+func NewIAMUserTags(iamClient *iam.Client, userName string, app *Application) *IAMUserTags {
 	i := &IAMUserTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
 		iamClient: iamClient,
-		app:       app,
 		userName:  userName,
+		app:       app,
 	}
 	return i
 }

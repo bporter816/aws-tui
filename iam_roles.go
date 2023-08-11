@@ -44,7 +44,7 @@ func (i IAMRoles) policiesHandler() {
 	if err != nil {
 		return
 	}
-	policiesView := NewIAMPolicies(i.iamClient, i.app, IAMIdentityTypeRole, roleName)
+	policiesView := NewIAMPolicies(i.iamClient, IAMIdentityTypeRole, roleName, i.app)
 	i.app.AddAndSwitch(policiesView)
 }
 
@@ -53,7 +53,7 @@ func (i IAMRoles) assumeRolePolicyHandler() {
 	if err != nil {
 		return
 	}
-	assumeRolePolicyView := NewIAMPolicy(i.iamClient, i.app, IAMIdentityTypeRole, IAMPolicyTypeAssumeRolePolicy, roleName, "", "")
+	assumeRolePolicyView := NewIAMPolicy(i.iamClient, IAMIdentityTypeRole, IAMPolicyTypeAssumeRolePolicy, roleName, "", "", i.app)
 	i.app.AddAndSwitch(assumeRolePolicyView)
 }
 
@@ -62,7 +62,7 @@ func (i IAMRoles) permissionsBoundaryHandler() {
 	if err != nil {
 		return
 	}
-	permissionsBoundaryView := NewIAMPolicy(i.iamClient, i.app, IAMIdentityTypeRole, IAMPolicyTypePermissionsBoundary, roleName, "", "")
+	permissionsBoundaryView := NewIAMPolicy(i.iamClient, IAMIdentityTypeRole, IAMPolicyTypePermissionsBoundary, roleName, "", "", i.app)
 	i.app.AddAndSwitch(permissionsBoundaryView)
 }
 
@@ -71,7 +71,7 @@ func (i IAMRoles) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewIAMRoleTags(i.iamClient, i.app, roleName)
+	tagsView := NewIAMRoleTags(i.iamClient, roleName, i.app)
 	i.app.AddAndSwitch(tagsView)
 }
 

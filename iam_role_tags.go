@@ -11,19 +11,19 @@ import (
 type IAMRoleTags struct {
 	*ui.Table
 	iamClient *iam.Client
-	app       *Application
 	roleName  string
+	app       *Application
 }
 
-func NewIAMRoleTags(iamClient *iam.Client, app *Application, roleName string) *IAMRoleTags {
+func NewIAMRoleTags(iamClient *iam.Client, roleName string, app *Application) *IAMRoleTags {
 	i := &IAMRoleTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
 		iamClient: iamClient,
-		app:       app,
 		roleName:  roleName,
+		app:       app,
 	}
 	return i
 }

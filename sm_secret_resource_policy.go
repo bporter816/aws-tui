@@ -11,13 +11,15 @@ type SMSecretResourcePolicy struct {
 	*ui.Text
 	smClient *sm.Client
 	secretId string
+	app      *Application
 }
 
-func NewSMSecretResourcePolicy(smClient *sm.Client, secretId string) *SMSecretResourcePolicy {
+func NewSMSecretResourcePolicy(smClient *sm.Client, secretId string, app *Application) *SMSecretResourcePolicy {
 	s := &SMSecretResourcePolicy{
 		Text:     ui.NewText(true, "json"),
 		smClient: smClient,
 		secretId: secretId,
+		app:      app,
 	}
 	return s
 }

@@ -15,9 +15,10 @@ type Route53Records struct {
 	*ui.Table
 	r53Client    *r53.Client
 	hostedZoneId string
+	app          *Application
 }
 
-func NewRoute53Records(client *r53.Client, zoneId string) *Route53Records {
+func NewRoute53Records(client *r53.Client, zoneId string, app *Application) *Route53Records {
 	r := &Route53Records{
 		Table: ui.NewTable([]string{
 			"RECORD NAME",
@@ -33,6 +34,7 @@ func NewRoute53Records(client *r53.Client, zoneId string) *Route53Records {
 		}, 1, 1),
 		r53Client:    client,
 		hostedZoneId: zoneId,
+		app:          app,
 	}
 	return r
 }

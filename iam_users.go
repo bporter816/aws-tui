@@ -12,11 +12,11 @@ import (
 type IAMUsers struct {
 	*ui.Table
 	iamClient *iam.Client
-	app       *Application
 	groupName string
+	app       *Application
 }
 
-func NewIAMUsers(iamClient *iam.Client, app *Application, groupName string) *IAMUsers {
+func NewIAMUsers(iamClient *iam.Client, groupName string, app *Application) *IAMUsers {
 	i := &IAMUsers{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -26,8 +26,8 @@ func NewIAMUsers(iamClient *iam.Client, app *Application, groupName string) *IAM
 			"PASSWORD LAST USED",
 		}, 1, 0),
 		iamClient: iamClient,
-		app:       app,
 		groupName: groupName,
+		app:       app,
 	}
 	return i
 }
@@ -49,7 +49,7 @@ func (i IAMUsers) accessKeysHandler() {
 	if err != nil {
 		return
 	}
-	accessKeysView := NewIAMAccessKeys(i.iamClient, i.app, userName)
+	accessKeysView := NewIAMAccessKeys(i.iamClient, userName, i.app)
 	i.app.AddAndSwitch(accessKeysView)
 }
 
@@ -58,7 +58,7 @@ func (i IAMUsers) policiesHandler() {
 	if err != nil {
 		return
 	}
-	policiesView := NewIAMPolicies(i.iamClient, i.app, IAMIdentityTypeUser, userName)
+	policiesView := NewIAMPolicies(i.iamClient, IAMIdentityTypeUser, userName, i.app)
 	i.app.AddAndSwitch(policiesView)
 }
 
@@ -67,7 +67,7 @@ func (i IAMUsers) permissionsBoundaryHandler() {
 	if err != nil {
 		return
 	}
-	permissionsBoundaryView := NewIAMPolicy(i.iamClient, i.app, IAMIdentityTypeUser, IAMPolicyTypePermissionsBoundary, userName, "", "")
+	permissionsBoundaryView := NewIAMPolicy(i.iamClient, IAMIdentityTypeUser, IAMPolicyTypePermissionsBoundary, userName, "", "", i.app)
 	i.app.AddAndSwitch(permissionsBoundaryView)
 }
 
@@ -76,7 +76,7 @@ func (i IAMUsers) groupsHandler() {
 	if err != nil {
 		return
 	}
-	groupsView := NewIAMGroups(i.iamClient, i.app, userName)
+	groupsView := NewIAMGroups(i.iamClient, userName, i.app)
 	i.app.AddAndSwitch(groupsView)
 }
 
@@ -85,7 +85,7 @@ func (i IAMUsers) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewIAMUserTags(i.iamClient, i.app, userName)
+	tagsView := NewIAMUserTags(i.iamClient, userName, i.app)
 	i.app.AddAndSwitch(tagsView)
 }
 

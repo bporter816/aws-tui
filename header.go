@@ -14,9 +14,9 @@ type Header struct {
 	*tview.Flex
 	stsClient   *sts.Client
 	iamClient   *iam.Client
+	app         *Application
 	accountInfo *tview.TextView
 	keybindInfo *tview.Grid
-	app         *Application
 }
 
 func NewHeader(s *sts.Client, i *iam.Client, app *Application) *Header {

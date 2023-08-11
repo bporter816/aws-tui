@@ -43,7 +43,7 @@ func (s SMSecrets) resourcePolicyHandler() {
 	if err != nil {
 		return
 	}
-	resourcePolicyView := NewSMSecretResourcePolicy(s.smClient, secretId)
+	resourcePolicyView := NewSMSecretResourcePolicy(s.smClient, secretId, s.app)
 	s.app.AddAndSwitch(resourcePolicyView)
 }
 

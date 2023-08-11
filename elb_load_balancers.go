@@ -48,7 +48,7 @@ func (e ELBLoadBalancers) listenersHandler() {
 	if err != nil {
 		return
 	}
-	listenersView := NewELBListeners(e.elbClient, e.app, e.arns[row-1], name)
+	listenersView := NewELBListeners(e.elbClient, e.arns[row-1], name, e.app)
 	e.app.AddAndSwitch(listenersView)
 }
 

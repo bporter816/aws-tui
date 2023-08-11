@@ -15,13 +15,13 @@ import (
 type ELBListeners struct {
 	*ui.Table
 	elbClient *elb.Client
-	app       *Application
 	lbArn     string
 	lbName    string
+	app       *Application
 	arns      []string
 }
 
-func NewELBListeners(elbClient *elb.Client, app *Application, lbArn string, lbName string) *ELBListeners {
+func NewELBListeners(elbClient *elb.Client, lbArn string, lbName string, app *Application) *ELBListeners {
 	e := &ELBListeners{
 		Table: ui.NewTable([]string{
 			"PROTOCOL",
@@ -31,9 +31,9 @@ func NewELBListeners(elbClient *elb.Client, app *Application, lbArn string, lbNa
 			"DEFAULT CERTIFICATE",
 		}, 1, 0),
 		elbClient: elbClient,
-		app:       app,
 		lbArn:     lbArn,
 		lbName:    lbName,
+		app:       app,
 	}
 	return e
 }
