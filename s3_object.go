@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/bporter816/aws-tui/ui"
 	"io"
+	"strings"
 )
 
 type S3Object struct {
@@ -55,6 +56,13 @@ func (s S3Object) Render() {
 	n, err := out.Body.Read(b)
 	if err != nil && err != io.EOF {
 		panic(err)
+	}
+	split := strings.Split(s.key, ".")
+	if len(split) > 1 {
+		// TODO abstract this into the text view
+		s.Text.SetDynamicColors(true)
+		s.Text.HighlightSyntax = true
+		s.Text.Lang = split[len(split)-1]
 	}
 	s.SetText(string(b[0:n]))
 }

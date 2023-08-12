@@ -9,8 +9,8 @@ import (
 
 type Text struct {
 	*tview.TextView
-	highlightSyntax bool
-	lang            string
+	HighlightSyntax bool
+	Lang            string
 }
 
 func NewText(highlightSyntax bool, lang string) *Text {
@@ -18,8 +18,8 @@ func NewText(highlightSyntax bool, lang string) *Text {
 	tv.SetDynamicColors(highlightSyntax)
 	t := &Text{
 		TextView:        tv,
-		highlightSyntax: highlightSyntax,
-		lang:            lang,
+		HighlightSyntax: highlightSyntax,
+		Lang:            lang,
 	}
 	return t
 }
@@ -30,7 +30,7 @@ func (t *Text) SetText(data string) {
 		return
 	}
 
-	if t.lang == "json" {
+	if t.Lang == "json" {
 		var buf bytes.Buffer
 		err := json.Indent(&buf, []byte(data), "", "  ")
 		if err == nil {
@@ -38,9 +38,9 @@ func (t *Text) SetText(data string) {
 		}
 	}
 
-	if t.highlightSyntax {
+	if t.HighlightSyntax {
 		var buf bytes.Buffer
-		err := quick.Highlight(&buf, data, t.lang, "terminal256", "solarized-dark256")
+		err := quick.Highlight(&buf, data, t.Lang, "terminal256", "solarized-dark256")
 		if err == nil {
 			data = buf.String()
 			data = tview.TranslateANSI(data)
