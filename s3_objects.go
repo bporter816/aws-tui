@@ -43,6 +43,17 @@ func (s S3Objects) selectHandler(n *tview.TreeNode) {
 	s.expandDir(n)
 }
 
+func (s S3Objects) objectHandler() {
+	if node := s.GetCurrentNode(); node != nil {
+		key := node.GetReference().(string)
+		if strings.HasSuffix(key, "/") {
+			return
+		}
+		objectView := NewS3Object(s.s3Client, s.bucket, key, s.app)
+		s.app.AddAndSwitch(objectView)
+	}
+}
+
 func (s S3Objects) metadataHandler() {
 	if node := s.GetCurrentNode(); node != nil {
 		key := node.GetReference().(string)
@@ -67,6 +78,11 @@ func (s S3Objects) tagsHandler() {
 
 func (s S3Objects) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'v', tcell.ModNone),
+			Description: "View Object",
+			Action:      s.objectHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'm', tcell.ModNone),
 			Description: "Metadata",
