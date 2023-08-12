@@ -43,22 +43,6 @@ func (t *Table) SetData(data [][]string) {
 	}
 }
 
-func (t Table) GetColSelection(col string) (string, error) {
-	r, _ := t.GetSelection()
-	if r == 0 {
-		return "", errors.New("cannot select row 0")
-	}
-	if r >= t.GetRowCount() {
-		return "", errors.New("selection out of range")
-	}
-	for i := 0; i < len(t.headers); i++ {
-		if t.headers[i] == col {
-			return t.GetCell(r, i).Text, nil
-		}
-	}
-	return "", errors.New("column not found")
-}
-
 func (t Table) GetRowSelection() (int, error) {
 	r, _ := t.GetSelection()
 	if r == 0 {
@@ -68,4 +52,17 @@ func (t Table) GetRowSelection() (int, error) {
 		return 0, errors.New("selection out of range")
 	}
 	return r, nil
+}
+
+func (t Table) GetColSelection(col string) (string, error) {
+	r, err := t.GetRowSelection()
+	if err != nil {
+		return "", err
+	}
+	for i := 0; i < len(t.headers); i++ {
+		if t.headers[i] == col {
+			return t.GetCell(r, i).Text, nil
+		}
+	}
+	return "", errors.New("column not found")
 }
