@@ -140,8 +140,6 @@ func (s S3Objects) expandDir(n *tview.TreeNode) {
 			c.SetReference(ref + label)
 			n.AddChild(c)
 		}
-	} else {
-		// TODO open file
 	}
 }
 
