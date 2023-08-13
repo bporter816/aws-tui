@@ -9,7 +9,7 @@ import (
 
 func TestKeyActionNotRune(t *testing.T) {
 	k := KeyAction{
-		Key:         tcell.NewEventKey(tcell.KeyEnter, 'a', tcell.ModNone),
+		Key:         tcell.NewEventKey(tcell.KeyEnter, 0, tcell.ModNone),
 		Description: "test",
 		Action:      func() {},
 	}
