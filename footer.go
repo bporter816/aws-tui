@@ -1,19 +1,19 @@
 package main
 
 import (
-	"github.com/rivo/tview"
+	"github.com/bporter816/aws-tui/ui"
 	"strings"
 )
 
 type Footer struct {
-	*tview.TextView
+	*ui.Text
 	app *Application
 }
 
 func NewFooter(app *Application) *Footer {
 	f := &Footer{
-		TextView: tview.NewTextView().SetDynamicColors(true),
-		app:      app,
+		Text: ui.NewText(false, ""),
+		app:  app,
 	}
 	return f
 }

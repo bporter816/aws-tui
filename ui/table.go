@@ -13,6 +13,7 @@ type Table struct {
 
 func NewTable(headers []string, fixedRows, fixedCols int) *Table {
 	tt := tview.NewTable()
+	tt.SetBackgroundColor(tcell.ColorDefault)
 	tt.SetFixed(fixedRows, fixedCols)
 	tt.SetSelectable(true, false)
 	tt.Select(1, 0)
