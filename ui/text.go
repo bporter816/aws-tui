@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/alecthomas/chroma/quick"
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -16,7 +15,6 @@ type Text struct {
 
 func NewText(highlightSyntax bool, lang string) *Text {
 	tv := tview.NewTextView()
-	tv.SetBackgroundColor(tcell.ColorDefault)
 	tv.SetDynamicColors(highlightSyntax)
 	t := &Text{
 		TextView:        tv,

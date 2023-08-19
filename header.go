@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"os/exec"
 	"strings"
@@ -22,7 +21,6 @@ type Header struct {
 
 func NewHeader(s *sts.Client, i *iam.Client, app *Application) *Header {
 	accountInfo := tview.NewTextView()
-	accountInfo.SetBackgroundColor(tcell.ColorDefault)
 	accountInfo.SetDynamicColors(true)
 	accountInfo.SetWrap(false)
 
@@ -90,7 +88,6 @@ func (h Header) Render() {
 	row, col := 0, 0
 	for _, v := range actions {
 		entry := tview.NewTextView().SetDynamicColors(true).SetText(fmt.Sprintf("[pink::b]<%v>[white::-] %v", v.String(), v.Description))
-		entry.SetBackgroundColor(tcell.ColorDefault)
 		h.keybindInfo.AddItem(entry, row, col, 1, 1, 1, 1, false)
 
 		row++
@@ -102,9 +99,7 @@ func (h Header) Render() {
 	// cleanup empty rows so they're the same color
 	// TODO see if this can be avoided
 	for row < 4 {
-		v := tview.NewTextView()
-		v.SetBackgroundColor(tcell.ColorDefault)
-		h.keybindInfo.AddItem(v, row, col, 1, 1, 1, 1, false)
+		h.keybindInfo.AddItem(tview.NewTextView(), row, col, 1, 1, 1, 1, false)
 		row++
 	}
 }

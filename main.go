@@ -70,7 +70,6 @@ func NewApplication() *Application {
 	services := NewServices(clients, a)
 	pages := tview.NewPages()
 	pages.SetBorder(true)
-	pages.SetBackgroundColor(tcell.ColorDefault)
 
 	header := NewHeader(stsClient, iamClient, a)
 	footer := NewFooter(a)
