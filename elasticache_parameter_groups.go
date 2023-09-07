@@ -5,6 +5,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ElasticacheParameterGroups struct {
@@ -35,8 +36,23 @@ func (e ElasticacheParameterGroups) GetLabels() []string {
 	return []string{"Parameter Groups"}
 }
 
+func (e ElasticacheParameterGroups) viewParametersHandler() {
+	name, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	parametersView := NewElasticacheParameters(e.ecClient, name, e.app)
+	e.app.AddAndSwitch(parametersView)
+}
+
 func (e ElasticacheParameterGroups) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
+			Description: "View Parameters",
+			Action:      e.viewParametersHandler,
+		},
+	}
 }
 
 func (e ElasticacheParameterGroups) Render() {
