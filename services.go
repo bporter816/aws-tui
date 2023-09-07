@@ -41,6 +41,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		"Elasticache": []string{
 			"Clusters",
 			"Events",
+			"Parameter Groups",
 			"Reserved Nodes",
 			"Snapshots",
 		},
@@ -139,6 +140,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewElasticacheClusters(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":
 				item = NewElasticacheEvents(s.clients["Elasticache"].(*ec.Client), s.app)
+			case "Elasticache.Parameter Groups":
+				item = NewElasticacheParameterGroups(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Reserved Nodes":
 				item = NewElasticacheReservedCacheNodes(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Snapshots":
