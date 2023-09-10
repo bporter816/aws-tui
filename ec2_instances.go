@@ -20,6 +20,7 @@ func NewEC2Instances(ec2Client *ec2.Client, app *Application) *EC2Instances {
 			"NAME",
 			"ID",
 			"STATE",
+			"PUBLIC IP",
 			"INSTANCE TYPE",
 			"SUBNET ID",
 			"KEY NAME",
@@ -75,7 +76,7 @@ func (e EC2Instances) Render() {
 
 	var data [][]string
 	for _, v := range instances {
-		var name, id, state, instanceType, subnetId, keyName string
+		var name, id, state, publicIP, instanceType, subnetId, keyName string
 		if n, ok := lookupTag(v.Tags, "Name"); ok {
 			name = n
 		} else {
@@ -86,6 +87,9 @@ func (e EC2Instances) Render() {
 		}
 		if v.State != nil {
 			state = string(v.State.Name)
+		}
+		if v.PublicIpAddress != nil {
+			publicIP = *v.PublicIpAddress
 		}
 		instanceType = string(v.InstanceType)
 		if v.SubnetId != nil {
@@ -98,6 +102,7 @@ func (e EC2Instances) Render() {
 			name,
 			id,
 			state,
+			publicIP,
 			instanceType,
 			subnetId,
 			keyName,
