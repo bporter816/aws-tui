@@ -5,8 +5,6 @@ import (
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 	"github.com/bporter816/aws-tui/ui"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type CFFunctions struct {
@@ -64,7 +62,6 @@ func (c CFFunctions) Render() {
 		}
 	}
 
-	caser := cases.Title(language.English)
 	var data [][]string
 	for _, v := range functions {
 		var name, comment, status, stage, created, modified string
@@ -75,10 +72,10 @@ func (c CFFunctions) Render() {
 			comment = *v.FunctionConfig.Comment
 		}
 		if v.Status != nil {
-			status = caser.String(*v.Status)
+			status = TitleCase(*v.Status)
 		}
 		if v.FunctionMetadata != nil {
-			stage = caser.String(string(v.FunctionMetadata.Stage))
+			stage = TitleCase(string(v.FunctionMetadata.Stage))
 			if v.FunctionMetadata.CreatedTime != nil {
 				created = v.FunctionMetadata.CreatedTime.Format(DefaultTimeFormat)
 			}

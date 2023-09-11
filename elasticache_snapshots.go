@@ -6,8 +6,6 @@ import (
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"strconv"
 	"strings"
 )
@@ -81,7 +79,6 @@ func (e *ElasticacheSnapshots) Render() {
 		snapshots = append(snapshots, out.Snapshots...)
 	}
 
-	caser := cases.Title(language.English)
 	var data [][]string
 	e.arns = make([]string, len(snapshots))
 	for i, v := range snapshots {
@@ -98,13 +95,13 @@ func (e *ElasticacheSnapshots) Render() {
 			cluster = *v.CacheClusterId
 		}
 		if v.SnapshotSource != nil {
-			snapshotType = caser.String(*v.SnapshotSource)
+			snapshotType = TitleCase(*v.SnapshotSource)
 		}
 		if len(v.NodeSnapshots) > 0 && v.NodeSnapshots[0].SnapshotCreateTime != nil {
 			created = v.NodeSnapshots[0].SnapshotCreateTime.Format(DefaultTimeFormat)
 		}
 		if v.SnapshotStatus != nil {
-			status = caser.String(*v.SnapshotStatus)
+			status = TitleCase(*v.SnapshotStatus)
 		}
 		// TODO do math and sum these up? don't know what units they could be
 		sizes := make([]string, 0)

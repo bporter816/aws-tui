@@ -6,8 +6,6 @@ import (
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type ELBLoadBalancers struct {
@@ -95,7 +93,6 @@ func (e *ELBLoadBalancers) Render() {
 		loadBalancers = append(loadBalancers, out.LoadBalancers...)
 	}
 
-	caser := cases.Title(language.English)
 	var data [][]string
 	e.arns = make([]string, len(loadBalancers))
 	for i, v := range loadBalancers {
@@ -110,7 +107,7 @@ func (e *ELBLoadBalancers) Render() {
 		if v.VpcId != nil {
 			vpcId = *v.VpcId
 		}
-		lbType = caser.String(string(v.Type))
+		lbType = TitleCase(string(v.Type))
 		data = append(data, []string{
 			name,
 			dnsName,

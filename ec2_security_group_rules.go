@@ -8,8 +8,6 @@ import (
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type EC2SecurityGroupRules struct {
@@ -85,7 +83,6 @@ func (e EC2SecurityGroupRules) Render() {
 		sgRules = append(sgRules, out.SecurityGroupRules...)
 	}
 
-	caser := cases.Upper(language.English)
 	var data [][]string
 	for _, v := range sgRules {
 		name := "-"
@@ -108,7 +105,7 @@ func (e EC2SecurityGroupRules) Render() {
 			if proto == "-1" {
 				protocol = "All"
 			} else {
-				protocol = caser.String(*v.IpProtocol)
+				protocol = UpperCase(*v.IpProtocol)
 			}
 		}
 		if v.CidrIpv4 != nil {

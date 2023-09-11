@@ -8,8 +8,6 @@ import (
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"strconv"
 	"strings"
 )
@@ -97,7 +95,6 @@ func (d *DynamoDBTables) Render() {
 		tableNames = append(tableNames, out.TableNames...)
 	}
 
-	caser := cases.Title(language.English)
 	var data [][]string
 	d.arns = make([]string, len(tableNames))
 	for i, v := range tableNames {
@@ -145,11 +142,11 @@ func (d *DynamoDBTables) Render() {
 		}
 		data = append(data, []string{
 			v,
-			caser.String(string(out.Table.TableStatus)),
+			TitleCase(string(out.Table.TableStatus)),
 			partitionKey,
 			sortKey,
 			strconv.Itoa(len(out.Table.GlobalSecondaryIndexes) + len(out.Table.LocalSecondaryIndexes)),
-			caser.String(strings.ReplaceAll(string(billingMode), "_", " ")),
+			TitleCase(strings.ReplaceAll(string(billingMode), "_", " ")),
 			readCap,
 			writeCap,
 			strconv.FormatInt(itemCount, 10),

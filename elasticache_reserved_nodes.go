@@ -6,8 +6,6 @@ import (
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"strconv"
 )
 
@@ -79,7 +77,6 @@ func (e *ElasticacheReservedCacheNodes) Render() {
 		reservations = append(reservations, out.ReservedCacheNodes...)
 	}
 
-	caser := cases.Title(language.English)
 	var data [][]string
 	e.arns = make([]string, len(reservations))
 	for i, v := range reservations {
@@ -87,10 +84,10 @@ func (e *ElasticacheReservedCacheNodes) Render() {
 		data = append(data, []string{
 			*v.ReservedCacheNodeId,
 			*v.OfferingType,
-			caser.String(*v.ProductDescription),
+			TitleCase(*v.ProductDescription),
 			*v.CacheNodeType,
 			strconv.Itoa(int(v.CacheNodeCount)),
-			caser.String(*v.State),
+			TitleCase(*v.State),
 		})
 	}
 	e.SetData(data)

@@ -6,8 +6,6 @@ import (
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"strconv"
 )
 
@@ -98,7 +96,6 @@ func (e *ElasticacheClusters) Render() {
 		replicationGroups = append(replicationGroups, out.ReplicationGroups...)
 	}
 
-	caser := cases.Title(language.English)
 	var data [][]string
 	for _, v := range clusters {
 		// skip clusters in replication groups as those are retrieved from DescribeReplicationGroups
@@ -112,11 +109,11 @@ func (e *ElasticacheClusters) Render() {
 		}
 		data = append(data, []string{
 			*v.CacheClusterId,
-			caser.String(*v.CacheClusterStatus),
-			caser.String(*v.Engine),
+			TitleCase(*v.CacheClusterStatus),
+			TitleCase(*v.Engine),
 			*v.EngineVersion,
 			*v.CacheNodeType,
-			caser.String(clusterMode),
+			TitleCase(clusterMode),
 			"-",
 			strconv.Itoa(int(*v.NumCacheNodes)),
 		})
@@ -126,11 +123,11 @@ func (e *ElasticacheClusters) Render() {
 		firstMemberCluster := v.MemberClusters[0]
 		data = append(data, []string{
 			*v.ReplicationGroupId,
-			caser.String(*v.Status),
+			TitleCase(*v.Status),
 			"Redis",
 			clusterToEngineVersion[firstMemberCluster],
 			*v.CacheNodeType,
-			caser.String(string(v.ClusterMode)),
+			TitleCase(string(v.ClusterMode)),
 			strconv.Itoa(len(v.NodeGroups)),
 			strconv.Itoa(len(v.MemberClusters)),
 		})

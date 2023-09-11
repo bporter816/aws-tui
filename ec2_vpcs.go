@@ -6,8 +6,6 @@ import (
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type EC2VPCs struct {
@@ -71,7 +69,6 @@ func (e EC2VPCs) Render() {
 		vpcs = append(vpcs, out.Vpcs...)
 	}
 
-	caser := cases.Title(language.English)
 	var data [][]string
 	for _, v := range vpcs {
 		var name, id, state, ipv4CIDR string
@@ -83,7 +80,7 @@ func (e EC2VPCs) Render() {
 		if v.VpcId != nil {
 			id = *v.VpcId
 		}
-		state = caser.String(string(v.State))
+		state = TitleCase(string(v.State))
 		if v.CidrBlock != nil {
 			ipv4CIDR = *v.CidrBlock
 		}
