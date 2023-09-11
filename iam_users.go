@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -163,10 +164,10 @@ func (i IAMUsers) Render() {
 			path = *v.Path
 		}
 		if v.CreateDate != nil {
-			created = v.CreateDate.Format(DefaultTimeFormat)
+			created = v.CreateDate.Format(utils.DefaultTimeFormat)
 		}
 		if v.PasswordLastUsed != nil {
-			passwordLastUsed = v.PasswordLastUsed.Format(DefaultTimeFormat)
+			passwordLastUsed = v.PasswordLastUsed.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
 			userId,

@@ -5,6 +5,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
@@ -109,11 +110,11 @@ func (e *ElasticacheClusters) Render() {
 		}
 		data = append(data, []string{
 			*v.CacheClusterId,
-			TitleCase(*v.CacheClusterStatus),
-			TitleCase(*v.Engine),
+			utils.TitleCase(*v.CacheClusterStatus),
+			utils.TitleCase(*v.Engine),
 			*v.EngineVersion,
 			*v.CacheNodeType,
-			TitleCase(clusterMode),
+			utils.TitleCase(clusterMode),
 			"-",
 			strconv.Itoa(int(*v.NumCacheNodes)),
 		})
@@ -123,11 +124,11 @@ func (e *ElasticacheClusters) Render() {
 		firstMemberCluster := v.MemberClusters[0]
 		data = append(data, []string{
 			*v.ReplicationGroupId,
-			TitleCase(*v.Status),
+			utils.TitleCase(*v.Status),
 			"Redis",
 			clusterToEngineVersion[firstMemberCluster],
 			*v.CacheNodeType,
-			TitleCase(string(v.ClusterMode)),
+			utils.TitleCase(string(v.ClusterMode)),
 			strconv.Itoa(len(v.NodeGroups)),
 			strconv.Itoa(len(v.MemberClusters)),
 		})

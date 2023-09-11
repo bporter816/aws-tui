@@ -5,6 +5,7 @@ import (
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -107,7 +108,7 @@ func (e *ELBLoadBalancers) Render() {
 		if v.VpcId != nil {
 			vpcId = *v.VpcId
 		}
-		lbType = TitleCase(string(v.Type))
+		lbType = utils.TitleCase(string(v.Type))
 		data = append(data, []string{
 			name,
 			dnsName,

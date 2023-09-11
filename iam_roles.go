@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
@@ -130,7 +131,7 @@ func (i IAMRoles) Render() {
 			maxSession = strconv.Itoa(int(*v.MaxSessionDuration))
 		}
 		if v.CreateDate != nil {
-			created = v.CreateDate.Format(DefaultTimeFormat)
+			created = v.CreateDate.Format(utils.DefaultTimeFormat)
 		}
 		if v.Description != nil {
 			description = *v.Description

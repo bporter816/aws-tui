@@ -5,6 +5,7 @@ import (
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type CFFunctions struct {
@@ -72,15 +73,15 @@ func (c CFFunctions) Render() {
 			comment = *v.FunctionConfig.Comment
 		}
 		if v.Status != nil {
-			status = TitleCase(*v.Status)
+			status = utils.TitleCase(*v.Status)
 		}
 		if v.FunctionMetadata != nil {
-			stage = TitleCase(string(v.FunctionMetadata.Stage))
+			stage = utils.TitleCase(string(v.FunctionMetadata.Stage))
 			if v.FunctionMetadata.CreatedTime != nil {
-				created = v.FunctionMetadata.CreatedTime.Format(DefaultTimeFormat)
+				created = v.FunctionMetadata.CreatedTime.Format(utils.DefaultTimeFormat)
 			}
 			if v.FunctionMetadata.LastModifiedTime != nil {
-				modified = v.FunctionMetadata.LastModifiedTime.Format(DefaultTimeFormat)
+				modified = v.FunctionMetadata.LastModifiedTime.Format(utils.DefaultTimeFormat)
 			}
 		}
 		data = append(data, []string{

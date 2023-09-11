@@ -5,6 +5,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 	"strings"
@@ -95,13 +96,13 @@ func (e *ElasticacheSnapshots) Render() {
 			cluster = *v.CacheClusterId
 		}
 		if v.SnapshotSource != nil {
-			snapshotType = TitleCase(*v.SnapshotSource)
+			snapshotType = utils.TitleCase(*v.SnapshotSource)
 		}
 		if len(v.NodeSnapshots) > 0 && v.NodeSnapshots[0].SnapshotCreateTime != nil {
-			created = v.NodeSnapshots[0].SnapshotCreateTime.Format(DefaultTimeFormat)
+			created = v.NodeSnapshots[0].SnapshotCreateTime.Format(utils.DefaultTimeFormat)
 		}
 		if v.SnapshotStatus != nil {
-			status = TitleCase(*v.SnapshotStatus)
+			status = utils.TitleCase(*v.SnapshotStatus)
 		}
 		// TODO do math and sum these up? don't know what units they could be
 		sizes := make([]string, 0)

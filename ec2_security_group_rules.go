@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -105,7 +106,7 @@ func (e EC2SecurityGroupRules) Render() {
 			if proto == "-1" {
 				protocol = "All"
 			} else {
-				protocol = UpperCase(*v.IpProtocol)
+				protocol = utils.UpperCase(*v.IpProtocol)
 			}
 		}
 		if v.CidrIpv4 != nil {

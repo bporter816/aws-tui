@@ -6,6 +6,7 @@ import (
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -85,7 +86,7 @@ func (c CFDistributionInvalidations) Render() {
 			status = *v.Status
 		}
 		if v.CreateTime != nil {
-			created = v.CreateTime.Format(DefaultTimeFormat)
+			created = v.CreateTime.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
 			id,

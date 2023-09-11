@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -95,7 +96,7 @@ func (s S3Buckets) Render() {
 			name = *v.Name
 		}
 		if v.CreationDate != nil {
-			created = v.CreationDate.Format(DefaultTimeFormat)
+			created = v.CreationDate.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
 			name,

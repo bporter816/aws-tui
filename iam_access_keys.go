@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type IAMAccessKeys struct {
@@ -76,7 +77,7 @@ func (i IAMAccessKeys) Render() {
 			)
 			if err == nil && out.AccessKeyLastUsed != nil {
 				if out.AccessKeyLastUsed.LastUsedDate != nil {
-					lastUsedDate = out.AccessKeyLastUsed.LastUsedDate.Format(DefaultTimeFormat)
+					lastUsedDate = out.AccessKeyLastUsed.LastUsedDate.Format(utils.DefaultTimeFormat)
 				}
 				if out.AccessKeyLastUsed.Region != nil {
 					lastUsedRegion = *out.AccessKeyLastUsed.Region
@@ -87,7 +88,7 @@ func (i IAMAccessKeys) Render() {
 			}
 		}
 		if v.CreateDate != nil {
-			created = v.CreateDate.Format(DefaultTimeFormat)
+			created = v.CreateDate.Format(utils.DefaultTimeFormat)
 		}
 		status = string(v.Status)
 

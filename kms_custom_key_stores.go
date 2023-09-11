@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type KmsCustomKeyStores struct {
@@ -67,7 +68,7 @@ func (k KmsCustomKeyStores) Render() {
 			connection = string(v.ConnectionState)
 		}
 		if v.CreationDate != nil {
-			created = v.CreationDate.Format(DefaultTimeFormat)
+			created = v.CreationDate.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
 			name,

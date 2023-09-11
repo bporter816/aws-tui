@@ -5,6 +5,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
@@ -84,10 +85,10 @@ func (e *ElasticacheReservedCacheNodes) Render() {
 		data = append(data, []string{
 			*v.ReservedCacheNodeId,
 			*v.OfferingType,
-			TitleCase(*v.ProductDescription),
+			utils.TitleCase(*v.ProductDescription),
 			*v.CacheNodeType,
 			strconv.Itoa(int(v.CacheNodeCount)),
-			TitleCase(*v.State),
+			utils.TitleCase(*v.State),
 		})
 	}
 	e.SetData(data)

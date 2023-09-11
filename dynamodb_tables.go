@@ -7,6 +7,7 @@ import (
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 	"strings"
@@ -142,11 +143,11 @@ func (d *DynamoDBTables) Render() {
 		}
 		data = append(data, []string{
 			v,
-			TitleCase(string(out.Table.TableStatus)),
+			utils.TitleCase(string(out.Table.TableStatus)),
 			partitionKey,
 			sortKey,
 			strconv.Itoa(len(out.Table.GlobalSecondaryIndexes) + len(out.Table.LocalSecondaryIndexes)),
-			TitleCase(strings.ReplaceAll(string(billingMode), "_", " ")),
+			utils.TitleCase(strings.ReplaceAll(string(billingMode), "_", " ")),
 			readCap,
 			writeCap,
 			strconv.FormatInt(itemCount, 10),

@@ -6,6 +6,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"time"
 )
 
@@ -62,7 +63,7 @@ func (e ElasticacheEvents) Render() {
 	for _, v := range events {
 		var date, sourceId, sourceType, message string
 		if v.Date != nil {
-			date = v.Date.Format(DefaultTimeFormat)
+			date = v.Date.Format(utils.DefaultTimeFormat)
 		}
 		if v.SourceIdentifier != nil {
 			sourceId = *v.SourceIdentifier

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -89,7 +90,7 @@ func (e EC2KeyPairs) Render() {
 			fingerprint = *v.KeyFingerprint
 		}
 		if v.CreateTime != nil {
-			created = v.CreateTime.Format(DefaultTimeFormat)
+			created = v.CreateTime.Format(utils.DefaultTimeFormat)
 		}
 		if v.KeyPairId != nil {
 			id = *v.KeyPairId

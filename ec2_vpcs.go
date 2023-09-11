@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -80,7 +81,7 @@ func (e EC2VPCs) Render() {
 		if v.VpcId != nil {
 			id = *v.VpcId
 		}
-		state = TitleCase(string(v.State))
+		state = utils.TitleCase(string(v.State))
 		if v.CidrBlock != nil {
 			ipv4CIDR = *v.CidrBlock
 		}
