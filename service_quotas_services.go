@@ -5,6 +5,7 @@ import (
 	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	sqTypes "github.com/aws/aws-sdk-go-v2/service/servicequotas/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ServiceQuotasServices struct {
@@ -16,7 +17,7 @@ type ServiceQuotasServices struct {
 func NewServiceQuotasServices(sqClient *sq.Client, app *Application) *ServiceQuotasServices {
 	s := &ServiceQuotasServices{
 		Table: ui.NewTable([]string{
-			"SERVICE",
+			"NAME",
 			"CODE",
 		}, 1, 0),
 		sqClient: sqClient,
@@ -33,8 +34,27 @@ func (s ServiceQuotasServices) GetLabels() []string {
 	return []string{}
 }
 
+func (s ServiceQuotasServices) viewQuotasHandler() {
+	serviceName, err := s.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	serviceCode, err := s.GetColSelection("CODE")
+	if err != nil {
+		return
+	}
+	quotasView := NewServiceQuotasQuotas(s.sqClient, serviceName, serviceCode, s.app)
+	s.app.AddAndSwitch(quotasView)
+}
+
 func (s ServiceQuotasServices) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'q', tcell.ModNone),
+			Description: "View Quotas",
+			Action:      s.viewQuotasHandler,
+		},
+	}
 }
 
 func (s ServiceQuotasServices) Render() {
