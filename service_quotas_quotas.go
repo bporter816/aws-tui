@@ -7,6 +7,7 @@ import (
 	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	sqTypes "github.com/aws/aws-sdk-go-v2/service/servicequotas/types"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type ServiceQuotasQuotas struct {
@@ -67,15 +68,15 @@ func (s ServiceQuotasQuotas) Render() {
 			ServiceCode: aws.String(s.serviceCode),
 		},
 	)
-	appliedQuotas := make(map[string]float64)
+	appliedQuotas := make(map[string]sqTypes.ServiceQuota)
 	for appliedPg.HasMorePages() {
 		out, err := appliedPg.NextPage(context.TODO())
 		if err != nil {
 			panic(err)
 		}
 		for _, q := range out.Quotas {
-			if q.QuotaName != nil && q.Value != nil {
-				appliedQuotas[*q.QuotaName] = *q.Value
+			if q.QuotaName != nil {
+				appliedQuotas[*q.QuotaName] = q
 			}
 		}
 	}
@@ -86,15 +87,9 @@ func (s ServiceQuotasQuotas) Render() {
 		if v.QuotaName != nil {
 			name = *v.QuotaName
 		}
-		var unit string
-		if v.Value != nil {
-			if v.Unit != nil && *v.Unit != "None" {
-				unit = " " + *v.Unit
-			}
-			defaultValue = fmt.Sprintf("%f%v", *v.Value, unit)
-		}
+		defaultValue = formatValue(v)
 		if av, ok := appliedQuotas[name]; ok {
-			appliedValue = fmt.Sprintf("%f%v", av, unit)
+			appliedValue = formatValue(av)
 		}
 		if v.Adjustable {
 			adjustable = "Yes"
@@ -107,4 +102,18 @@ func (s ServiceQuotasQuotas) Render() {
 		})
 	}
 	s.SetData(data)
+}
+
+func formatValue(quota sqTypes.ServiceQuota) string {
+	if quota.Value == nil {
+		return ""
+	}
+
+	value := utils.SimplifyFloat(*quota.Value)
+
+	if quota.Unit != nil && *quota.Unit != "None" {
+		return fmt.Sprintf("%v %v", value, utils.AbbreviateUnit(*quota.Unit))
+	} else {
+		return value
+	}
 }

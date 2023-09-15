@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+	"math"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -12,6 +14,16 @@ const (
 var (
 	titleCaser = cases.Title(language.English)
 	upperCaser = cases.Upper(language.English)
+
+	abbreviations = map[string]string{
+		"Milliseconds": "ms",
+		"Seconds":      "sec",
+		"Minutes":      "min",
+		"Bytes":        "B",
+		"Kilobytes":    "KB",
+		"Megabytes":    "MB",
+		"Gigabytes":    "GB",
+	}
 )
 
 func TitleCase(str string) string {
@@ -20,4 +32,20 @@ func TitleCase(str string) string {
 
 func UpperCase(str string) string {
 	return upperCaser.String(str)
+}
+
+func SimplifyFloat(value float64) string {
+	if value == math.Trunc(value) {
+		return fmt.Sprintf("%v", int(value))
+	} else {
+		return fmt.Sprintf("%f", value)
+	}
+}
+
+func AbbreviateUnit(unit string) string {
+	if u, ok := abbreviations[unit]; ok {
+		return u
+	} else {
+		return unit
+	}
 }
