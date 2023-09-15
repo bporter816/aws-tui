@@ -12,6 +12,7 @@ import (
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/rivo/tview"
 	"sort"
@@ -69,6 +70,9 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		"Secrets Manager": []string{
 			"Secrets",
 		},
+		"Service Quotas": []string{
+			"Services",
+		},
 	}
 	root := tview.NewTreeNode("Services")
 	s := &Services{
@@ -118,6 +122,12 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 	}
 
 	s.Root.Walk(func(node, parent *tview.TreeNode) bool {
+		// Skip non-leaf nodes but continue traversing.
+		// We have to skip the root because it has the same name as Service Quotas "Services".
+		if node.GetLevel() < 2 {
+			return true
+		}
+
 		if node.GetText() == n.GetText() {
 			view := fmt.Sprintf("%v.%v", parent.GetText(), node.GetText())
 			var item Component
@@ -170,6 +180,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewS3Buckets(s.clients["S3"].(*s3.Client), s.app)
 			case "Secrets Manager.Secrets":
 				item = NewSMSecrets(s.clients["Secrets Manager"].(*sm.Client), s.app)
+			case "Service Quotas.Services":
+				item = NewServiceQuotasServices(s.clients["Service Quotas"].(*sq.Client), s.app)
 			default:
 				panic("unknown service")
 			}

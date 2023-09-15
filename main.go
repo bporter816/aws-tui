@@ -18,6 +18,7 @@ import (
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -50,6 +51,7 @@ func NewApplication() *Application {
 	s3Client := s3.NewFromConfig(cfg)
 	stsClient := sts.NewFromConfig(cfg)
 	smClient := sm.NewFromConfig(cfg)
+	sqClient := sq.NewFromConfig(cfg)
 
 	a := &Application{}
 
@@ -65,6 +67,7 @@ func NewApplication() *Application {
 		"S3":              s3Client,
 		"STS":             stsClient,
 		"Secrets Manager": smClient,
+		"Service Quotas":  sqClient,
 	}
 
 	services := NewServices(clients, a)
