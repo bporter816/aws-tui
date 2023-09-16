@@ -19,7 +19,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -52,6 +54,7 @@ func NewApplication() *Application {
 	stsClient := sts.NewFromConfig(cfg)
 	smClient := sm.NewFromConfig(cfg)
 	sqClient := sq.NewFromConfig(cfg)
+	sqsClient := sqs.NewFromConfig(cfg)
 
 	a := &Application{}
 
@@ -70,7 +73,11 @@ func NewApplication() *Application {
 		"Service Quotas":  sqClient,
 	}
 
-	services := NewServices(clients, a)
+	repos := map[string]interface{}{
+		"SQS": repo.NewSQS(sqsClient),
+	}
+
+	services := NewServices(clients, repos, a)
 	pages := tview.NewPages()
 	pages.SetBorder(true)
 

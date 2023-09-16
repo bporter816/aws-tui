@@ -49,3 +49,11 @@ func AbbreviateUnit(unit string) string {
 		return unit
 	}
 }
+
+func BoolToString(b bool, y string, n string) string {
+	if b {
+		return y
+	} else {
+		return n
+	}
+}

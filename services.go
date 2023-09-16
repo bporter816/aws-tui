@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/rivo/tview"
 	"sort"
@@ -21,10 +22,11 @@ import (
 type Services struct {
 	*ui.Tree
 	clients map[string]interface{}
+	repos   map[string]interface{}
 	app     *Application
 }
 
-func NewServices(clients map[string]interface{}, app *Application) *Services {
+func NewServices(clients map[string]interface{}, repos map[string]interface{}, app *Application) *Services {
 	m := map[string][]string{
 		"Cloudfront": []string{
 			"Distributions",
@@ -67,6 +69,9 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 		"S3": []string{
 			"Buckets",
 		},
+		"SQS": []string{
+			"Queues",
+		},
 		"Secrets Manager": []string{
 			"Secrets",
 		},
@@ -78,6 +83,7 @@ func NewServices(clients map[string]interface{}, app *Application) *Services {
 	s := &Services{
 		Tree:    ui.NewTree(root),
 		clients: clients,
+		repos:   repos,
 		app:     app,
 	}
 	// sort the keys
@@ -178,6 +184,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewRoute53HealthChecks(s.clients["Route 53"].(*r53.Client), s.app)
 			case "S3.Buckets":
 				item = NewS3Buckets(s.clients["S3"].(*s3.Client), s.app)
+			case "SQS.Queues":
+				item = NewSQSQueues(s.repos["SQS"].(*repo.SQS), s.app)
 			case "Secrets Manager.Secrets":
 				item = NewSMSecrets(s.clients["Secrets Manager"].(*sm.Client), s.app)
 			case "Service Quotas.Services":
