@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/bporter816/aws-tui/ui"
-	"strings"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type DynamoDBTags struct {
@@ -35,9 +36,11 @@ func (d DynamoDBTags) GetService() string {
 func (d DynamoDBTags) GetLabels() []string {
 	// TODO generalize for other resources
 	// extract id from arn
-	parts := strings.Split(d.id, "/")
-	id := parts[len(parts)-1]
-	return []string{id, "Tags"}
+	arn, err := arn.Parse(d.id)
+	if err != nil {
+		panic(err)
+	}
+	return []string{utils.GetResourceNameFromArn(arn), "Tags"}
 }
 
 func (d DynamoDBTags) GetKeyActions() []KeyAction {

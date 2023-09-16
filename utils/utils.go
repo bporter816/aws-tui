@@ -5,6 +5,8 @@ import (
 	"math"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	"strings"
 )
 
 const (
@@ -56,4 +58,21 @@ func BoolToString(b bool, y string, n string) string {
 	} else {
 		return n
 	}
+}
+
+func GetResourceNameFromArn(arn arn.ARN) string {
+	// slash delimited resources
+	parts := strings.Split(arn.Resource, "/")
+	if len(parts) == 2 {
+		return parts[len(parts)-1]
+	}
+
+	// colon delimited resources
+	parts = strings.Split(arn.Resource, ":")
+	if len(parts) == 2 {
+		return parts[len(parts)-1]
+	}
+
+	// path based resources
+	return arn.Resource
 }

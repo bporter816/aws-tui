@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"github.com/bporter816/aws-tui/ui"
-	"strings"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type CFTags struct {
@@ -34,9 +35,11 @@ func (c CFTags) GetService() string {
 func (c CFTags) GetLabels() []string {
 	// TODO generalize for other resources
 	// extract id from arn
-	parts := strings.Split(c.id, "/")
-	id := parts[len(parts)-1]
-	return []string{id, "Tags"}
+	arn, err := arn.Parse(c.id)
+	if err != nil {
+		panic(err)
+	}
+	return []string{utils.GetResourceNameFromArn(arn), "Tags"}
 }
 
 func (c CFTags) GetKeyActions() []KeyAction {
