@@ -5,6 +5,7 @@ import (
 )
 
 type (
-	CloudfrontDistribution cfTypes.DistributionSummary
-	CloudfrontFunction     cfTypes.FunctionSummary
+	CloudfrontDistribution       cfTypes.DistributionSummary
+	CloudfrontDistributionOrigin cfTypes.Origin
+	CloudfrontFunction           cfTypes.FunctionSummary
 )

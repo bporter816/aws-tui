@@ -47,7 +47,7 @@ func (c CFDistributions) originsHandler() {
 	if err != nil {
 		return
 	}
-	originsView := NewCFDistributionOrigins(c.cfClient, id, c.app)
+	originsView := NewCFDistributionOrigins(c.repo, id, c.app)
 	c.app.AddAndSwitch(originsView)
 }
 
