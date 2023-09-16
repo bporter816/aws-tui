@@ -1,7 +1,6 @@
 package main
 
 import (
-	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -11,13 +10,12 @@ import (
 
 type CFDistributions struct {
 	*ui.Table
-	cfClient *cf.Client
-	repo     *repo.Cloudfront
-	app      *Application
-	model    []model.CloudfrontDistribution
+	repo  *repo.Cloudfront
+	app   *Application
+	model []model.CloudfrontDistribution
 }
 
-func NewCFDistributions(cfClient *cf.Client, repo *repo.Cloudfront, app *Application) *CFDistributions {
+func NewCFDistributions(repo *repo.Cloudfront, app *Application) *CFDistributions {
 	c := &CFDistributions{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -27,9 +25,8 @@ func NewCFDistributions(cfClient *cf.Client, repo *repo.Cloudfront, app *Applica
 			"DOMAIN",
 			"ALTERNATE DOMAINS",
 		}, 1, 0),
-		cfClient: cfClient,
-		repo:     repo,
-		app:      app,
+		repo: repo,
+		app:  app,
 	}
 	return c
 }

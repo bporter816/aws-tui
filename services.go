@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
@@ -138,7 +137,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			var item Component
 			switch view {
 			case "Cloudfront.Distributions":
-				item = NewCFDistributions(s.clients["Cloudfront"].(*cf.Client), s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
+				item = NewCFDistributions(s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
 			case "Cloudfront.Functions":
 				item = NewCFFunctions(s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
 			case "DynamoDB.Tables":

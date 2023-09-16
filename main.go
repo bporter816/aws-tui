@@ -59,7 +59,6 @@ func NewApplication() *Application {
 	a := &Application{}
 
 	clients := map[string]interface{}{
-		"Cloudfront":     cfClient,
 		"DynamoDB":       ddbClient,
 		"Elasticache":    ecClient,
 		"EC2":            ec2Client,
