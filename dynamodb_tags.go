@@ -29,7 +29,7 @@ func NewDynamoDBTags(ddbClient *ddb.Client, id string, app *Application) *Dynamo
 }
 
 func (d DynamoDBTags) GetService() string {
-	return "Cloudfront"
+	return "DynamoDB"
 }
 
 func (d DynamoDBTags) GetLabels() []string {
