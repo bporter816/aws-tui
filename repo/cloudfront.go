@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 	"github.com/bporter816/aws-tui/model"
 )
 
@@ -15,6 +16,19 @@ func NewCloudfront(cfClient *cf.Client) *Cloudfront {
 	return &Cloudfront{
 		cfClient: cfClient,
 	}
+}
+
+func (c Cloudfront) getDistributionConfig(distributionId string) (*cfTypes.DistributionConfig, error) {
+	out, err := c.cfClient.GetDistributionConfig(
+		context.TODO(),
+		&cf.GetDistributionConfigInput{
+			Id: aws.String(distributionId),
+		},
+	)
+	if err != nil || out.DistributionConfig == nil {
+		return &cfTypes.DistributionConfig{}, err
+	}
+	return out.DistributionConfig, nil
 }
 
 func (c Cloudfront) ListDistributions() ([]model.CloudfrontDistribution, error) {
@@ -36,20 +50,40 @@ func (c Cloudfront) ListDistributions() ([]model.CloudfrontDistribution, error) 
 }
 
 func (c Cloudfront) GetDistributionOrigins(distributionId string) ([]model.CloudfrontDistributionOrigin, error) {
-	out, err := c.cfClient.GetDistributionConfig(
-		context.TODO(),
-		&cf.GetDistributionConfigInput{
-			Id: aws.String(distributionId),
-		},
-	)
-	var origins []model.CloudfrontDistributionOrigin
-	if err != nil || out.DistributionConfig == nil || out.DistributionConfig.Origins == nil {
+	out, err := c.getDistributionConfig(distributionId)
+	if err != nil || out.Origins == nil {
 		return []model.CloudfrontDistributionOrigin{}, err
 	}
-	for _, v := range out.DistributionConfig.Origins.Items {
+	var origins []model.CloudfrontDistributionOrigin
+	for _, v := range out.Origins.Items {
 		origins = append(origins, model.CloudfrontDistributionOrigin(v))
 	}
 	return origins, nil
+}
+
+func (c Cloudfront) GetDistributionCacheBehaviors(distributionId string) ([]model.CloudfrontDistributionCacheBehavior, error) {
+	out, err := c.getDistributionConfig(distributionId)
+	if err != nil {
+		return []model.CloudfrontDistributionCacheBehavior{}, err
+	}
+	var cacheBehaviors []model.CloudfrontDistributionCacheBehavior
+	if out.CacheBehaviors != nil {
+		for _, v := range out.CacheBehaviors.Items {
+			cacheBehaviors = append(cacheBehaviors, model.CloudfrontDistributionCacheBehavior(v))
+		}
+	}
+	// the default cache behavior is a different type, so merge them
+	if d := out.DefaultCacheBehavior; d != nil {
+		cacheBehaviors = append(cacheBehaviors, model.CloudfrontDistributionCacheBehavior{
+			PathPattern: aws.String("Default (*)"),
+			TargetOriginId:          d.TargetOriginId,
+			ViewerProtocolPolicy:    d.ViewerProtocolPolicy,
+			CachePolicyId:           d.CachePolicyId,
+			OriginRequestPolicyId:   d.OriginRequestPolicyId,
+			ResponseHeadersPolicyId: d.ResponseHeadersPolicyId,
+		})
+	}
+	return cacheBehaviors, nil
 }
 
 func (c Cloudfront) ListFunctions() ([]model.CloudfrontFunction, error) {

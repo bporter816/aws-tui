@@ -56,7 +56,7 @@ func (c CFDistributions) cacheBehaviorsHandler() {
 	if err != nil {
 		return
 	}
-	cacheBehaviorsView := NewCFDistributionCacheBehaviors(c.cfClient, id, c.app)
+	cacheBehaviorsView := NewCFDistributionCacheBehaviors(c.repo, id, c.app)
 	c.app.AddAndSwitch(cacheBehaviorsView)
 }
 

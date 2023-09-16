@@ -1,20 +1,18 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type CFDistributionCacheBehaviors struct {
 	*ui.Table
-	cfClient       *cf.Client
+	repo           *repo.Cloudfront
 	distributionId string
 	app            *Application
 }
 
-func NewCFDistributionCacheBehaviors(cfClient *cf.Client, distributionId string, app *Application) *CFDistributionCacheBehaviors {
+func NewCFDistributionCacheBehaviors(repo *repo.Cloudfront, distributionId string, app *Application) *CFDistributionCacheBehaviors {
 	c := &CFDistributionCacheBehaviors{
 		Table: ui.NewTable([]string{
 			"PATH",
@@ -24,7 +22,7 @@ func NewCFDistributionCacheBehaviors(cfClient *cf.Client, distributionId string,
 			"ORIGIN REQUEST POLICY",
 			"RESPONSE HEADERS POLICY",
 		}, 1, 0),
-		cfClient:       cfClient,
+		repo:           repo,
 		distributionId: distributionId,
 		app:            app,
 	}
@@ -44,73 +42,39 @@ func (c CFDistributionCacheBehaviors) GetKeyActions() []KeyAction {
 }
 
 func (c CFDistributionCacheBehaviors) Render() {
-	out, err := c.cfClient.GetDistributionConfig(
-		context.TODO(),
-		&cf.GetDistributionConfigInput{
-			Id: aws.String(c.distributionId),
-		},
-	)
+	model, err := c.repo.GetDistributionCacheBehaviors(c.distributionId)
 	if err != nil {
 		panic(err)
 	}
 
 	var data [][]string
-	if out.DistributionConfig != nil {
-		if out.DistributionConfig.CacheBehaviors != nil {
-			for _, v := range out.DistributionConfig.CacheBehaviors.Items {
-				var pathPattern, origin, viewerProtocolPolicy string
-				cachePolicyId, originRequestPolicyId, responseHeadersPolicyId := "-", "-", "-"
-				if v.PathPattern != nil {
-					pathPattern = *v.PathPattern
-				}
-				if v.TargetOriginId != nil {
-					origin = *v.TargetOriginId
-				}
-				viewerProtocolPolicy = viewerProtocolPolicyToString(v.ViewerProtocolPolicy)
-				if v.CachePolicyId != nil {
-					cachePolicyId = *v.CachePolicyId
-				}
-				if v.OriginRequestPolicyId != nil {
-					originRequestPolicyId = *v.OriginRequestPolicyId
-				}
-				if v.ResponseHeadersPolicyId != nil {
-					responseHeadersPolicyId = *v.ResponseHeadersPolicyId
-				}
-				data = append(data, []string{
-					pathPattern,
-					origin,
-					viewerProtocolPolicy,
-					cachePolicyId,
-					originRequestPolicyId,
-					responseHeadersPolicyId,
-				})
-			}
+	for _, v := range model {
+		var pathPattern, origin, viewerProtocolPolicy string
+		cachePolicyId, originRequestPolicyId, responseHeadersPolicyId := "-", "-", "-"
+		if v.PathPattern != nil {
+			pathPattern = *v.PathPattern
 		}
-		if d := out.DistributionConfig.DefaultCacheBehavior; d != nil {
-			var origin, viewerProtocolPolicy string
-			cachePolicyId, originRequestPolicyId, responseHeadersPolicyId := "-", "-", "-"
-			if d.TargetOriginId != nil {
-				origin = *d.TargetOriginId
-			}
-			viewerProtocolPolicy = viewerProtocolPolicyToString(d.ViewerProtocolPolicy)
-			if d.CachePolicyId != nil {
-				cachePolicyId = *d.CachePolicyId
-			}
-			if d.OriginRequestPolicyId != nil {
-				originRequestPolicyId = *d.OriginRequestPolicyId
-			}
-			if d.ResponseHeadersPolicyId != nil {
-				responseHeadersPolicyId = *d.ResponseHeadersPolicyId
-			}
-			data = append(data, []string{
-				"Default (*)",
-				origin,
-				viewerProtocolPolicy,
-				cachePolicyId,
-				originRequestPolicyId,
-				responseHeadersPolicyId,
-			})
+		if v.TargetOriginId != nil {
+			origin = *v.TargetOriginId
 		}
+		viewerProtocolPolicy = viewerProtocolPolicyToString(v.ViewerProtocolPolicy)
+		if v.CachePolicyId != nil {
+			cachePolicyId = *v.CachePolicyId
+		}
+		if v.OriginRequestPolicyId != nil {
+			originRequestPolicyId = *v.OriginRequestPolicyId
+		}
+		if v.ResponseHeadersPolicyId != nil {
+			responseHeadersPolicyId = *v.ResponseHeadersPolicyId
+		}
+		data = append(data, []string{
+			pathPattern,
+			origin,
+			viewerProtocolPolicy,
+			cachePolicyId,
+			originRequestPolicyId,
+			responseHeadersPolicyId,
+		})
 	}
 	c.SetData(data)
 }
