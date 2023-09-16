@@ -5,8 +5,9 @@ import (
 )
 
 type (
-	CloudfrontDistribution              cfTypes.DistributionSummary
-	CloudfrontDistributionOrigin        cfTypes.Origin
-	CloudfrontDistributionCacheBehavior cfTypes.CacheBehavior
-	CloudfrontFunction                  cfTypes.FunctionSummary
+	CloudfrontDistribution                    cfTypes.DistributionSummary
+	CloudfrontDistributionOrigin              cfTypes.Origin
+	CloudfrontDistributionCacheBehavior       cfTypes.CacheBehavior
+	CloudfrontDistributionCustomErrorResponse cfTypes.CustomErrorResponse
+	CloudfrontFunction                        cfTypes.FunctionSummary
 )

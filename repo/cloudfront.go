@@ -86,6 +86,18 @@ func (c Cloudfront) GetDistributionCacheBehaviors(distributionId string) ([]mode
 	return cacheBehaviors, nil
 }
 
+func (c Cloudfront) GetDistributionCustomErrorResponses(distributionId string) ([]model.CloudfrontDistributionCustomErrorResponse, error) {
+	out, err := c.getDistributionConfig(distributionId)
+	if err != nil || out.CustomErrorResponses == nil {
+		return []model.CloudfrontDistributionCustomErrorResponse{}, err
+	}
+	var customErrorResponses []model.CloudfrontDistributionCustomErrorResponse
+	for _, v := range out.CustomErrorResponses.Items {
+		customErrorResponses = append(customErrorResponses, model.CloudfrontDistributionCustomErrorResponse(v))
+	}
+	return customErrorResponses, nil
+}
+
 func (c Cloudfront) ListFunctions() ([]model.CloudfrontFunction, error) {
 	// ListFunctions doesn't have a paginator
 	var functions []model.CloudfrontFunction

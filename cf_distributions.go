@@ -65,7 +65,7 @@ func (c CFDistributions) customErrorResponsesHandler() {
 	if err != nil {
 		return
 	}
-	customErrorResponsesView := NewCFDistributionCustomErrorResponses(c.cfClient, id, c.app)
+	customErrorResponsesView := NewCFDistributionCustomErrorResponses(c.repo, id, c.app)
 	c.app.AddAndSwitch(customErrorResponsesView)
 }
 
