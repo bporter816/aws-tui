@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -187,7 +186,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "SQS.Queues":
 				item = NewSQSQueues(s.repos["SQS"].(*repo.SQS), s.app)
 			case "Secrets Manager.Secrets":
-				item = NewSMSecrets(s.clients["Secrets Manager"].(*sm.Client), s.app)
+				item = NewSMSecrets(s.repos["Secrets Manager"].(*repo.SecretsManager), s.app)
 			case "Service Quotas.Services":
 				item = NewServiceQuotasServices(s.clients["Service Quotas"].(*sq.Client), s.app)
 			default:

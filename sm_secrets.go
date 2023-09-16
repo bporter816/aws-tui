@@ -1,10 +1,7 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
-	smTypes "github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
@@ -12,11 +9,11 @@ import (
 
 type SMSecrets struct {
 	*ui.Table
-	smClient *sm.Client
-	app      *Application
+	repo *repo.SecretsManager
+	app  *Application
 }
 
-func NewSMSecrets(smClient *sm.Client, app *Application) *SMSecrets {
+func NewSMSecrets(repo *repo.SecretsManager, app *Application) *SMSecrets {
 	s := &SMSecrets{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -24,8 +21,8 @@ func NewSMSecrets(smClient *sm.Client, app *Application) *SMSecrets {
 			"ROTATION",
 			"DESCRIPTION",
 		}, 1, 0),
-		smClient: smClient,
-		app:      app,
+		repo: repo,
+		app:  app,
 	}
 	return s
 }
@@ -39,20 +36,20 @@ func (s SMSecrets) GetLabels() []string {
 }
 
 func (s SMSecrets) resourcePolicyHandler() {
-	secretId, err := s.GetColSelection("NAME")
+	secretName, err := s.GetColSelection("NAME")
 	if err != nil {
 		return
 	}
-	resourcePolicyView := NewSMSecretResourcePolicy(s.smClient, secretId, s.app)
+	resourcePolicyView := NewSMSecretResourcePolicy(s.repo, secretName, s.app)
 	s.app.AddAndSwitch(resourcePolicyView)
 }
 
 func (s SMSecrets) tagsHandler() {
-	secretId, err := s.GetColSelection("NAME")
+	secretName, err := s.GetColSelection("NAME")
 	if err != nil {
 		return
 	}
-	tagsView := NewSMSecretTags(s.smClient, secretId, s.app)
+	tagsView := NewSMSecretTags(s.repo, secretName, s.app)
 	s.app.AddAndSwitch(tagsView)
 }
 
@@ -72,23 +69,13 @@ func (s SMSecrets) GetKeyActions() []KeyAction {
 }
 
 func (s SMSecrets) Render() {
-	pg := sm.NewListSecretsPaginator(
-		s.smClient,
-		&sm.ListSecretsInput{
-			IncludePlannedDeletion: aws.Bool(true),
-		},
-	)
-	var secrets []smTypes.SecretListEntry
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		secrets = append(secrets, out.SecretList...)
+	model, err := s.repo.ListSecrets()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range secrets {
+	for _, v := range model {
 		var name, primaryRegion, desc string
 		var rotationEnabled bool
 		if v.Name != nil {

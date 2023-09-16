@@ -1,28 +1,26 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type SMSecretTags struct {
 	*ui.Table
-	smClient *sm.Client
-	secretId string
-	app      *Application
+	repo       *repo.SecretsManager
+	secretName string
+	app        *Application
 }
 
-func NewSMSecretTags(smClient *sm.Client, secretId string, app *Application) *SMSecretTags {
+func NewSMSecretTags(repo *repo.SecretsManager, secretName string, app *Application) *SMSecretTags {
 	s := &SMSecretTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		smClient: smClient,
-		secretId: secretId,
-		app:      app,
+		repo:       repo,
+		secretName: secretName,
+		app:        app,
 	}
 	return s
 }
@@ -32,7 +30,7 @@ func (s SMSecretTags) GetService() string {
 }
 
 func (s SMSecretTags) GetLabels() []string {
-	return []string{s.secretId, "Tags"}
+	return []string{s.secretName, "Tags"}
 }
 
 func (s SMSecretTags) GetKeyActions() []KeyAction {
@@ -40,21 +38,15 @@ func (s SMSecretTags) GetKeyActions() []KeyAction {
 }
 
 func (s SMSecretTags) Render() {
-	out, err := s.smClient.DescribeSecret(
-		context.TODO(),
-		&sm.DescribeSecretInput{
-			SecretId: aws.String(s.secretId),
-		},
-	)
+	model, err := s.repo.ListTags(s.secretName)
 	if err != nil {
 		panic(err)
 	}
-
 	var data [][]string
-	for _, v := range out.Tags {
+	for _, v := range model {
 		data = append(data, []string{
-			*v.Key,
-			*v.Value,
+			v.Key,
+			v.Value,
 		})
 	}
 	s.SetData(data)
