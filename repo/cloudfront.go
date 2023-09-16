@@ -16,6 +16,24 @@ func NewCloudfront(cfClient *cf.Client) *Cloudfront {
 	}
 }
 
+func (c Cloudfront) ListDistributions() ([]model.CloudfrontDistribution, error) {
+	pg := cf.NewListDistributionsPaginator(
+		c.cfClient,
+		&cf.ListDistributionsInput{},
+	)
+	var distributions []model.CloudfrontDistribution
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil || out.DistributionList == nil {
+			return []model.CloudfrontDistribution{}, err
+		}
+		for _, v := range out.DistributionList.Items {
+			distributions = append(distributions, model.CloudfrontDistribution(v))
+		}
+	}
+	return distributions, nil
+}
+
 func (c Cloudfront) ListFunctions() ([]model.CloudfrontFunction, error) {
 	// ListFunctions doesn't have a paginator
 	var functions []model.CloudfrontFunction

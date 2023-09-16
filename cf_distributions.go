@@ -1,9 +1,9 @@
 package main
 
 import (
-	"context"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
-	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+	"github.com/bporter816/aws-tui/model"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strings"
@@ -12,11 +12,12 @@ import (
 type CFDistributions struct {
 	*ui.Table
 	cfClient *cf.Client
+	repo     *repo.Cloudfront
 	app      *Application
-	arns     []string
+	model    []model.CloudfrontDistribution
 }
 
-func NewCFDistributions(cfClient *cf.Client, app *Application) *CFDistributions {
+func NewCFDistributions(cfClient *cf.Client, repo *repo.Cloudfront, app *Application) *CFDistributions {
 	c := &CFDistributions{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -27,6 +28,7 @@ func NewCFDistributions(cfClient *cf.Client, app *Application) *CFDistributions 
 			"ALTERNATE DOMAINS",
 		}, 1, 0),
 		cfClient: cfClient,
+		repo:     repo,
 		app:      app,
 	}
 	return c
@@ -81,7 +83,10 @@ func (c CFDistributions) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewCFTags(c.cfClient, c.arns[row-1], c.app)
+	if c.model[row-1].ARN == nil {
+		return
+	}
+	tagsView := NewCFTags(c.cfClient, *c.model[row-1].ARN, c.app)
 	c.app.AddAndSwitch(tagsView)
 }
 
@@ -116,23 +121,14 @@ func (c CFDistributions) GetKeyActions() []KeyAction {
 }
 
 func (c *CFDistributions) Render() {
-	pg := cf.NewListDistributionsPaginator(
-		c.cfClient,
-		&cf.ListDistributionsInput{},
-	)
-	var distributions []cfTypes.DistributionSummary
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		distributions = append(distributions, out.DistributionList.Items...)
+	model, err := c.repo.ListDistributions()
+	if err != nil {
+		panic(err)
 	}
+	c.model = model
 
 	var data [][]string
-	c.arns = make([]string, len(distributions))
-	for i, v := range distributions {
-		c.arns[i] = *v.ARN
+	for _, v := range model {
 		var id, comment, distributionType, status, domainName, alternateDomainNames string
 		if v.Id != nil {
 			id = *v.Id
