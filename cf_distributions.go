@@ -74,7 +74,7 @@ func (c CFDistributions) invalidationsHandler() {
 	if err != nil {
 		return
 	}
-	invalidationsView := NewCFDistributionInvalidations(c.cfClient, id, c.app)
+	invalidationsView := NewCFDistributionInvalidations(c.repo, id, c.app)
 	c.app.AddAndSwitch(invalidationsView)
 }
 

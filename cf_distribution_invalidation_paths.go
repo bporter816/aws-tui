@@ -1,26 +1,24 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type CFDistributionInvalidationPaths struct {
 	*ui.Table
-	cfClient       *cf.Client
+	repo           *repo.Cloudfront
 	distributionId string
 	invalidationId string
 	app            *Application
 }
 
-func NewCFDistributionInvalidationPaths(cfClient *cf.Client, distributionId string, invalidationId string, app *Application) *CFDistributionInvalidationPaths {
+func NewCFDistributionInvalidationPaths(repo *repo.Cloudfront, distributionId string, invalidationId string, app *Application) *CFDistributionInvalidationPaths {
 	c := &CFDistributionInvalidationPaths{
 		Table: ui.NewTable([]string{
 			"PATH",
 		}, 1, 0),
-		cfClient:       cfClient,
+		repo:           repo,
 		distributionId: distributionId,
 		invalidationId: invalidationId,
 		app:            app,
@@ -41,24 +39,16 @@ func (c CFDistributionInvalidationPaths) GetKeyActions() []KeyAction {
 }
 
 func (c CFDistributionInvalidationPaths) Render() {
-	out, err := c.cfClient.GetInvalidation(
-		context.TODO(),
-		&cf.GetInvalidationInput{
-			DistributionId: aws.String(c.distributionId),
-			Id:             aws.String(c.invalidationId),
-		},
-	)
+	model, err := c.repo.ListInvalidationPaths(c.distributionId, c.invalidationId)
 	if err != nil {
 		panic(err)
 	}
 
 	var data [][]string
-	if out.Invalidation != nil && out.Invalidation.InvalidationBatch != nil && out.Invalidation.InvalidationBatch.Paths != nil {
-		for _, v := range out.Invalidation.InvalidationBatch.Paths.Items {
-			data = append(data, []string{
-				v,
-			})
-		}
+	for _, v := range model {
+		data = append(data, []string{
+			string(v),
+		})
 	}
 	c.SetData(data)
 }

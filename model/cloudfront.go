@@ -9,5 +9,7 @@ type (
 	CloudfrontDistributionOrigin              cfTypes.Origin
 	CloudfrontDistributionCacheBehavior       cfTypes.CacheBehavior
 	CloudfrontDistributionCustomErrorResponse cfTypes.CustomErrorResponse
+	CloudfrontInvalidation                    cfTypes.InvalidationSummary
+	CloudfrontInvalidationPath                string
 	CloudfrontFunction                        cfTypes.FunctionSummary
 )

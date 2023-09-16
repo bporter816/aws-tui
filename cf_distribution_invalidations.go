@@ -1,10 +1,7 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
-	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -12,19 +9,19 @@ import (
 
 type CFDistributionInvalidations struct {
 	*ui.Table
-	cfClient       *cf.Client
+	repo           *repo.Cloudfront
 	distributionId string
 	app            *Application
 }
 
-func NewCFDistributionInvalidations(cfClient *cf.Client, distributionId string, app *Application) *CFDistributionInvalidations {
+func NewCFDistributionInvalidations(repo *repo.Cloudfront, distributionId string, app *Application) *CFDistributionInvalidations {
 	c := &CFDistributionInvalidations{
 		Table: ui.NewTable([]string{
 			"ID",
 			"STATUS",
 			"CREATED",
 		}, 1, 0),
-		cfClient:       cfClient,
+		repo:           repo,
 		distributionId: distributionId,
 		app:            app,
 	}
@@ -44,7 +41,7 @@ func (c CFDistributionInvalidations) pathsHandler() {
 	if err != nil {
 		return
 	}
-	pathsView := NewCFDistributionInvalidationPaths(c.cfClient, c.distributionId, id, c.app)
+	pathsView := NewCFDistributionInvalidationPaths(c.repo, c.distributionId, id, c.app)
 	c.app.AddAndSwitch(pathsView)
 }
 
@@ -59,25 +56,13 @@ func (c CFDistributionInvalidations) GetKeyActions() []KeyAction {
 }
 
 func (c CFDistributionInvalidations) Render() {
-	pg := cf.NewListInvalidationsPaginator(
-		c.cfClient,
-		&cf.ListInvalidationsInput{
-			DistributionId: aws.String(c.distributionId),
-		},
-	)
-	var invalidations []cfTypes.InvalidationSummary
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		if out.InvalidationList != nil {
-			invalidations = append(invalidations, out.InvalidationList.Items...)
-		}
+	model, err := c.repo.ListInvalidations(c.distributionId)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range invalidations {
+	for _, v := range model {
 		id, status, created := "-", "-", "-"
 		if v.Id != nil {
 			id = *v.Id

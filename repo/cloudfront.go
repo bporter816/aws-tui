@@ -98,6 +98,44 @@ func (c Cloudfront) GetDistributionCustomErrorResponses(distributionId string) (
 	return customErrorResponses, nil
 }
 
+func (c Cloudfront) ListInvalidations(distributionId string) ([]model.CloudfrontInvalidation, error) {
+	pg := cf.NewListInvalidationsPaginator(
+		c.cfClient,
+		&cf.ListInvalidationsInput{
+			DistributionId: aws.String(distributionId),
+		},
+	)
+	var invalidations []model.CloudfrontInvalidation
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil || out.InvalidationList == nil {
+			return []model.CloudfrontInvalidation{}, err
+		}
+		for _, v := range out.InvalidationList.Items {
+			invalidations = append(invalidations, model.CloudfrontInvalidation(v))
+		}
+	}
+	return invalidations, nil
+}
+
+func (c Cloudfront) ListInvalidationPaths(distributionId string, invalidationId string) ([]model.CloudfrontInvalidationPath, error) {
+	out, err := c.cfClient.GetInvalidation(
+		context.TODO(),
+		&cf.GetInvalidationInput{
+			DistributionId: aws.String(distributionId),
+			Id:             aws.String(invalidationId),
+		},
+	)
+	if err != nil || out.Invalidation == nil || out.Invalidation.InvalidationBatch == nil || out.Invalidation.InvalidationBatch.Paths == nil {
+		return []model.CloudfrontInvalidationPath{}, err
+	}
+	var paths []model.CloudfrontInvalidationPath
+	for _, v := range out.Invalidation.InvalidationBatch.Paths.Items {
+		paths = append(paths, model.CloudfrontInvalidationPath(v))
+	}
+	return paths, nil
+}
+
 func (c Cloudfront) ListFunctions() ([]model.CloudfrontFunction, error) {
 	// ListFunctions doesn't have a paginator
 	var functions []model.CloudfrontFunction
