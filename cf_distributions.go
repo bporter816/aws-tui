@@ -86,7 +86,7 @@ func (c CFDistributions) tagsHandler() {
 	if c.model[row-1].ARN == nil {
 		return
 	}
-	tagsView := NewCFTags(c.cfClient, *c.model[row-1].ARN, c.app)
+	tagsView := NewCFTags(c.repo, *c.model[row-1].ARN, c.app)
 	c.app.AddAndSwitch(tagsView)
 }
 

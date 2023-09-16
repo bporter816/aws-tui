@@ -1,30 +1,28 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
-	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 )
 
 type CFTags struct {
 	*ui.Table
-	cfClient *cf.Client
-	id       string
-	app      *Application
+	repo *repo.Cloudfront
+	id   string
+	app  *Application
 }
 
-func NewCFTags(cfClient *cf.Client, id string, app *Application) *CFTags {
+func NewCFTags(repo *repo.Cloudfront, id string, app *Application) *CFTags {
 	c := &CFTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		cfClient: cfClient,
-		id:       id,
-		app:      app,
+		repo: repo,
+		id:   id,
+		app:  app,
 	}
 	return c
 }
@@ -47,24 +45,17 @@ func (c CFTags) GetKeyActions() []KeyAction {
 }
 
 func (c CFTags) Render() {
-	out, err := c.cfClient.ListTagsForResource(
-		context.TODO(),
-		&cf.ListTagsForResourceInput{
-			Resource: aws.String(c.id),
-		},
-	)
+	model, err := c.repo.ListTags(c.id)
 	if err != nil {
 		panic(err)
 	}
 
 	var data [][]string
-	if out.Tags != nil {
-		for _, v := range out.Tags.Items {
-			data = append(data, []string{
-				*v.Key,
-				*v.Value,
-			})
-		}
+	for _, v := range model {
+		data = append(data, []string{
+			v.Key,
+			v.Value,
+		})
 	}
 	c.SetData(data)
 }
