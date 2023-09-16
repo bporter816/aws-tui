@@ -73,6 +73,7 @@ func NewApplication() *Application {
 	}
 
 	repos := map[string]interface{}{
+		"Cloudfront":      repo.NewCloudfront(cfClient),
 		"SQS":             repo.NewSQS(sqsClient),
 		"Secrets Manager": repo.NewSecretsManager(smClient),
 	}

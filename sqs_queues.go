@@ -41,6 +41,7 @@ func (s SQSQueues) Render() {
 	if err != nil {
 		panic(err)
 	}
+
 	var data [][]string
 	for _, v := range model {
 		data = append(data, []string{

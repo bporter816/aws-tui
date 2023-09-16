@@ -1,20 +1,18 @@
 package main
 
 import (
-	"context"
-	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
-	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 )
 
 type CFFunctions struct {
 	*ui.Table
-	cfClient *cf.Client
-	app      *Application
+	repo *repo.Cloudfront
+	app  *Application
 }
 
-func NewCFFunctions(cfClient *cf.Client, app *Application) *CFFunctions {
+func NewCFFunctions(repo *repo.Cloudfront, app *Application) *CFFunctions {
 	c := &CFFunctions{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -24,8 +22,8 @@ func NewCFFunctions(cfClient *cf.Client, app *Application) *CFFunctions {
 			"CREATED",
 			"MODIFIED",
 		}, 1, 0),
-		cfClient: cfClient,
-		app:      app,
+		repo: repo,
+		app:  app,
 	}
 	return c
 }
@@ -43,28 +41,13 @@ func (c CFFunctions) GetKeyActions() []KeyAction {
 }
 
 func (c CFFunctions) Render() {
-	// ListFunctions doesn't have a paginator
-	var functions []cfTypes.FunctionSummary
-	var marker *string
-	for {
-		out, err := c.cfClient.ListFunctions(
-			context.TODO(),
-			&cf.ListFunctionsInput{
-				Marker: marker,
-			},
-		)
-		if err != nil {
-			panic(err)
-		}
-		functions = append(functions, out.FunctionList.Items...)
-		marker = out.FunctionList.NextMarker
-		if marker == nil {
-			break
-		}
+	model, err := c.repo.ListFunctions()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range functions {
+	for _, v := range model {
 		var name, comment, status, stage, created, modified string
 		if v.Name != nil {
 			name = *v.Name

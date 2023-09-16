@@ -140,7 +140,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "Cloudfront.Distributions":
 				item = NewCFDistributions(s.clients["Cloudfront"].(*cf.Client), s.app)
 			case "Cloudfront.Functions":
-				item = NewCFFunctions(s.clients["Cloudfront"].(*cf.Client), s.app)
+				item = NewCFFunctions(s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
 			case "EC2.Instances":
