@@ -161,7 +161,7 @@ func (c Cloudfront) ListFunctions() ([]model.CloudfrontFunction, error) {
 	return functions, nil
 }
 
-func (c Cloudfront) ListTags(resourceId string) ([]model.Tag, error) {
+func (c Cloudfront) ListTags(resourceId string) (model.Tags, error) {
 	out, err := c.cfClient.ListTagsForResource(
 		context.TODO(),
 		&cf.ListTagsForResourceInput{
@@ -169,9 +169,9 @@ func (c Cloudfront) ListTags(resourceId string) ([]model.Tag, error) {
 		},
 	)
 	if err != nil || out.Tags == nil {
-		return []model.Tag{}, err
+		return model.Tags{}, err
 	}
-	var tags []model.Tag
+	var tags model.Tags
 	for _, v := range out.Tags.Items {
 		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
 	}

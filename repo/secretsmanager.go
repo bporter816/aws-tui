@@ -54,7 +54,7 @@ func (s SecretsManager) GetResourcePolicy(secretName string) (string, error) {
 	return policy, nil
 }
 
-func (s SecretsManager) ListTags(secretName string) ([]model.Tag, error) {
+func (s SecretsManager) ListTags(secretName string) (model.Tags, error) {
 	out, err := s.smClient.DescribeSecret(
 		context.TODO(),
 		&sm.DescribeSecretInput{
@@ -62,9 +62,9 @@ func (s SecretsManager) ListTags(secretName string) ([]model.Tag, error) {
 		},
 	)
 	if err != nil {
-		return []model.Tag{}, err
+		return model.Tags{}, err
 	}
-	var tags []model.Tag
+	var tags model.Tags
 	for _, v := range out.Tags {
 		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
 	}

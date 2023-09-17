@@ -27,7 +27,7 @@ func (r Route53) ListTags(resourceName string, resourceType r53Types.TagResource
 		},
 	)
 	if err != nil || out.ResourceTagSet == nil {
-		return []model.Tag{}, err
+		return model.Tags{}, err
 	}
 	var tags model.Tags
 	for _, v := range out.ResourceTagSet.Tags {

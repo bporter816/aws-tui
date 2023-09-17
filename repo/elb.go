@@ -105,7 +105,7 @@ func (e ELB) ListTargetGroups() ([]model.ELBTargetGroup, error) {
 	return targetGroups, nil
 }
 
-func (e ELB) ListTags(resourceArn string) ([]model.Tag, error) {
+func (e ELB) ListTags(resourceArn string) (model.Tags, error) {
 	out, err := e.elbClient.DescribeTags(
 		context.TODO(),
 		&elb.DescribeTagsInput{
@@ -113,12 +113,12 @@ func (e ELB) ListTags(resourceArn string) ([]model.Tag, error) {
 		},
 	)
 	if err != nil {
-		return []model.Tag{}, err
+		return model.Tags{}, err
 	}
 	if len(out.TagDescriptions) != 1 {
-		return []model.Tag{}, errors.New("should get exactly 1 tag description")
+		return model.Tags{}, errors.New("should get exactly 1 tag description")
 	}
-	var tags []model.Tag
+	var tags model.Tags
 	for _, v := range out.TagDescriptions[0].Tags {
 		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
 	}

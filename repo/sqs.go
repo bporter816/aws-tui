@@ -78,7 +78,7 @@ func (s SQS) GetPolicy(queueUrl string) (string, error) {
 	return "", nil
 }
 
-func (s SQS) ListTags(queueUrl string) ([]model.Tag, error) {
+func (s SQS) ListTags(queueUrl string) (model.Tags, error) {
 	out, err := s.sqsClient.ListQueueTags(
 		context.TODO(),
 		&sqs.ListQueueTagsInput{
@@ -86,9 +86,9 @@ func (s SQS) ListTags(queueUrl string) ([]model.Tag, error) {
 		},
 	)
 	if err != nil {
-		return []model.Tag{}, err
+		return model.Tags{}, err
 	}
-	var tags []model.Tag
+	var tags model.Tags
 	for k, v := range out.Tags {
 		tags = append(tags, model.Tag{Key: k, Value: v})
 	}

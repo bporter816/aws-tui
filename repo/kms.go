@@ -118,18 +118,18 @@ func (k KMS) GetKeyPolicy(keyId string) (string, error) {
 	return *out.Policy, nil
 }
 
-func (k KMS) ListTags(keyId string) ([]model.Tag, error) {
+func (k KMS) ListTags(keyId string) (model.Tags, error) {
 	pg := kms.NewListResourceTagsPaginator(
 		k.kmsClient,
 		&kms.ListResourceTagsInput{
 			KeyId: aws.String(keyId),
 		},
 	)
-	var tags []model.Tag
+	var tags model.Tags
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.Tag{}, err
+			return model.Tags{}, err
 		}
 		for _, v := range out.Tags {
 			tags = append(tags, model.Tag{Key: *v.TagKey, Value: *v.TagValue})
