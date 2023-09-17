@@ -1,14 +1,13 @@
 package main
 
 import (
-	"context"
-	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type ELBTags struct {
 	*ui.Table
-	elbClient    *elb.Client
+	repo         *repo.ELB
 	resourceType ELBResourceType
 	resourceArn  string
 	resourceName string
@@ -23,13 +22,13 @@ const (
 	ELBResourceTypeListener     ELBResourceType = "Listeners"
 )
 
-func NewELBTags(elbClient *elb.Client, resourceType ELBResourceType, resourceArn string, resourceName string, app *Application) *ELBTags {
+func NewELBTags(repo *repo.ELB, resourceType ELBResourceType, resourceArn string, resourceName string, app *Application) *ELBTags {
 	e := &ELBTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		elbClient:    elbClient,
+		repo:         repo,
 		resourceType: resourceType,
 		resourceArn:  resourceArn,
 		resourceName: resourceName,
@@ -51,24 +50,16 @@ func (e ELBTags) GetKeyActions() []KeyAction {
 }
 
 func (e ELBTags) Render() {
-	out, err := e.elbClient.DescribeTags(
-		context.TODO(),
-		&elb.DescribeTagsInput{
-			ResourceArns: []string{e.resourceArn},
-		},
-	)
+	model, err := e.repo.ListTags(e.resourceArn)
 	if err != nil {
 		panic(err)
 	}
 
 	var data [][]string
-	if len(out.TagDescriptions) != 1 {
-		panic("should get exactly 1 tag description")
-	}
-	for _, v := range out.TagDescriptions[0].Tags {
+	for _, v := range model {
 		data = append(data, []string{
-			*v.Key,
-			*v.Value,
+			v.Key,
+			v.Value,
 		})
 	}
 	e.SetData(data)

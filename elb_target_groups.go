@@ -1,9 +1,9 @@
 package main
 
 import (
-	"context"
-	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+	"github.com/bporter816/aws-tui/model"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
@@ -11,12 +11,12 @@ import (
 
 type ELBTargetGroups struct {
 	*ui.Table
-	elbClient *elb.Client
-	app       *Application
-	arns      []string
+	repo  *repo.ELB
+	app   *Application
+	model []model.ELBTargetGroup
 }
 
-func NewELBTargetGroups(elbClient *elb.Client, app *Application) *ELBTargetGroups {
+func NewELBTargetGroups(repo *repo.ELB, app *Application) *ELBTargetGroups {
 	e := &ELBTargetGroups{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -25,8 +25,8 @@ func NewELBTargetGroups(elbClient *elb.Client, app *Application) *ELBTargetGroup
 			"TARGET TYPE",
 			"VPC",
 		}, 1, 0),
-		elbClient: elbClient,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	return e
 }
@@ -48,7 +48,10 @@ func (e ELBTargetGroups) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewELBTags(e.elbClient, ELBResourceTypeTargetGroup, e.arns[row-1], name, e.app)
+	if e.model[row-1].TargetGroupArn == nil {
+		return
+	}
+	tagsView := NewELBTags(e.repo, ELBResourceTypeTargetGroup, *e.model[row-1].TargetGroupArn, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
@@ -63,23 +66,14 @@ func (e ELBTargetGroups) GetKeyActions() []KeyAction {
 }
 
 func (e *ELBTargetGroups) Render() {
-	pg := elb.NewDescribeTargetGroupsPaginator(
-		e.elbClient,
-		&elb.DescribeTargetGroupsInput{},
-	)
-	var targetGroups []elbTypes.TargetGroup
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		targetGroups = append(targetGroups, out.TargetGroups...)
+	model, err := e.repo.ListTargetGroups()
+	if err != nil {
+		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
-	e.arns = make([]string, len(targetGroups))
-	for i, v := range targetGroups {
-		e.arns[i] = *v.TargetGroupArn
+	for _, v := range model {
 		// TODO add attached load balancer
 		var name, protocol, targetType, vpcId string
 		port := "-"

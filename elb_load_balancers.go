@@ -1,9 +1,8 @@
 package main
 
 import (
-	"context"
-	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
-	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+	"github.com/bporter816/aws-tui/model"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -11,12 +10,12 @@ import (
 
 type ELBLoadBalancers struct {
 	*ui.Table
-	elbClient *elb.Client
-	app       *Application
-	arns      []string
+	repo  *repo.ELB
+	app   *Application
+	model []model.ELBLoadBalancer
 }
 
-func NewELBLoadBalancers(elbClient *elb.Client, app *Application) *ELBLoadBalancers {
+func NewELBLoadBalancers(repo *repo.ELB, app *Application) *ELBLoadBalancers {
 	e := &ELBLoadBalancers{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -24,8 +23,8 @@ func NewELBLoadBalancers(elbClient *elb.Client, app *Application) *ELBLoadBalanc
 			"TYPE",
 			"VPC",
 		}, 1, 0),
-		elbClient: elbClient,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	return e
 }
@@ -47,7 +46,10 @@ func (e ELBLoadBalancers) listenersHandler() {
 	if err != nil {
 		return
 	}
-	listenersView := NewELBListeners(e.elbClient, e.arns[row-1], name, e.app)
+	if e.model[row-1].LoadBalancerArn == nil {
+		return
+	}
+	listenersView := NewELBListeners(e.repo, *e.model[row-1].LoadBalancerArn, name, e.app)
 	e.app.AddAndSwitch(listenersView)
 }
 
@@ -60,7 +62,10 @@ func (e ELBLoadBalancers) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewELBTags(e.elbClient, ELBResourceTypeLoadBalancer, e.arns[row-1], name, e.app)
+	if e.model[row-1].LoadBalancerArn == nil {
+		return
+	}
+	tagsView := NewELBTags(e.repo, ELBResourceTypeLoadBalancer, *e.model[row-1].LoadBalancerArn, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
@@ -81,23 +86,14 @@ func (e ELBLoadBalancers) GetKeyActions() []KeyAction {
 }
 
 func (e *ELBLoadBalancers) Render() {
-	pg := elb.NewDescribeLoadBalancersPaginator(
-		e.elbClient,
-		&elb.DescribeLoadBalancersInput{},
-	)
-	var loadBalancers []elbTypes.LoadBalancer
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		loadBalancers = append(loadBalancers, out.LoadBalancers...)
+	model, err := e.repo.ListLoadBalancers()
+	if err != nil {
+		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
-	e.arns = make([]string, len(loadBalancers))
-	for i, v := range loadBalancers {
-		e.arns[i] = *v.LoadBalancerArn
+	for _, v := range model {
 		var name, dnsName, lbType, vpcId string
 		if v.LoadBalancerName != nil {
 			name = *v.LoadBalancerName

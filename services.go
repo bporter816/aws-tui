@@ -5,7 +5,6 @@ import (
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
-	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
@@ -161,9 +160,9 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "Elasticache.Snapshots":
 				item = NewElasticacheSnapshots(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "ELB.Load Balancers":
-				item = NewELBLoadBalancers(s.clients["ELB"].(*elb.Client), s.app)
+				item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
 			case "ELB.Target Groups":
-				item = NewELBTargetGroups(s.clients["ELB"].(*elb.Client), s.app)
+				item = NewELBTargetGroups(s.repos["ELB"].(*repo.ELB), s.app)
 			case "IAM.Users":
 				item = NewIAMUsers(s.clients["IAM"].(*iam.Client), "", s.app)
 			case "IAM.Roles":

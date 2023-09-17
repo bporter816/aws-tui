@@ -62,7 +62,6 @@ func NewApplication() *Application {
 		"DynamoDB":       ddbClient,
 		"Elasticache":    ecClient,
 		"EC2":            ec2Client,
-		"ELB":            elbClient,
 		"IAM":            iamClient,
 		"KMS":            kmsClient,
 		"Route 53":       r53Client,
@@ -72,6 +71,7 @@ func NewApplication() *Application {
 	}
 
 	repos := map[string]interface{}{
+		"ELB":             repo.NewELB(elbClient),
 		"Cloudfront":      repo.NewCloudfront(cfClient),
 		"SQS":             repo.NewSQS(sqsClient),
 		"Secrets Manager": repo.NewSecretsManager(smClient),

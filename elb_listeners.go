@@ -1,10 +1,8 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
-	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
+	"github.com/bporter816/aws-tui/model"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
@@ -14,14 +12,14 @@ import (
 // TODO better manage name/arn
 type ELBListeners struct {
 	*ui.Table
-	elbClient *elb.Client
-	lbArn     string
-	lbName    string
-	app       *Application
-	arns      []string
+	repo   *repo.ELB
+	lbArn  string
+	lbName string
+	app    *Application
+	model  []model.ELBListener
 }
 
-func NewELBListeners(elbClient *elb.Client, lbArn string, lbName string, app *Application) *ELBListeners {
+func NewELBListeners(repo *repo.ELB, lbArn string, lbName string, app *Application) *ELBListeners {
 	e := &ELBListeners{
 		Table: ui.NewTable([]string{
 			"PROTOCOL",
@@ -30,10 +28,10 @@ func NewELBListeners(elbClient *elb.Client, lbArn string, lbName string, app *Ap
 			"SSL POLICY",
 			"DEFAULT CERTIFICATE",
 		}, 1, 0),
-		elbClient: elbClient,
-		lbArn:     lbArn,
-		lbName:    lbName,
-		app:       app,
+		repo:   repo,
+		lbArn:  lbArn,
+		lbName: lbName,
+		app:    app,
 	}
 	return e
 }
@@ -59,7 +57,10 @@ func (e ELBListeners) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewELBTags(e.elbClient, ELBResourceTypeListener, e.arns[row-1], protocol+port, e.app)
+	if e.model[row-1].ListenerArn == nil {
+		return
+	}
+	tagsView := NewELBTags(e.repo, ELBResourceTypeListener, *e.model[row-1].ListenerArn, protocol+port, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
@@ -74,53 +75,20 @@ func (e ELBListeners) GetKeyActions() []KeyAction {
 }
 
 func (e *ELBListeners) Render() {
-	pg := elb.NewDescribeListenersPaginator(
-		e.elbClient,
-		&elb.DescribeListenersInput{
-			LoadBalancerArn: aws.String(e.lbArn),
-		},
-	)
-	var listeners []elbTypes.Listener
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		listeners = append(listeners, out.Listeners...)
+	model, err := e.repo.ListListeners(e.lbArn)
+	if err != nil {
+		panic(err)
 	}
-
-	listenerToRules := make(map[string][]elbTypes.Rule)
-	for _, l := range listeners {
-		var marker *string
-		for {
-			out, err := e.elbClient.DescribeRules(
-				context.TODO(),
-				&elb.DescribeRulesInput{
-					ListenerArn: l.ListenerArn,
-					Marker:      marker,
-				},
-			)
-			if err != nil {
-				panic(err)
-			}
-			listenerToRules[*l.ListenerArn] = append(listenerToRules[*l.ListenerArn], out.Rules...)
-			marker = out.NextMarker
-			if marker == nil {
-				break
-			}
-		}
-	}
+	e.model = model
 
 	var data [][]string
-	e.arns = make([]string, len(listeners))
-	for i, v := range listeners {
-		e.arns[i] = *v.ListenerArn
+	for _, v := range model {
 		var protocol, port, rules, sslPolicy, defaultCertificate string
 		protocol = string(v.Protocol)
 		if v.Port != nil {
 			port = strconv.Itoa(int(*v.Port))
 		}
-		rules = strconv.Itoa(len(listenerToRules[*v.ListenerArn]))
+		rules = strconv.Itoa(v.Rules)
 		if v.SslPolicy != nil {
 			sslPolicy = *v.SslPolicy
 		}
