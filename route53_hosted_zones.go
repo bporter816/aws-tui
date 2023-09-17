@@ -48,7 +48,7 @@ func (r Route53HostedZones) selectHandler(row, col int) {
 	if err != nil {
 		return
 	}
-	recordsView := NewRoute53Records(r.r53Client, hostedZoneId, r.app)
+	recordsView := NewRoute53Records(r.repo, hostedZoneId, r.app)
 	r.app.AddAndSwitch(recordsView)
 }
 

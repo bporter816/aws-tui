@@ -1,11 +1,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"strconv"
 	"strings"
@@ -13,12 +11,12 @@ import (
 
 type Route53Records struct {
 	*ui.Table
-	r53Client    *r53.Client
+	repo         *repo.Route53
 	hostedZoneId string
 	app          *Application
 }
 
-func NewRoute53Records(client *r53.Client, zoneId string, app *Application) *Route53Records {
+func NewRoute53Records(repo *repo.Route53, zoneId string, app *Application) *Route53Records {
 	r := &Route53Records{
 		Table: ui.NewTable([]string{
 			"RECORD NAME",
@@ -32,7 +30,7 @@ func NewRoute53Records(client *r53.Client, zoneId string, app *Application) *Rou
 			"ALIAS",
 			"VALUE",
 		}, 1, 1),
-		r53Client:    client,
+		repo:         repo,
 		hostedZoneId: zoneId,
 		app:          app,
 	}
@@ -52,36 +50,13 @@ func (r Route53Records) GetKeyActions() []KeyAction {
 }
 
 func (r Route53Records) Render() {
-	// ListResourceRecordSets doesn't have a paginator :'(
-	good := true
-	var resourceRecordSets []r53Types.ResourceRecordSet
-	var nextRecordName *string = nil
-	var nextRecordType r53Types.RRType
-	var nextRecordIdentifier *string = nil
-	for good {
-		out, err := r.r53Client.ListResourceRecordSets(
-			context.TODO(),
-			&r53.ListResourceRecordSetsInput{
-				HostedZoneId:          aws.String(r.hostedZoneId),
-				StartRecordName:       nextRecordName,
-				StartRecordType:       nextRecordType,
-				StartRecordIdentifier: nextRecordIdentifier,
-			},
-		)
-		if err != nil {
-			panic(err)
-		}
-		resourceRecordSets = append(resourceRecordSets, out.ResourceRecordSets...)
-		good = out.IsTruncated
-		if out.IsTruncated {
-			nextRecordName = out.NextRecordName
-			nextRecordType = out.NextRecordType
-			nextRecordIdentifier = out.NextRecordIdentifier
-		}
+	model, err := r.repo.ListRecords(r.hostedZoneId)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range resourceRecordSets {
+	for _, v := range model {
 		routingPolicy := "Simple"
 		differentiator := "-"
 		label := "-"
