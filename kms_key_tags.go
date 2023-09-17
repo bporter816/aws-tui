@@ -1,29 +1,26 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/kms"
-	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type KmsKeyTags struct {
 	*ui.Table
-	kmsClient *kms.Client
-	keyId     string
-	app       *Application
+	repo  *repo.KMS
+	keyId string
+	app   *Application
 }
 
-func NewKmsKeyTags(kmsClient *kms.Client, keyId string, app *Application) *KmsKeyTags {
+func NewKmsKeyTags(repo *repo.KMS, keyId string, app *Application) *KmsKeyTags {
 	k := &KmsKeyTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		kmsClient: kmsClient,
-		app:       app,
-		keyId:     keyId,
+		repo:  repo,
+		app:   app,
+		keyId: keyId,
 	}
 	return k
 }
@@ -41,26 +38,16 @@ func (k KmsKeyTags) GetKeyActions() []KeyAction {
 }
 
 func (k KmsKeyTags) Render() {
-	var tags []kmsTypes.Tag
-	pg := kms.NewListResourceTagsPaginator(
-		k.kmsClient,
-		&kms.ListResourceTagsInput{
-			KeyId: aws.String(k.keyId),
-		},
-	)
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		tags = append(tags, out.Tags...)
+	model, err := k.repo.ListTags(k.keyId)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range tags {
+	for _, v := range model {
 		data = append(data, []string{
-			*v.TagKey,
-			*v.TagValue,
+			v.Key,
+			v.Value,
 		})
 	}
 	k.SetData(data)

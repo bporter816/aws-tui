@@ -83,3 +83,23 @@ func (k KMS) ListKeys() ([]model.KMSKey, error) {
 	}
 	return keys, nil
 }
+
+func (k KMS) ListTags(keyId string) ([]model.Tag, error) {
+	pg := kms.NewListResourceTagsPaginator(
+		k.kmsClient,
+		&kms.ListResourceTagsInput{
+			KeyId: aws.String(keyId),
+		},
+	)
+	var tags []model.Tag
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.Tag{}, err
+		}
+		for _, v := range out.Tags {
+			tags = append(tags, model.Tag{Key: *v.TagKey, Value: *v.TagValue})
+		}
+	}
+	return tags, nil
+}

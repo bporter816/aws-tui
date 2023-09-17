@@ -66,7 +66,7 @@ func (k KmsKeys) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewKmsKeyTags(k.kmsClient, keyId, k.app)
+	tagsView := NewKmsKeyTags(k.repo, keyId, k.app)
 	k.app.AddAndSwitch(tagsView)
 }
 
