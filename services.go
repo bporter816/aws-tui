@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
-	"github.com/aws/aws-sdk-go-v2/service/kms"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/bporter816/aws-tui/repo"
@@ -171,9 +170,9 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "IAM.Managed Policies":
 				item = NewIAMPolicies(s.clients["IAM"].(*iam.Client), IAMIdentityTypeAll, "", s.app)
 			case "KMS.Keys":
-				item = NewKmsKeys(s.repos["KMS"].(*repo.KMS), s.clients["KMS"].(*kms.Client), s.app)
+				item = NewKmsKeys(s.repos["KMS"].(*repo.KMS), s.app)
 			case "KMS.Custom Key Stores":
-				item = NewKmsCustomKeyStores(s.clients["KMS"].(*kms.Client), s.app)
+				item = NewKmsCustomKeyStores(s.repos["KMS"].(*repo.KMS), s.app)
 			case "Route 53.Hosted Zones":
 				item = NewRoute53HostedZones(s.clients["Route 53"].(*r53.Client), s.app)
 			case "Route 53.Health Checks":

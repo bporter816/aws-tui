@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
@@ -11,12 +10,11 @@ import (
 
 type KmsKeys struct {
 	*ui.Table
-	repo      *repo.KMS
-	kmsClient *kms.Client
-	app       *Application
+	repo *repo.KMS
+	app  *Application
 }
 
-func NewKmsKeys(repo *repo.KMS, kmsClient *kms.Client, app *Application) *KmsKeys {
+func NewKmsKeys(repo *repo.KMS, app *Application) *KmsKeys {
 	k := &KmsKeys{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -28,9 +26,8 @@ func NewKmsKeys(repo *repo.KMS, kmsClient *kms.Client, app *Application) *KmsKey
 			"USAGE",
 			"REGIONALITY",
 		}, 1, 0),
-		repo:      repo,
-		kmsClient: kmsClient,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	return k
 }

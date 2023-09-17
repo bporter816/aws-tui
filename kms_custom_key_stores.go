@@ -1,21 +1,20 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/service/kms"
 	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 )
 
 type KmsCustomKeyStores struct {
 	*ui.Table
-	kmsClient *kms.Client
-	app       *Application
+	repo *repo.KMS
+	app  *Application
 }
 
-func NewKmsCustomKeyStores(kmsClient *kms.Client, app *Application) *KmsCustomKeyStores {
+func NewKmsCustomKeyStores(repo *repo.KMS, app *Application) *KmsCustomKeyStores {
 	k := &KmsCustomKeyStores{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -23,8 +22,8 @@ func NewKmsCustomKeyStores(kmsClient *kms.Client, app *Application) *KmsCustomKe
 			"CONNECTION STATUS",
 			"CREATED",
 		}, 1, 0),
-		kmsClient: kmsClient,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	return k
 }
@@ -42,21 +41,13 @@ func (k KmsCustomKeyStores) GetKeyActions() []KeyAction {
 }
 
 func (k KmsCustomKeyStores) Render() {
-	var keyStores []kmsTypes.CustomKeyStoresListEntry
-	pg := kms.NewDescribeCustomKeyStoresPaginator(
-		k.kmsClient,
-		&kms.DescribeCustomKeyStoresInput{},
-	)
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		keyStores = append(keyStores, out.CustomKeyStores...)
+	model, err := k.repo.ListCustomKeyStores()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range keyStores {
+	for _, v := range model {
 		var name, keyStoreType, connection, created string
 		if v.CustomKeyStoreName != nil {
 			name = *v.CustomKeyStoreName

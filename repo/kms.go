@@ -137,3 +137,21 @@ func (k KMS) ListTags(keyId string) ([]model.Tag, error) {
 	}
 	return tags, nil
 }
+
+func (k KMS) ListCustomKeyStores() ([]model.KMSCustomKeyStore, error) {
+	pg := kms.NewDescribeCustomKeyStoresPaginator(
+		k.kmsClient,
+		&kms.DescribeCustomKeyStoresInput{},
+	)
+	var keyStores []model.KMSCustomKeyStore
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.KMSCustomKeyStore{}, err
+		}
+		for _, v := range out.CustomKeyStores {
+			keyStores = append(keyStores, model.KMSCustomKeyStore(v))
+		}
+	}
+	return keyStores, nil
+}

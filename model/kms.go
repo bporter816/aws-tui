@@ -10,4 +10,5 @@ type (
 		Aliases []string
 	}
 	KMSGrant kmsTypes.GrantListEntry
+	KMSCustomKeyStore kmsTypes.CustomKeyStoresListEntry
 )
