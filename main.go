@@ -71,6 +71,7 @@ func NewApplication() *Application {
 		"ELB":             repo.NewELB(elbClient),
 		"Cloudfront":      repo.NewCloudfront(cfClient),
 		"KMS":             repo.NewKMS(kmsClient),
+		"Route 53":        repo.NewRoute53(r53Client),
 		"SQS":             repo.NewSQS(sqsClient),
 		"STS":             repo.NewSTS(stsClient),
 		"Secrets Manager": repo.NewSecretsManager(smClient),

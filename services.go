@@ -174,9 +174,9 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "KMS.Custom Key Stores":
 				item = NewKmsCustomKeyStores(s.repos["KMS"].(*repo.KMS), s.app)
 			case "Route 53.Hosted Zones":
-				item = NewRoute53HostedZones(s.clients["Route 53"].(*r53.Client), s.app)
+				item = NewRoute53HostedZones(s.repos["Route 53"].(*repo.Route53), s.clients["Route 53"].(*r53.Client), s.app)
 			case "Route 53.Health Checks":
-				item = NewRoute53HealthChecks(s.clients["Route 53"].(*r53.Client), s.app)
+				item = NewRoute53HealthChecks(s.repos["Route 53"].(*repo.Route53), s.clients["Route 53"].(*r53.Client), s.app)
 			case "S3.Buckets":
 				item = NewS3Buckets(s.clients["S3"].(*s3.Client), s.app)
 			case "SQS.Queues":

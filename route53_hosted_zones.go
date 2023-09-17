@@ -4,6 +4,7 @@ import (
 	"context"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
@@ -12,11 +13,12 @@ import (
 
 type Route53HostedZones struct {
 	*ui.Table
+	repo      *repo.Route53
 	r53Client *r53.Client
 	app       *Application
 }
 
-func NewRoute53HostedZones(client *r53.Client, app *Application) *Route53HostedZones {
+func NewRoute53HostedZones(repo *repo.Route53, client *r53.Client, app *Application) *Route53HostedZones {
 	r := &Route53HostedZones{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -25,6 +27,7 @@ func NewRoute53HostedZones(client *r53.Client, app *Application) *Route53HostedZ
 			"VISIBILITY",
 			"DESCRIPTION",
 		}, 1, 0),
+		repo:      repo,
 		r53Client: client,
 		app:       app,
 	}
@@ -54,7 +57,7 @@ func (r Route53HostedZones) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewRoute53Tags(r.r53Client, r53Types.TagResourceTypeHostedzone, hostedZoneId, r.app)
+	tagsView := NewRoute53Tags(r.repo, r53Types.TagResourceTypeHostedzone, hostedZoneId, r.app)
 	r.app.AddAndSwitch(tagsView)
 }
 

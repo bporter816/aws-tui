@@ -2,20 +2,21 @@ package main
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 )
 
 type Route53HealthChecks struct {
 	*ui.Table
+	repo      *repo.Route53
 	r53Client *r53.Client
 	app       *Application
 }
 
-func NewRoute53HealthChecks(r53Client *r53.Client, app *Application) *Route53HealthChecks {
+func NewRoute53HealthChecks(repo *repo.Route53, r53Client *r53.Client, app *Application) *Route53HealthChecks {
 	r := &Route53HealthChecks{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -23,6 +24,7 @@ func NewRoute53HealthChecks(r53Client *r53.Client, app *Application) *Route53Hea
 			"TYPE",
 			"DESCRIPTION",
 		}, 1, 0),
+		repo:      repo,
 		r53Client: r53Client,
 		app:       app,
 	}
@@ -42,7 +44,7 @@ func (r Route53HealthChecks) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewRoute53Tags(r.r53Client, r53Types.TagResourceTypeHealthcheck, healthCheckId, r.app)
+	tagsView := NewRoute53Tags(r.repo, r53Types.TagResourceTypeHealthcheck, healthCheckId, r.app)
 	r.app.AddAndSwitch(tagsView)
 }
 
@@ -72,24 +74,18 @@ func (r Route53HealthChecks) Render() {
 
 	var data [][]string
 	for _, v := range healthchecks {
-		// name comes from the Name tag
-		out, err := r.r53Client.ListTagsForResource(
-			context.TODO(),
-			&r53.ListTagsForResourceInput{
-				ResourceId:   aws.String(*v.Id),
-				ResourceType: r53Types.TagResourceTypeHealthcheck,
-			},
-		)
-		if err != nil {
-			panic(err)
-		}
-
 		var id, name, checkType, description string
 		if v.Id != nil {
 			id = *v.Id
-		}
-		if out.ResourceTagSet != nil {
-			name, _ = getTag(out.ResourceTagSet.Tags, "Name")
+
+			// name comes from the Name tag
+			tags, err := r.repo.ListTags(*v.Id, r53Types.TagResourceTypeHealthcheck)
+			if err != nil {
+				panic(err)
+			}
+			if n, ok := tags.Get("Name"); ok {
+				name = n
+			}
 		}
 		if v.HealthCheckConfig != nil {
 			checkType = string(v.HealthCheckConfig.Type)
