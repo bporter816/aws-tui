@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/rivo/tview"
 	"os/exec"
 	"strings"
@@ -12,14 +12,14 @@ import (
 
 type Header struct {
 	*tview.Flex
-	stsClient   *sts.Client
+	stsRepo     *repo.STS
 	iamClient   *iam.Client
 	app         *Application
 	accountInfo *tview.TextView
 	keybindInfo *tview.Grid
 }
 
-func NewHeader(s *sts.Client, i *iam.Client, app *Application) *Header {
+func NewHeader(stsRepo *repo.STS, i *iam.Client, app *Application) *Header {
 	accountInfo := tview.NewTextView()
 	accountInfo.SetDynamicColors(true)
 	accountInfo.SetWrap(false)
@@ -35,7 +35,7 @@ func NewHeader(s *sts.Client, i *iam.Client, app *Application) *Header {
 
 	h := &Header{
 		Flex:        flex,
-		stsClient:   s,
+		stsRepo:     stsRepo,
 		iamClient:   i,
 		accountInfo: accountInfo,
 		keybindInfo: keybindInfo,
@@ -53,18 +53,18 @@ func (h Header) Render() {
 	}
 
 	var account, arn, userId string
-	identityOutput, err := h.stsClient.GetCallerIdentity(context.TODO(), &sts.GetCallerIdentityInput{})
+	identityModel, err := h.stsRepo.GetCallerIdentity()
 	if err != nil {
 		panic(err)
 	}
-	if identityOutput.Account != nil {
-		account = *identityOutput.Account
+	if identityModel.Account != nil {
+		account = *identityModel.Account
 	}
-	if identityOutput.Arn != nil {
-		arn = *identityOutput.Arn
+	if identityModel.Arn != nil {
+		arn = *identityModel.Arn
 	}
-	if identityOutput.UserId != nil {
-		userId = *identityOutput.UserId
+	if identityModel.UserId != nil {
+		userId = *identityModel.UserId
 	}
 
 	aliasesOutput, err := h.iamClient.ListAccountAliases(context.TODO(), &iam.ListAccountAliasesInput{})

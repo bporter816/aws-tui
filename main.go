@@ -66,13 +66,13 @@ func NewApplication() *Application {
 		"KMS":         kmsClient,
 		"Route 53":    r53Client,
 		"S3":          s3Client,
-		"STS":         stsClient,
 	}
 
 	repos := map[string]interface{}{
 		"ELB":             repo.NewELB(elbClient),
 		"Cloudfront":      repo.NewCloudfront(cfClient),
 		"SQS":             repo.NewSQS(sqsClient),
+		"STS":             repo.NewSTS(stsClient),
 		"Secrets Manager": repo.NewSecretsManager(smClient),
 		"Service Quotas":  repo.NewServiceQuotas(sqClient),
 	}
@@ -81,7 +81,7 @@ func NewApplication() *Application {
 	pages := tview.NewPages()
 	pages.SetBorder(true)
 
-	header := NewHeader(stsClient, iamClient, a)
+	header := NewHeader(repos["STS"].(*repo.STS), iamClient, a)
 	footer := NewFooter(a)
 
 	flex := tview.NewFlex()
