@@ -71,6 +71,7 @@ func NewApplication() *Application {
 	repos := map[string]interface{}{
 		"ELB":             repo.NewELB(elbClient),
 		"Cloudfront":      repo.NewCloudfront(cfClient),
+		"KMS":             repo.NewKMS(kmsClient),
 		"SQS":             repo.NewSQS(sqsClient),
 		"STS":             repo.NewSTS(stsClient),
 		"Secrets Manager": repo.NewSecretsManager(smClient),

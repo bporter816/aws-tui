@@ -1,10 +1,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
-	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
@@ -12,11 +11,12 @@ import (
 
 type KmsKeys struct {
 	*ui.Table
+	repo      *repo.KMS
 	kmsClient *kms.Client
 	app       *Application
 }
 
-func NewKmsKeys(kmsClient *kms.Client, app *Application) *KmsKeys {
+func NewKmsKeys(repo *repo.KMS, kmsClient *kms.Client, app *Application) *KmsKeys {
 	k := &KmsKeys{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -28,6 +28,7 @@ func NewKmsKeys(kmsClient *kms.Client, app *Application) *KmsKeys {
 			"USAGE",
 			"REGIONALITY",
 		}, 1, 0),
+		repo:      repo,
 		kmsClient: kmsClient,
 		app:       app,
 	}
@@ -90,82 +91,43 @@ func (k KmsKeys) GetKeyActions() []KeyAction {
 }
 
 func (k KmsKeys) Render() {
-	aliasMap := make(map[string][]string)
-	aliasesPg := kms.NewListAliasesPaginator(
-		k.kmsClient,
-		&kms.ListAliasesInput{},
-	)
-	for aliasesPg.HasMorePages() {
-		out, err := aliasesPg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		for _, v := range out.Aliases {
-			if v.TargetKeyId != nil {
-				aliasMap[*v.TargetKeyId] = append(aliasMap[*v.TargetKeyId], *v.AliasName)
-			}
-		}
-	}
-
-	var keys []kmsTypes.KeyListEntry
-	keysPg := kms.NewListKeysPaginator(
-		k.kmsClient,
-		&kms.ListKeysInput{},
-	)
-	for keysPg.HasMorePages() {
-		out, err := keysPg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		keys = append(keys, out.Keys...)
+	model, err := k.repo.ListKeys()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range keys {
-		aliases, ok := aliasMap[*v.KeyId]
-		var alias string
-		if ok {
-			alias = aliases[0]
-			if len(aliases) > 1 {
-				alias += fmt.Sprintf(" + %v more", len(aliases)-1)
-			}
+	for _, v := range model {
+		var keyId, description, regionality string
+		if v.KeyId != nil {
+			keyId = *v.KeyId
 		}
-
-		out, err := k.kmsClient.DescribeKey(
-			context.TODO(),
-			&kms.DescribeKeyInput{
-				KeyId: v.KeyId,
-			},
-		)
-		if err != nil {
-			// panic(err)
-			data = append(data, []string{
-				*v.KeyId,
-				"Unauthorized",
-				"-",
-				"-",
-				"-",
-				"-",
-				"-",
-				"-",
-			})
-			continue
+		if v.Description != nil {
+			description = *v.Description
 		}
-		var regionality string
-		if *out.KeyMetadata.MultiRegion && out.KeyMetadata.MultiRegionConfiguration != nil {
-			regionality = string(out.KeyMetadata.MultiRegionConfiguration.MultiRegionKeyType)
+		if v.MultiRegion != nil && *v.MultiRegion && v.MultiRegionConfiguration != nil {
+			regionality = string(v.MultiRegionConfiguration.MultiRegionKeyType)
 		}
-
 		data = append(data, []string{
-			*v.KeyId,
-			alias,
-			*out.KeyMetadata.Description,
-			strconv.FormatBool(out.KeyMetadata.Enabled),
-			string(out.KeyMetadata.KeyState),
-			string(out.KeyMetadata.KeySpec),
-			string(out.KeyMetadata.KeyUsage),
+			keyId,
+			renderAliases(v.Aliases),
+			description,
+			strconv.FormatBool(v.Enabled),
+			string(v.KeyState),
+			string(v.KeySpec),
+			string(v.KeyUsage),
 			regionality,
 		})
 	}
 	k.SetData(data)
+}
+
+func renderAliases(a []string) string {
+	if len(a) == 0 {
+		return "-"
+	}
+	if len(a) == 1 {
+		return a[0]
+	}
+	return fmt.Sprintf("%v + %v more", a[0], len(a)-1)
 }

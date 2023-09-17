@@ -171,7 +171,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "IAM.Managed Policies":
 				item = NewIAMPolicies(s.clients["IAM"].(*iam.Client), IAMIdentityTypeAll, "", s.app)
 			case "KMS.Keys":
-				item = NewKmsKeys(s.clients["KMS"].(*kms.Client), s.app)
+				item = NewKmsKeys(s.repos["KMS"].(*repo.KMS), s.clients["KMS"].(*kms.Client), s.app)
 			case "KMS.Custom Key Stores":
 				item = NewKmsCustomKeyStores(s.clients["KMS"].(*kms.Client), s.app)
 			case "Route 53.Hosted Zones":
