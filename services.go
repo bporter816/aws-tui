@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/rivo/tview"
@@ -186,7 +185,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "Secrets Manager.Secrets":
 				item = NewSMSecrets(s.repos["Secrets Manager"].(*repo.SecretsManager), s.app)
 			case "Service Quotas.Services":
-				item = NewServiceQuotasServices(s.clients["Service Quotas"].(*sq.Client), s.app)
+				item = NewServiceQuotasServices(s.repos["Service Quotas"].(*repo.ServiceQuotas), s.app)
 			default:
 				panic("unknown service")
 			}

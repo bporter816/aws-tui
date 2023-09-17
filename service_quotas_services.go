@@ -1,27 +1,25 @@
 package main
 
 import (
-	"context"
-	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
-	sqTypes "github.com/aws/aws-sdk-go-v2/service/servicequotas/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 )
 
 type ServiceQuotasServices struct {
 	*ui.Table
-	sqClient *sq.Client
-	app      *Application
+	repo *repo.ServiceQuotas
+	app  *Application
 }
 
-func NewServiceQuotasServices(sqClient *sq.Client, app *Application) *ServiceQuotasServices {
+func NewServiceQuotasServices(repo *repo.ServiceQuotas, app *Application) *ServiceQuotasServices {
 	s := &ServiceQuotasServices{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"CODE",
 		}, 1, 0),
-		sqClient: sqClient,
-		app:      app,
+		repo: repo,
+		app:  app,
 	}
 	return s
 }
@@ -43,7 +41,7 @@ func (s ServiceQuotasServices) viewQuotasHandler() {
 	if err != nil {
 		return
 	}
-	quotasView := NewServiceQuotasQuotas(s.sqClient, serviceName, serviceCode, s.app)
+	quotasView := NewServiceQuotasQuotas(s.repo, serviceName, serviceCode, s.app)
 	s.app.AddAndSwitch(quotasView)
 }
 
@@ -58,21 +56,13 @@ func (s ServiceQuotasServices) GetKeyActions() []KeyAction {
 }
 
 func (s ServiceQuotasServices) Render() {
-	pg := sq.NewListServicesPaginator(
-		s.sqClient,
-		&sq.ListServicesInput{},
-	)
-	var services []sqTypes.ServiceInfo
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		services = append(services, out.Services...)
+	model, err := s.repo.ListServices()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range services {
+	for _, v := range model {
 		var name, code string
 		if v.ServiceName != nil {
 			name = *v.ServiceName

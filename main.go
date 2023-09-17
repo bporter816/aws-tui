@@ -59,15 +59,14 @@ func NewApplication() *Application {
 	a := &Application{}
 
 	clients := map[string]interface{}{
-		"DynamoDB":       ddbClient,
-		"Elasticache":    ecClient,
-		"EC2":            ec2Client,
-		"IAM":            iamClient,
-		"KMS":            kmsClient,
-		"Route 53":       r53Client,
-		"S3":             s3Client,
-		"STS":            stsClient,
-		"Service Quotas": sqClient,
+		"DynamoDB":    ddbClient,
+		"Elasticache": ecClient,
+		"EC2":         ec2Client,
+		"IAM":         iamClient,
+		"KMS":         kmsClient,
+		"Route 53":    r53Client,
+		"S3":          s3Client,
+		"STS":         stsClient,
 	}
 
 	repos := map[string]interface{}{
@@ -75,6 +74,7 @@ func NewApplication() *Application {
 		"Cloudfront":      repo.NewCloudfront(cfClient),
 		"SQS":             repo.NewSQS(sqsClient),
 		"Secrets Manager": repo.NewSecretsManager(smClient),
+		"Service Quotas":  repo.NewServiceQuotas(sqClient),
 	}
 
 	services := NewServices(clients, repos, a)

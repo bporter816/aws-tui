@@ -1,24 +1,21 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
-	sqTypes "github.com/aws/aws-sdk-go-v2/service/servicequotas/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 )
 
 type ServiceQuotasQuotas struct {
 	*ui.Table
-	sqClient    *sq.Client
+	repo        *repo.ServiceQuotas
 	serviceName string
 	serviceCode string
 	app         *Application
 }
 
-func NewServiceQuotasQuotas(sqClient *sq.Client, serviceName string, serviceCode string, app *Application) *ServiceQuotasQuotas {
+func NewServiceQuotasQuotas(repo *repo.ServiceQuotas, serviceName string, serviceCode string, app *Application) *ServiceQuotasQuotas {
 	s := &ServiceQuotasQuotas{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -26,7 +23,7 @@ func NewServiceQuotasQuotas(sqClient *sq.Client, serviceName string, serviceCode
 			"DEFAULT VALUE",
 			"ADJUSTABLE",
 		}, 1, 0),
-		sqClient:    sqClient,
+		repo:        repo,
 		serviceName: serviceName,
 		serviceCode: serviceCode,
 		app:         app,
@@ -47,49 +44,20 @@ func (s ServiceQuotasQuotas) GetKeyActions() []KeyAction {
 }
 
 func (s ServiceQuotasQuotas) Render() {
-	defaultsPg := sq.NewListAWSDefaultServiceQuotasPaginator(
-		s.sqClient,
-		&sq.ListAWSDefaultServiceQuotasInput{
-			ServiceCode: aws.String(s.serviceCode),
-		},
-	)
-	var defaultQuotas []sqTypes.ServiceQuota
-	for defaultsPg.HasMorePages() {
-		out, err := defaultsPg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		defaultQuotas = append(defaultQuotas, out.Quotas...)
-	}
-
-	appliedPg := sq.NewListServiceQuotasPaginator(
-		s.sqClient,
-		&sq.ListServiceQuotasInput{
-			ServiceCode: aws.String(s.serviceCode),
-		},
-	)
-	appliedQuotas := make(map[string]sqTypes.ServiceQuota)
-	for appliedPg.HasMorePages() {
-		out, err := appliedPg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		for _, q := range out.Quotas {
-			if q.QuotaName != nil {
-				appliedQuotas[*q.QuotaName] = q
-			}
-		}
+	model, err := s.repo.ListQuotas(s.serviceCode)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range defaultQuotas {
+	for _, v := range model {
 		name, appliedValue, defaultValue, adjustable := "", "Not available", "", "No"
 		if v.QuotaName != nil {
 			name = *v.QuotaName
 		}
-		defaultValue = formatValue(v)
-		if av, ok := appliedQuotas[name]; ok {
-			appliedValue = formatValue(av)
+		defaultValue = formatValue(v.DefaultValue, v.Unit)
+		if v.AppliedValue != nil {
+			appliedValue = formatValue(v.AppliedValue, v.Unit)
 		}
 		if v.Adjustable {
 			adjustable = "Yes"
@@ -104,16 +72,16 @@ func (s ServiceQuotasQuotas) Render() {
 	s.SetData(data)
 }
 
-func formatValue(quota sqTypes.ServiceQuota) string {
-	if quota.Value == nil {
+func formatValue(value *float64, unit *string) string {
+	if value == nil {
 		return ""
 	}
 
-	value := utils.SimplifyFloat(*quota.Value)
+	v := utils.SimplifyFloat(*value)
 
-	if quota.Unit != nil && *quota.Unit != "None" {
-		return fmt.Sprintf("%v %v", value, utils.AbbreviateUnit(*quota.Unit))
+	if unit != nil && *unit != "None" {
+		return fmt.Sprintf("%v %v", v, utils.AbbreviateUnit(*unit))
 	} else {
-		return value
+		return v
 	}
 }
