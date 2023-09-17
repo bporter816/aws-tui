@@ -48,7 +48,7 @@ func (k KmsKeys) keyPolicyHandler() {
 	if err != nil {
 		return
 	}
-	policyView := NewKmsKeyPolicy(k.kmsClient, keyId, k.app)
+	policyView := NewKmsKeyPolicy(k.repo, keyId, k.app)
 	k.app.AddAndSwitch(policyView)
 }
 
@@ -57,7 +57,7 @@ func (k KmsKeys) grantsHandler() {
 	if err != nil {
 		return
 	}
-	grantsView := NewKmsKeyGrants(k.kmsClient, keyId, k.app)
+	grantsView := NewKmsKeyGrants(k.repo, keyId, k.app)
 	k.app.AddAndSwitch(grantsView)
 }
 

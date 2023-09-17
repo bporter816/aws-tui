@@ -1,25 +1,23 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/kms"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type KmsKeyPolicy struct {
 	*ui.Text
-	kmsClient *kms.Client
-	keyId     string
-	app       *Application
+	repo  *repo.KMS
+	keyId string
+	app   *Application
 }
 
-func NewKmsKeyPolicy(kmsClient *kms.Client, keyId string, app *Application) *KmsKeyPolicy {
+func NewKmsKeyPolicy(repo *repo.KMS, keyId string, app *Application) *KmsKeyPolicy {
 	k := &KmsKeyPolicy{
-		Text:      ui.NewText(true, "json"),
-		kmsClient: kmsClient,
-		keyId:     keyId,
-		app:       app,
+		Text:  ui.NewText(true, "json"),
+		repo:  repo,
+		keyId: keyId,
+		app:   app,
 	}
 	return k
 }
@@ -37,19 +35,9 @@ func (k KmsKeyPolicy) GetKeyActions() []KeyAction {
 }
 
 func (k KmsKeyPolicy) Render() {
-	out, err := k.kmsClient.GetKeyPolicy(
-		context.TODO(),
-		&kms.GetKeyPolicyInput{
-			KeyId:      aws.String(k.keyId),
-			PolicyName: aws.String("default"),
-		},
-	)
+	policy, err := k.repo.GetKeyPolicy(k.keyId)
 	if err != nil {
 		panic(err)
-	}
-	var policy string
-	if out.Policy != nil {
-		policy = *out.Policy
 	}
 	k.SetText(policy)
 }

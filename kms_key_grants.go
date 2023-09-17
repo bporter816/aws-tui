@@ -1,21 +1,18 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/kms"
-	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type KmsKeyGrants struct {
 	*ui.Table
-	kmsClient *kms.Client
-	keyId     string
-	app       *Application
+	repo  *repo.KMS
+	keyId string
+	app   *Application
 }
 
-func NewKmsKeyGrants(kmsClient *kms.Client, keyId string, app *Application) *KmsKeyGrants {
+func NewKmsKeyGrants(repo *repo.KMS, keyId string, app *Application) *KmsKeyGrants {
 	k := &KmsKeyGrants{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -23,9 +20,9 @@ func NewKmsKeyGrants(kmsClient *kms.Client, keyId string, app *Application) *Kms
 			"GRANTEE PRINCIPAL",
 			"RETIRING PRINCIPAL",
 		}, 1, 0),
-		kmsClient: kmsClient,
-		keyId:     keyId,
-		app:       app,
+		repo:  repo,
+		keyId: keyId,
+		app:   app,
 	}
 	return k
 }
@@ -43,23 +40,13 @@ func (k KmsKeyGrants) GetKeyActions() []KeyAction {
 }
 
 func (k KmsKeyGrants) Render() {
-	var grants []kmsTypes.GrantListEntry
-	pg := kms.NewListGrantsPaginator(
-		k.kmsClient,
-		&kms.ListGrantsInput{
-			KeyId: aws.String(k.keyId),
-		},
-	)
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		grants = append(grants, out.Grants...)
+	model, err := k.repo.ListGrants(k.keyId)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range grants {
+	for _, v := range model {
 		var name, operations, granteePrincipal, retiringPrincipal string
 		if v.Name != nil {
 			name = *v.Name

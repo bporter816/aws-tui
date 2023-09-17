@@ -84,6 +84,40 @@ func (k KMS) ListKeys() ([]model.KMSKey, error) {
 	return keys, nil
 }
 
+func (k KMS) ListGrants(keyId string) ([]model.KMSGrant, error) {
+	pg := kms.NewListGrantsPaginator(
+		k.kmsClient,
+		&kms.ListGrantsInput{
+			KeyId: aws.String(keyId),
+		},
+	)
+	var grants []model.KMSGrant
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.KMSGrant{}, err
+		}
+		for _, v := range out.Grants {
+			grants = append(grants, model.KMSGrant(v))
+		}
+	}
+	return grants, nil
+}
+
+func (k KMS) GetKeyPolicy(keyId string) (string, error) {
+	out, err := k.kmsClient.GetKeyPolicy(
+		context.TODO(),
+		&kms.GetKeyPolicyInput{
+			KeyId:      aws.String(keyId),
+			PolicyName: aws.String("default"),
+		},
+	)
+	if err != nil || out.Policy == nil {
+		return "", err
+	}
+	return *out.Policy, nil
+}
+
 func (k KMS) ListTags(keyId string) ([]model.Tag, error) {
 	pg := kms.NewListResourceTagsPaginator(
 		k.kmsClient,
