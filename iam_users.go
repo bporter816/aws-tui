@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -12,12 +13,13 @@ import (
 
 type IAMUsers struct {
 	*ui.Table
+	repo      *repo.IAM
 	iamClient *iam.Client
 	groupName string
 	app       *Application
 }
 
-func NewIAMUsers(iamClient *iam.Client, groupName string, app *Application) *IAMUsers {
+func NewIAMUsers(repo *repo.IAM, iamClient *iam.Client, groupName string, app *Application) *IAMUsers {
 	i := &IAMUsers{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -26,6 +28,7 @@ func NewIAMUsers(iamClient *iam.Client, groupName string, app *Application) *IAM
 			"CREATED",
 			"PASSWORD LAST USED",
 		}, 1, 0),
+		repo:      repo,
 		iamClient: iamClient,
 		groupName: groupName,
 		app:       app,
@@ -77,7 +80,7 @@ func (i IAMUsers) groupsHandler() {
 	if err != nil {
 		return
 	}
-	groupsView := NewIAMGroups(i.iamClient, userName, i.app)
+	groupsView := NewIAMGroups(i.repo, i.iamClient, userName, i.app)
 	i.app.AddAndSwitch(groupsView)
 }
 
@@ -86,7 +89,7 @@ func (i IAMUsers) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewIAMUserTags(i.iamClient, userName, i.app)
+	tagsView := NewIAMUserTags(i.repo, userName, i.app)
 	i.app.AddAndSwitch(tagsView)
 }
 

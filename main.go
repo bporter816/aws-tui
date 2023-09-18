@@ -69,6 +69,7 @@ func NewApplication() *Application {
 		"DynamoDB":        repo.NewDynamoDB(ddbClient),
 		"EC2":             repo.NewEC2(ec2Client),
 		"ELB":             repo.NewELB(elbClient),
+		"IAM":             repo.NewIAM(iamClient),
 		"KMS":             repo.NewKMS(kmsClient),
 		"Route 53":        repo.NewRoute53(r53Client),
 		"SQS":             repo.NewSQS(sqsClient),

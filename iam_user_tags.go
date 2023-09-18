@@ -1,29 +1,26 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/iam"
-	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type IAMUserTags struct {
 	*ui.Table
-	iamClient *iam.Client
-	userName  string
-	app       *Application
+	repo     *repo.IAM
+	userName string
+	app      *Application
 }
 
-func NewIAMUserTags(iamClient *iam.Client, userName string, app *Application) *IAMUserTags {
+func NewIAMUserTags(repo *repo.IAM, userName string, app *Application) *IAMUserTags {
 	i := &IAMUserTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		iamClient: iamClient,
-		userName:  userName,
-		app:       app,
+		repo:     repo,
+		userName: userName,
+		app:      app,
 	}
 	return i
 }
@@ -41,26 +38,16 @@ func (i IAMUserTags) GetKeyActions() []KeyAction {
 }
 
 func (i IAMUserTags) Render() {
-	pg := iam.NewListUserTagsPaginator(
-		i.iamClient,
-		&iam.ListUserTagsInput{
-			UserName: aws.String(i.userName),
-		},
-	)
-	var tags []iamTypes.Tag
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		tags = append(tags, out.Tags...)
+	model, err := i.repo.ListUserTags(i.userName)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range tags {
+	for _, v := range model {
 		data = append(data, []string{
-			*v.Key,
-			*v.Value,
+			v.Key,
+			v.Value,
 		})
 	}
 	i.SetData(data)

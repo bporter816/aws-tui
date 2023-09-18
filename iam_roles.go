@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -12,11 +13,12 @@ import (
 
 type IAMRoles struct {
 	*ui.Table
+	repo      *repo.IAM
 	iamClient *iam.Client
 	app       *Application
 }
 
-func NewIAMRoles(iamClient *iam.Client, app *Application) *IAMRoles {
+func NewIAMRoles(repo *repo.IAM, iamClient *iam.Client, app *Application) *IAMRoles {
 	i := &IAMRoles{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -26,6 +28,7 @@ func NewIAMRoles(iamClient *iam.Client, app *Application) *IAMRoles {
 			"CREATED",
 			"DESCRIPTION",
 		}, 1, 0),
+		repo:      repo,
 		iamClient: iamClient,
 		app:       app,
 	}
@@ -72,7 +75,7 @@ func (i IAMRoles) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewIAMRoleTags(i.iamClient, roleName, i.app)
+	tagsView := NewIAMRoleTags(i.repo, roleName, i.app)
 	i.app.AddAndSwitch(tagsView)
 }
 

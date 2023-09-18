@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -12,12 +13,13 @@ import (
 
 type IAMGroups struct {
 	*ui.Table
+	repo      *repo.IAM
 	iamClient *iam.Client
 	userName  string
 	app       *Application
 }
 
-func NewIAMGroups(iamClient *iam.Client, userName string, app *Application) *IAMGroups {
+func NewIAMGroups(repo *repo.IAM, iamClient *iam.Client, userName string, app *Application) *IAMGroups {
 	i := &IAMGroups{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -25,6 +27,7 @@ func NewIAMGroups(iamClient *iam.Client, userName string, app *Application) *IAM
 			"PATH",
 			"CREATED",
 		}, 1, 0),
+		repo:      repo,
 		iamClient: iamClient,
 		userName:  userName,
 		app:       app,
@@ -58,7 +61,7 @@ func (i IAMGroups) usersHandler() {
 	if err != nil {
 		return
 	}
-	usersView := NewIAMUsers(i.iamClient, groupName, i.app)
+	usersView := NewIAMUsers(i.repo, i.iamClient, groupName, i.app)
 	i.app.AddAndSwitch(usersView)
 }
 
