@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -136,7 +135,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "Cloudfront.Functions":
 				item = NewCFFunctions(s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
 			case "DynamoDB.Tables":
-				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
+				item = NewDynamoDBTables(s.repos["DynamoDB"].(*repo.DynamoDB), s.app)
 			case "EC2.Instances":
 				item = NewEC2Instances(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.VPCs":

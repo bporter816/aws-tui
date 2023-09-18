@@ -1,11 +1,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"strconv"
 	"strings"
@@ -13,12 +11,13 @@ import (
 
 type DynamoDBTableIndexes struct {
 	*ui.Table
-	ddbClient *ddb.Client
-	tableName string
-	app       *Application
+	repo       *repo.DynamoDB
+	tableName  string
+	attributes []ddbTypes.AttributeDefinition
+	app        *Application
 }
 
-func NewDynamoDBTableIndexes(ddbClient *ddb.Client, tableName string, app *Application) *DynamoDBTableIndexes {
+func NewDynamoDBTableIndexes(repo *repo.DynamoDB, tableName string, attributes []ddbTypes.AttributeDefinition, app *Application) *DynamoDBTableIndexes {
 	d := &DynamoDBTableIndexes{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -30,9 +29,10 @@ func NewDynamoDBTableIndexes(ddbClient *ddb.Client, tableName string, app *Appli
 			"SIZE",
 			"PROJECTED ATTRIBUTES",
 		}, 1, 0),
-		ddbClient: ddbClient,
-		tableName: tableName,
-		app:       app,
+		repo:       repo,
+		tableName:  tableName,
+		attributes: attributes,
+		app:        app,
 	}
 	return d
 }
@@ -50,22 +50,18 @@ func (d DynamoDBTableIndexes) GetKeyActions() []KeyAction {
 }
 
 func (d DynamoDBTableIndexes) Render() {
-	out, err := d.ddbClient.DescribeTable(
-		context.TODO(),
-		&ddb.DescribeTableInput{
-			TableName: aws.String(d.tableName),
-		},
-	)
+	model, err := d.repo.ListIndexes(d.tableName)
 	if err != nil {
 		panic(err)
 	}
+
 	var data [][]string
-	for _, v := range out.Table.GlobalSecondaryIndexes {
+	for _, v := range model.Global {
 		partitionKey, sortKey := getPartitionAndSortKeys(v.KeySchema)
-		if partitionKeyType, ok := getAttributeType(partitionKey, out.Table.AttributeDefinitions); ok {
+		if partitionKeyType, ok := getAttributeType(partitionKey, d.attributes); ok {
 			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
 		}
-		if sortKeyType, ok := getAttributeType(sortKey, out.Table.AttributeDefinitions); ok {
+		if sortKeyType, ok := getAttributeType(sortKey, d.attributes); ok {
 			sortKey = fmt.Sprintf("%v (%v)", sortKey, sortKeyType)
 		}
 		var projection string
@@ -87,12 +83,12 @@ func (d DynamoDBTableIndexes) Render() {
 			projection,
 		})
 	}
-	for _, v := range out.Table.LocalSecondaryIndexes {
+	for _, v := range model.Local {
 		partitionKey, sortKey := getPartitionAndSortKeys(v.KeySchema)
-		if partitionKeyType, ok := getAttributeType(partitionKey, out.Table.AttributeDefinitions); ok {
+		if partitionKeyType, ok := getAttributeType(partitionKey, d.attributes); ok {
 			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
 		}
-		if sortKeyType, ok := getAttributeType(sortKey, out.Table.AttributeDefinitions); ok {
+		if sortKeyType, ok := getAttributeType(sortKey, d.attributes); ok {
 			sortKey = fmt.Sprintf("%v (%v)", sortKey, sortKeyType)
 		}
 		var projection string
