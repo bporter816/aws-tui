@@ -1,9 +1,8 @@
 package main
 
 import (
-	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -11,11 +10,12 @@ import (
 
 type EC2VPCs struct {
 	*ui.Table
+	repo      *repo.EC2
 	ec2Client *ec2.Client
 	app       *Application
 }
 
-func NewEC2VPCs(ec2Client *ec2.Client, app *Application) *EC2VPCs {
+func NewEC2VPCs(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *EC2VPCs {
 	e := &EC2VPCs{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -23,6 +23,7 @@ func NewEC2VPCs(ec2Client *ec2.Client, app *Application) *EC2VPCs {
 			"STATE",
 			"IPV4 CIDR",
 		}, 1, 0),
+		repo:      repo,
 		ec2Client: ec2Client,
 		app:       app,
 	}
@@ -57,21 +58,13 @@ func (e EC2VPCs) GetKeyActions() []KeyAction {
 }
 
 func (e EC2VPCs) Render() {
-	pg := ec2.NewDescribeVpcsPaginator(
-		e.ec2Client,
-		&ec2.DescribeVpcsInput{},
-	)
-	var vpcs []ec2Types.Vpc
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		vpcs = append(vpcs, out.Vpcs...)
+	model, err := e.repo.ListVPCs()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range vpcs {
+	for _, v := range model {
 		var name, id, state, ipv4CIDR string
 		if n, ok := lookupTag(v.Tags, "Name"); ok {
 			name = n

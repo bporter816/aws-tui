@@ -1,20 +1,20 @@
 package main
 
 import (
-	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 )
 
 type EC2Instances struct {
 	*ui.Table
+	repo      *repo.EC2
 	ec2Client *ec2.Client
 	app       *Application
 }
 
-func NewEC2Instances(ec2Client *ec2.Client, app *Application) *EC2Instances {
+func NewEC2Instances(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *EC2Instances {
 	e := &EC2Instances{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -25,6 +25,7 @@ func NewEC2Instances(ec2Client *ec2.Client, app *Application) *EC2Instances {
 			"SUBNET ID",
 			"KEY NAME",
 		}, 1, 0),
+		repo:      repo,
 		ec2Client: ec2Client,
 		app:       app,
 	}
@@ -59,23 +60,13 @@ func (e EC2Instances) GetKeyActions() []KeyAction {
 }
 
 func (e EC2Instances) Render() {
-	pg := ec2.NewDescribeInstancesPaginator(
-		e.ec2Client,
-		&ec2.DescribeInstancesInput{},
-	)
-	var instances []ec2Types.Instance
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		for _, v := range out.Reservations {
-			instances = append(instances, v.Instances...)
-		}
+	model, err := e.repo.ListInstances()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range instances {
+	for _, v := range model {
 		var name, id, state, publicIP, instanceType, subnetId, keyName string
 		if n, ok := lookupTag(v.Tags, "Name"); ok {
 			name = n

@@ -1,9 +1,8 @@
 package main
 
 import (
-	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
@@ -11,11 +10,12 @@ import (
 
 type EC2SecurityGroups struct {
 	*ui.Table
+	repo      *repo.EC2
 	ec2Client *ec2.Client
 	app       *Application
 }
 
-func NewEC2SecurityGroups(ec2Client *ec2.Client, app *Application) *EC2SecurityGroups {
+func NewEC2SecurityGroups(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *EC2SecurityGroups {
 	e := &EC2SecurityGroups{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -25,6 +25,7 @@ func NewEC2SecurityGroups(ec2Client *ec2.Client, app *Application) *EC2SecurityG
 			"EGRESS RULES",
 			"DESCRIPTION",
 		}, 1, 0),
+		repo:      repo,
 		ec2Client: ec2Client,
 		app:       app,
 	}
@@ -44,7 +45,7 @@ func (e EC2SecurityGroups) rulesHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2SecurityGroupRules(e.ec2Client, sgId, e.app)
+	tagsView := NewEC2SecurityGroupRules(e.repo, e.ec2Client, sgId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
@@ -73,21 +74,13 @@ func (e EC2SecurityGroups) GetKeyActions() []KeyAction {
 }
 
 func (e EC2SecurityGroups) Render() {
-	pg := ec2.NewDescribeSecurityGroupsPaginator(
-		e.ec2Client,
-		&ec2.DescribeSecurityGroupsInput{},
-	)
-	var securityGroups []ec2Types.SecurityGroup
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		securityGroups = append(securityGroups, out.SecurityGroups...)
+	model, err := e.repo.ListSecurityGroups()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range securityGroups {
+	for _, v := range model {
 		var name, id, description, ingressCount, egressCount string
 		vpcId := "-"
 		if v.GroupName != nil {

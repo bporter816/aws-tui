@@ -1,8 +1,8 @@
 package main
 
 import (
-	"context"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -10,11 +10,12 @@ import (
 
 type EC2KeyPairs struct {
 	*ui.Table
+	repo      *repo.EC2
 	ec2Client *ec2.Client
 	app       *Application
 }
 
-func NewEC2KeyPairs(ec2Client *ec2.Client, app *Application) *EC2KeyPairs {
+func NewEC2KeyPairs(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *EC2KeyPairs {
 	e := &EC2KeyPairs{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -23,6 +24,7 @@ func NewEC2KeyPairs(ec2Client *ec2.Client, app *Application) *EC2KeyPairs {
 			"CREATED",
 			"ID",
 		}, 1, 0),
+		repo:      repo,
 		ec2Client: ec2Client,
 		app:       app,
 	}
@@ -71,16 +73,13 @@ func (e EC2KeyPairs) GetKeyActions() []KeyAction {
 }
 
 func (e EC2KeyPairs) Render() {
-	out, err := e.ec2Client.DescribeKeyPairs(
-		context.TODO(),
-		&ec2.DescribeKeyPairsInput{},
-	)
+	model, err := e.repo.ListKeyPairs()
 	if err != nil {
 		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range out.KeyPairs {
+	for _, v := range model {
 		var name, keyType, fingerprint, created, id string
 		if v.KeyName != nil {
 			name = *v.KeyName

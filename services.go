@@ -139,13 +139,13 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
 			case "EC2.Instances":
-				item = NewEC2Instances(s.clients["EC2"].(*ec2.Client), s.app)
+				item = NewEC2Instances(s.repos["EC2"].(*repo.EC2), s.clients["EC2"].(*ec2.Client), s.app)
 			case "EC2.VPCs":
-				item = NewEC2VPCs(s.clients["EC2"].(*ec2.Client), s.app)
+				item = NewEC2VPCs(s.repos["EC2"].(*repo.EC2), s.clients["EC2"].(*ec2.Client), s.app)
 			case "EC2.Security Groups":
-				item = NewEC2SecurityGroups(s.clients["EC2"].(*ec2.Client), s.app)
+				item = NewEC2SecurityGroups(s.repos["EC2"].(*repo.EC2), s.clients["EC2"].(*ec2.Client), s.app)
 			case "EC2.Key Pairs":
-				item = NewEC2KeyPairs(s.clients["EC2"].(*ec2.Client), s.app)
+				item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.clients["EC2"].(*ec2.Client), s.app)
 			case "Elasticache.Clusters":
 				item = NewElasticacheClusters(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":

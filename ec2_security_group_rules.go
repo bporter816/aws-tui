@@ -1,11 +1,9 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -13,12 +11,13 @@ import (
 
 type EC2SecurityGroupRules struct {
 	*ui.Table
+	repo      *repo.EC2
 	ec2Client *ec2.Client
 	sgId      string
 	app       *Application
 }
 
-func NewEC2SecurityGroupRules(ec2Client *ec2.Client, sgId string, app *Application) *EC2SecurityGroupRules {
+func NewEC2SecurityGroupRules(repo *repo.EC2, ec2Client *ec2.Client, sgId string, app *Application) *EC2SecurityGroupRules {
 	e := &EC2SecurityGroupRules{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -29,6 +28,7 @@ func NewEC2SecurityGroupRules(ec2Client *ec2.Client, sgId string, app *Applicati
 			"SRC/DST",
 			"DESCRIPTION",
 		}, 1, 0),
+		repo:      repo,
 		ec2Client: ec2Client,
 		sgId:      sgId,
 		app:       app,
@@ -64,28 +64,13 @@ func (e EC2SecurityGroupRules) GetKeyActions() []KeyAction {
 }
 
 func (e EC2SecurityGroupRules) Render() {
-	pg := ec2.NewDescribeSecurityGroupRulesPaginator(
-		e.ec2Client,
-		&ec2.DescribeSecurityGroupRulesInput{
-			Filters: []ec2Types.Filter{
-				ec2Types.Filter{
-					Name:   aws.String("group-id"),
-					Values: []string{e.sgId},
-				},
-			},
-		},
-	)
-	var sgRules []ec2Types.SecurityGroupRule
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		sgRules = append(sgRules, out.SecurityGroupRules...)
+	model, err := e.repo.ListSecurityGroupRules(e.sgId)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range sgRules {
+	for _, v := range model {
 		name := "-"
 		var id, ruleType, protocol, ports, cidr, description string
 		if ruleName, ok := lookupTag(v.Tags, "Name"); ok {

@@ -67,6 +67,7 @@ func NewApplication() *Application {
 	}
 
 	repos := map[string]interface{}{
+		"EC2":             repo.NewEC2(ec2Client),
 		"ELB":             repo.NewELB(elbClient),
 		"Cloudfront":      repo.NewCloudfront(cfClient),
 		"KMS":             repo.NewKMS(kmsClient),
