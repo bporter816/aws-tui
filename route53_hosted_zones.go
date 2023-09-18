@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -13,12 +11,11 @@ import (
 
 type Route53HostedZones struct {
 	*ui.Table
-	repo      *repo.Route53
-	r53Client *r53.Client
-	app       *Application
+	repo *repo.Route53
+	app  *Application
 }
 
-func NewRoute53HostedZones(repo *repo.Route53, client *r53.Client, app *Application) *Route53HostedZones {
+func NewRoute53HostedZones(repo *repo.Route53, app *Application) *Route53HostedZones {
 	r := &Route53HostedZones{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -27,9 +24,8 @@ func NewRoute53HostedZones(repo *repo.Route53, client *r53.Client, app *Applicat
 			"VISIBILITY",
 			"DESCRIPTION",
 		}, 1, 0),
-		repo:      repo,
-		r53Client: client,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	r.SetSelectedFunc(r.selectHandler)
 	return r
@@ -72,21 +68,13 @@ func (r Route53HostedZones) GetKeyActions() []KeyAction {
 }
 
 func (r Route53HostedZones) Render() {
-	pg := r53.NewListHostedZonesPaginator(
-		r.r53Client,
-		&r53.ListHostedZonesInput{},
-	)
-	var hostedZones []r53Types.HostedZone
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		hostedZones = append(hostedZones, out.HostedZones...)
+	model, err := r.repo.ListHostedZones()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range hostedZones {
+	for _, v := range model {
 		var id, name, resourceRecordSetCount, visibility, comment string
 		if v.Id != nil {
 			split := strings.Split(*v.Id, "/")

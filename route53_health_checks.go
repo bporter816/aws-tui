@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -11,12 +9,11 @@ import (
 
 type Route53HealthChecks struct {
 	*ui.Table
-	repo      *repo.Route53
-	r53Client *r53.Client
-	app       *Application
+	repo *repo.Route53
+	app  *Application
 }
 
-func NewRoute53HealthChecks(repo *repo.Route53, r53Client *r53.Client, app *Application) *Route53HealthChecks {
+func NewRoute53HealthChecks(repo *repo.Route53, app *Application) *Route53HealthChecks {
 	r := &Route53HealthChecks{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -24,9 +21,8 @@ func NewRoute53HealthChecks(repo *repo.Route53, r53Client *r53.Client, app *Appl
 			"TYPE",
 			"DESCRIPTION",
 		}, 1, 0),
-		repo:      repo,
-		r53Client: r53Client,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	return r
 }
@@ -59,21 +55,13 @@ func (r Route53HealthChecks) GetKeyActions() []KeyAction {
 }
 
 func (r Route53HealthChecks) Render() {
-	pg := r53.NewListHealthChecksPaginator(
-		r.r53Client,
-		&r53.ListHealthChecksInput{},
-	)
-	var healthchecks []r53Types.HealthCheck
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		healthchecks = append(healthchecks, out.HealthChecks...)
+	model, err := r.repo.ListHealthChecks()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range healthchecks {
+	for _, v := range model {
 		var id, name, checkType, description string
 		if v.Id != nil {
 			id = *v.Id

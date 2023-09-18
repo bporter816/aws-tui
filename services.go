@@ -6,7 +6,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
-	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -174,9 +173,9 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "KMS.Custom Key Stores":
 				item = NewKmsCustomKeyStores(s.repos["KMS"].(*repo.KMS), s.app)
 			case "Route 53.Hosted Zones":
-				item = NewRoute53HostedZones(s.repos["Route 53"].(*repo.Route53), s.clients["Route 53"].(*r53.Client), s.app)
+				item = NewRoute53HostedZones(s.repos["Route 53"].(*repo.Route53), s.app)
 			case "Route 53.Health Checks":
-				item = NewRoute53HealthChecks(s.repos["Route 53"].(*repo.Route53), s.clients["Route 53"].(*r53.Client), s.app)
+				item = NewRoute53HealthChecks(s.repos["Route 53"].(*repo.Route53), s.app)
 			case "S3.Buckets":
 				item = NewS3Buckets(s.clients["S3"].(*s3.Client), s.app)
 			case "SQS.Queues":

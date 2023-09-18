@@ -63,7 +63,6 @@ func NewApplication() *Application {
 		"Elasticache": ecClient,
 		"EC2":         ec2Client,
 		"IAM":         iamClient,
-		"Route 53":    r53Client,
 		"S3":          s3Client,
 	}
 

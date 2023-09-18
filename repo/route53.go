@@ -18,6 +18,42 @@ func NewRoute53(r53Client *r53.Client) *Route53 {
 	}
 }
 
+func (r Route53) ListHostedZones() ([]model.Route53HostedZone, error) {
+	pg := r53.NewListHostedZonesPaginator(
+		r.r53Client,
+		&r53.ListHostedZonesInput{},
+	)
+	var hostedZones []model.Route53HostedZone
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.Route53HostedZone{}, err
+		}
+		for _, v := range out.HostedZones {
+			hostedZones = append(hostedZones, model.Route53HostedZone(v))
+		}
+	}
+	return hostedZones, nil
+}
+
+func (r Route53) ListHealthChecks() ([]model.Route53HealthCheck, error) {
+	pg := r53.NewListHealthChecksPaginator(
+		r.r53Client,
+		&r53.ListHealthChecksInput{},
+	)
+	var healthChecks []model.Route53HealthCheck
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.Route53HealthCheck{}, err
+		}
+		for _, v := range out.HealthChecks {
+			healthChecks = append(healthChecks, model.Route53HealthCheck(v))
+		}
+	}
+	return healthChecks, nil
+}
+
 func (r Route53) ListRecords(hostedZoneId string) ([]model.Route53Record, error) {
 	// ListResourceRecordSets doesn't have a paginator :'(
 	good := true
