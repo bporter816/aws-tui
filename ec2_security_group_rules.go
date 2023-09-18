@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -11,13 +10,12 @@ import (
 
 type EC2SecurityGroupRules struct {
 	*ui.Table
-	repo      *repo.EC2
-	ec2Client *ec2.Client
-	sgId      string
-	app       *Application
+	repo *repo.EC2
+	sgId string
+	app  *Application
 }
 
-func NewEC2SecurityGroupRules(repo *repo.EC2, ec2Client *ec2.Client, sgId string, app *Application) *EC2SecurityGroupRules {
+func NewEC2SecurityGroupRules(repo *repo.EC2, sgId string, app *Application) *EC2SecurityGroupRules {
 	e := &EC2SecurityGroupRules{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -28,10 +26,9 @@ func NewEC2SecurityGroupRules(repo *repo.EC2, ec2Client *ec2.Client, sgId string
 			"SRC/DST",
 			"DESCRIPTION",
 		}, 1, 0),
-		repo:      repo,
-		ec2Client: ec2Client,
-		sgId:      sgId,
-		app:       app,
+		repo: repo,
+		sgId: sgId,
+		app:  app,
 	}
 	return e
 }
@@ -49,7 +46,7 @@ func (e EC2SecurityGroupRules) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2SecurityGroupRuleTags(e.ec2Client, e.sgId, ruleId, e.app)
+	tagsView := NewEC2SecurityGroupRuleTags(e.repo, ruleId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

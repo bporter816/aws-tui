@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -139,13 +138,13 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.clients["DynamoDB"].(*ddb.Client), s.app)
 			case "EC2.Instances":
-				item = NewEC2Instances(s.repos["EC2"].(*repo.EC2), s.clients["EC2"].(*ec2.Client), s.app)
+				item = NewEC2Instances(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.VPCs":
-				item = NewEC2VPCs(s.repos["EC2"].(*repo.EC2), s.clients["EC2"].(*ec2.Client), s.app)
+				item = NewEC2VPCs(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.Security Groups":
-				item = NewEC2SecurityGroups(s.repos["EC2"].(*repo.EC2), s.clients["EC2"].(*ec2.Client), s.app)
+				item = NewEC2SecurityGroups(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.Key Pairs":
-				item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.clients["EC2"].(*ec2.Client), s.app)
+				item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
 			case "Elasticache.Clusters":
 				item = NewElasticacheClusters(s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":

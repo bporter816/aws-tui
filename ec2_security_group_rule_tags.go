@@ -1,29 +1,26 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type EC2SecurityGroupRuleTags struct {
 	*ui.Table
-	ec2Client *ec2.Client
-	sgId      string
-	ruleId    string
-	app       *Application
+	repo   *repo.EC2
+	ruleId string
+	app    *Application
 }
 
-func NewEC2SecurityGroupRuleTags(ec2Client *ec2.Client, sgId string, ruleId string, app *Application) *EC2SecurityGroupRuleTags {
+func NewEC2SecurityGroupRuleTags(repo *repo.EC2, ruleId string, app *Application) *EC2SecurityGroupRuleTags {
 	e := &EC2SecurityGroupRuleTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		ec2Client: ec2Client,
-		sgId:      sgId,
-		ruleId:    ruleId,
-		app:       app,
+		repo:   repo,
+		ruleId: ruleId,
+		app:    app,
 	}
 	return e
 }
@@ -41,24 +38,16 @@ func (e EC2SecurityGroupRuleTags) GetKeyActions() []KeyAction {
 }
 
 func (e EC2SecurityGroupRuleTags) Render() {
-	out, err := e.ec2Client.DescribeSecurityGroups(
-		context.TODO(),
-		&ec2.DescribeSecurityGroupsInput{
-			GroupIds: []string{e.sgId},
-		},
-	)
+	model, err := e.repo.ListSecurityGroupRuleTags(e.ruleId)
 	if err != nil {
 		panic(err)
 	}
 
-	if len(out.SecurityGroups) != 1 {
-		panic("should get exactly 1 rule")
-	}
 	var data [][]string
-	for _, v := range out.SecurityGroups[0].Tags {
+	for _, v := range model {
 		data = append(data, []string{
-			*v.Key,
-			*v.Value,
+			v.Key,
+			v.Value,
 		})
 	}
 	e.SetData(data)

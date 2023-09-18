@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
@@ -9,12 +8,11 @@ import (
 
 type EC2Instances struct {
 	*ui.Table
-	repo      *repo.EC2
-	ec2Client *ec2.Client
-	app       *Application
+	repo *repo.EC2
+	app  *Application
 }
 
-func NewEC2Instances(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *EC2Instances {
+func NewEC2Instances(repo *repo.EC2, app *Application) *EC2Instances {
 	e := &EC2Instances{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -25,9 +23,8 @@ func NewEC2Instances(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *E
 			"SUBNET ID",
 			"KEY NAME",
 		}, 1, 0),
-		repo:      repo,
-		ec2Client: ec2Client,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	return e
 }
@@ -45,7 +42,7 @@ func (e EC2Instances) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2InstanceTags(e.ec2Client, instanceId, e.app)
+	tagsView := NewEC2InstanceTags(e.repo, instanceId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

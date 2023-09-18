@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
@@ -10,12 +9,11 @@ import (
 
 type EC2SecurityGroups struct {
 	*ui.Table
-	repo      *repo.EC2
-	ec2Client *ec2.Client
-	app       *Application
+	repo *repo.EC2
+	app  *Application
 }
 
-func NewEC2SecurityGroups(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *EC2SecurityGroups {
+func NewEC2SecurityGroups(repo *repo.EC2, app *Application) *EC2SecurityGroups {
 	e := &EC2SecurityGroups{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -25,9 +23,8 @@ func NewEC2SecurityGroups(repo *repo.EC2, ec2Client *ec2.Client, app *Applicatio
 			"EGRESS RULES",
 			"DESCRIPTION",
 		}, 1, 0),
-		repo:      repo,
-		ec2Client: ec2Client,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	return e
 }
@@ -45,7 +42,7 @@ func (e EC2SecurityGroups) rulesHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2SecurityGroupRules(e.repo, e.ec2Client, sgId, e.app)
+	tagsView := NewEC2SecurityGroupRules(e.repo, sgId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
@@ -54,7 +51,7 @@ func (e EC2SecurityGroups) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2SecurityGroupTags(e.ec2Client, sgId, e.app)
+	tagsView := NewEC2SecurityGroupTags(e.repo, sgId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

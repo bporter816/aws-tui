@@ -61,7 +61,6 @@ func NewApplication() *Application {
 	clients := map[string]interface{}{
 		"DynamoDB":    ddbClient,
 		"Elasticache": ecClient,
-		"EC2":         ec2Client,
 		"IAM":         iamClient,
 		"S3":          s3Client,
 	}

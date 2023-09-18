@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
@@ -51,6 +52,31 @@ func (e EC2) ListKeyPairs() ([]model.EC2KeyPair, error) {
 		keyPairs = append(keyPairs, model.EC2KeyPair(v))
 	}
 	return keyPairs, nil
+}
+
+func (e EC2) GetPublicKey(keyPairId string) (string, error) {
+	out, err := e.ec2Client.DescribeKeyPairs(
+		context.TODO(),
+		&ec2.DescribeKeyPairsInput{
+			IncludePublicKey: aws.Bool(true),
+			Filters: []ec2Types.Filter{
+				ec2Types.Filter{
+					Name:   aws.String("key-pair-id"),
+					Values: []string{keyPairId},
+				},
+			},
+		},
+	)
+	if err != nil {
+		return "", err
+	}
+	if len(out.KeyPairs) != 1 {
+		return "", errors.New("should get exactly one key pair")
+	}
+	if out.KeyPairs[0].PublicKey == nil {
+		return "", nil
+	}
+	return *out.KeyPairs[0].PublicKey, nil
 }
 
 func (e EC2) ListSecurityGroups() ([]model.EC2SecurityGroup, error) {
@@ -112,4 +138,113 @@ func (e EC2) ListVPCs() ([]model.EC2VPC, error) {
 		}
 	}
 	return vpcs, nil
+}
+
+func (e EC2) ListInstanceTags(instanceId string) (model.Tags, error) {
+	out, err := e.ec2Client.DescribeInstances(
+		context.TODO(),
+		&ec2.DescribeInstancesInput{
+			InstanceIds: []string{instanceId},
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	if len(out.Reservations) != 1 {
+		return model.Tags{}, errors.New("should get exactly 1 reservation")
+	}
+	if len(out.Reservations[0].Instances) != 1 {
+		return model.Tags{}, errors.New("should get exactly 1 instance")
+	}
+	var tags model.Tags
+	for _, v := range out.Reservations[0].Instances[0].Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
+}
+
+func (e EC2) ListKeyPairTags(keyPairId string) (model.Tags, error) {
+	out, err := e.ec2Client.DescribeKeyPairs(
+		context.TODO(),
+		&ec2.DescribeKeyPairsInput{
+			IncludePublicKey: aws.Bool(true),
+			Filters: []ec2Types.Filter{
+				ec2Types.Filter{
+					Name:   aws.String("key-pair-id"),
+					Values: []string{keyPairId},
+				},
+			},
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	if len(out.KeyPairs) != 1 {
+		return model.Tags{}, errors.New("should get exactly 1 key pair")
+	}
+	var tags model.Tags
+	for _, v := range out.KeyPairs[0].Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
+}
+
+func (e EC2) ListSecurityGroupTags(securityGroupId string) (model.Tags, error) {
+	out, err := e.ec2Client.DescribeSecurityGroups(
+		context.TODO(),
+		&ec2.DescribeSecurityGroupsInput{
+			GroupIds: []string{securityGroupId},
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	if len(out.SecurityGroups) != 1 {
+		return model.Tags{}, errors.New("should get exactly 1 security group")
+	}
+	var tags model.Tags
+	for _, v := range out.SecurityGroups[0].Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
+}
+
+func (e EC2) ListSecurityGroupRuleTags(ruleId string) (model.Tags, error) {
+	out, err := e.ec2Client.DescribeSecurityGroupRules(
+		context.TODO(),
+		&ec2.DescribeSecurityGroupRulesInput{
+			SecurityGroupRuleIds: []string{ruleId},
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	if len(out.SecurityGroupRules) != 1 {
+		return model.Tags{}, errors.New("should get exactly 1 rule")
+	}
+	var tags model.Tags
+	for _, v := range out.SecurityGroupRules[0].Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
+}
+
+func (e EC2) ListVPCTags(vpcId string) (model.Tags, error) {
+	out, err := e.ec2Client.DescribeVpcs(
+		context.TODO(),
+		&ec2.DescribeVpcsInput{
+			VpcIds: []string{vpcId},
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	if len(out.Vpcs) != 1 {
+		return model.Tags{}, errors.New("should get exactly 1 vpc")
+	}
+	var tags model.Tags
+	for _, v := range out.Vpcs[0].Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -10,12 +9,11 @@ import (
 
 type EC2KeyPairs struct {
 	*ui.Table
-	repo      *repo.EC2
-	ec2Client *ec2.Client
-	app       *Application
+	repo *repo.EC2
+	app  *Application
 }
 
-func NewEC2KeyPairs(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *EC2KeyPairs {
+func NewEC2KeyPairs(repo *repo.EC2, app *Application) *EC2KeyPairs {
 	e := &EC2KeyPairs{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -24,9 +22,8 @@ func NewEC2KeyPairs(repo *repo.EC2, ec2Client *ec2.Client, app *Application) *EC
 			"CREATED",
 			"ID",
 		}, 1, 0),
-		repo:      repo,
-		ec2Client: ec2Client,
-		app:       app,
+		repo: repo,
+		app:  app,
 	}
 	return e
 }
@@ -44,7 +41,7 @@ func (e EC2KeyPairs) pubKeyHandler() {
 	if err != nil {
 		return
 	}
-	pubKeyView := NewEC2KeyPairPubKey(e.ec2Client, keyId, e.app)
+	pubKeyView := NewEC2KeyPairPubKey(e.repo, keyId, e.app)
 	e.app.AddAndSwitch(pubKeyView)
 }
 
@@ -53,7 +50,7 @@ func (e EC2KeyPairs) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2KeyPairTags(e.ec2Client, keyId, e.app)
+	tagsView := NewEC2KeyPairTags(e.repo, keyId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
