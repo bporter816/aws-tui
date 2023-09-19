@@ -1,22 +1,19 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/iam"
-	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 )
 
 type IAMAccessKeys struct {
 	*ui.Table
-	iamClient *iam.Client
-	userName  string
-	app       *Application
+	repo     *repo.IAM
+	userName string
+	app      *Application
 }
 
-func NewIAMAccessKeys(iamClient *iam.Client, userName string, app *Application) *IAMAccessKeys {
+func NewIAMAccessKeys(repo *repo.IAM, userName string, app *Application) *IAMAccessKeys {
 	i := &IAMAccessKeys{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -26,9 +23,9 @@ func NewIAMAccessKeys(iamClient *iam.Client, userName string, app *Application) 
 			"LAST USED REGION",
 			"LAST USED SERVICE",
 		}, 1, 0),
-		iamClient: iamClient,
-		userName:  userName,
-		app:       app,
+		repo:     repo,
+		userName: userName,
+		app:      app,
 	}
 	return i
 }
@@ -46,45 +43,26 @@ func (i IAMAccessKeys) GetKeyActions() []KeyAction {
 }
 
 func (i IAMAccessKeys) Render() {
-	var accessKeys []iamTypes.AccessKeyMetadata
-	pg := iam.NewListAccessKeysPaginator(
-		i.iamClient,
-		&iam.ListAccessKeysInput{
-			UserName: aws.String(i.userName),
-		},
-	)
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		accessKeys = append(accessKeys, out.AccessKeyMetadata...)
+	model, err := i.repo.ListAccessKeys(i.userName)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-
-	for _, v := range accessKeys {
+	for _, v := range model {
 		var id, created, status, lastUsedDate, lastUsedRegion, lastUsedService string
 
 		if v.AccessKeyId != nil {
 			id = *v.AccessKeyId
 
-			out, err := i.iamClient.GetAccessKeyLastUsed(
-				context.TODO(),
-				&iam.GetAccessKeyLastUsedInput{
-					AccessKeyId: aws.String(*v.AccessKeyId),
-				},
-			)
-			if err == nil && out.AccessKeyLastUsed != nil {
-				if out.AccessKeyLastUsed.LastUsedDate != nil {
-					lastUsedDate = out.AccessKeyLastUsed.LastUsedDate.Format(utils.DefaultTimeFormat)
-				}
-				if out.AccessKeyLastUsed.Region != nil {
-					lastUsedRegion = *out.AccessKeyLastUsed.Region
-				}
-				if out.AccessKeyLastUsed.ServiceName != nil {
-					lastUsedService = *out.AccessKeyLastUsed.ServiceName
-				}
+			if v.LastUsed.LastUsedDate != nil {
+				lastUsedDate = v.LastUsed.LastUsedDate.Format(utils.DefaultTimeFormat)
+			}
+			if v.LastUsed.Region != nil {
+				lastUsedRegion = *v.LastUsed.Region
+			}
+			if v.LastUsed.ServiceName != nil {
+				lastUsedService = *v.LastUsed.ServiceName
 			}
 		}
 		if v.CreateDate != nil {

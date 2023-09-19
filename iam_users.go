@@ -53,7 +53,7 @@ func (i IAMUsers) accessKeysHandler() {
 	if err != nil {
 		return
 	}
-	accessKeysView := NewIAMAccessKeys(i.iamClient, userName, i.app)
+	accessKeysView := NewIAMAccessKeys(i.repo, userName, i.app)
 	i.app.AddAndSwitch(accessKeysView)
 }
 
