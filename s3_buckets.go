@@ -42,7 +42,7 @@ func (s S3Buckets) selectHandler(row, col int) {
 	if err != nil {
 		return
 	}
-	objectsView := NewS3Objects(s.s3Client, bucket, s.app)
+	objectsView := NewS3Objects(s.repo, s.s3Client, bucket, s.app)
 	s.app.AddAndSwitch(objectsView)
 }
 

@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/bporter816/aws-tui/model"
+	"io"
 )
 
 type S3 struct {
@@ -43,4 +44,63 @@ func (s S3) GetBucketPolicy(bucketName string) (string, error) {
 		return "", err
 	}
 	return *out.Policy, nil
+}
+
+func (s S3) GetObject(bucketName string, key string) ([]byte, error) {
+	out, err := s.s3Client.GetObject(
+		context.TODO(),
+		&s3.GetObjectInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(key),
+		},
+	)
+	if err != nil {
+		return []byte{}, err
+	}
+	defer out.Body.Close()
+	b := make([]byte, out.ContentLength)
+	n, err := out.Body.Read(b)
+	if err != nil && err != io.EOF {
+		return []byte{}, err
+	}
+	return b[0:n], nil
+}
+
+func (s S3) GetObjectMetadata(bucketName string, key string) (model.Tags, error) {
+	out, err := s.s3Client.GetObject(
+		context.TODO(),
+		&s3.GetObjectInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(key),
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	var tags model.Tags
+	if out.ContentType != nil {
+		tags = append(tags, model.Tag{Key: "Content-Type", Value: *out.ContentType})
+	}
+	for k, v := range out.Metadata {
+		tags = append(tags, model.Tag{Key: k, Value: v})
+	}
+	return tags, nil
+}
+
+func (s S3) ListObjectTags(bucketName string, key string) (model.Tags, error) {
+	out, err := s.s3Client.GetObjectTagging(
+		context.TODO(),
+		&s3.GetObjectTaggingInput{
+			Bucket: aws.String(bucketName),
+			Key:    aws.String(key),
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	var tags model.Tags
+	for _, v := range out.TagSet {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
 }

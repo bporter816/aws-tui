@@ -1,30 +1,28 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type S3ObjectMetadata struct {
 	*ui.Table
-	s3Client *s3.Client
-	bucket   string
-	key      string
-	app      *Application
+	repo   *repo.S3
+	bucket string
+	key    string
+	app    *Application
 }
 
-func NewS3ObjectMetadata(s3Client *s3.Client, bucket string, key string, app *Application) *S3ObjectMetadata {
+func NewS3ObjectMetadata(repo *repo.S3, bucket string, key string, app *Application) *S3ObjectMetadata {
 	s := &S3ObjectMetadata{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		s3Client: s3Client,
-		bucket:   bucket,
-		key:      key,
-		app:      app,
+		repo:   repo,
+		bucket: bucket,
+		key:    key,
+		app:    app,
 	}
 	return s
 }
@@ -42,28 +40,16 @@ func (s S3ObjectMetadata) GetKeyActions() []KeyAction {
 }
 
 func (s S3ObjectMetadata) Render() {
-	out, err := s.s3Client.GetObject(
-		context.TODO(),
-		&s3.GetObjectInput{
-			Bucket: aws.String(s.bucket),
-			Key:    aws.String(s.key),
-		},
-	)
+	model, err := s.repo.GetObjectMetadata(s.bucket, s.key)
 	if err != nil {
 		panic(err)
 	}
 
 	var data [][]string
-	if out.ContentType != nil {
+	for _, v := range model {
 		data = append(data, []string{
-			"Content-Type",
-			*out.ContentType,
-		})
-	}
-	for k, v := range out.Metadata {
-		data = append(data, []string{
-			k,
-			v,
+			v.Key,
+			v.Value,
 		})
 	}
 	s.SetData(data)

@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -13,16 +14,18 @@ import (
 
 type S3Objects struct {
 	*ui.Tree
+	repo     *repo.S3
 	s3Client *s3.Client
 	bucket   string
 	app      *Application
 }
 
-func NewS3Objects(s3Client *s3.Client, bucket string, app *Application) *S3Objects {
+func NewS3Objects(repo *repo.S3, s3Client *s3.Client, bucket string, app *Application) *S3Objects {
 	root := tview.NewTreeNode("/")
 	root.SetReference("")
 	s := &S3Objects{
 		Tree:     ui.NewTree(root),
+		repo:     repo,
 		s3Client: s3Client,
 		bucket:   bucket,
 		app:      app,
@@ -49,7 +52,7 @@ func (s S3Objects) objectHandler() {
 		if strings.HasSuffix(key, "/") {
 			return
 		}
-		objectView := NewS3Object(s.s3Client, s.bucket, key, s.app)
+		objectView := NewS3Object(s.repo, s.bucket, key, s.app)
 		s.app.AddAndSwitch(objectView)
 	}
 }
@@ -60,7 +63,7 @@ func (s S3Objects) metadataHandler() {
 		if strings.HasSuffix(key, "/") {
 			return
 		}
-		metadataView := NewS3ObjectMetadata(s.s3Client, s.bucket, key, s.app)
+		metadataView := NewS3ObjectMetadata(s.repo, s.bucket, key, s.app)
 		s.app.AddAndSwitch(metadataView)
 	}
 }
@@ -71,7 +74,7 @@ func (s S3Objects) tagsHandler() {
 		if strings.HasSuffix(key, "/") {
 			return
 		}
-		tagsView := NewS3ObjectTags(s.s3Client, s.bucket, key, s.app)
+		tagsView := NewS3ObjectTags(s.repo, s.bucket, key, s.app)
 		s.app.AddAndSwitch(tagsView)
 	}
 }
