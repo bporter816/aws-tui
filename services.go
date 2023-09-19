@@ -5,6 +5,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/rivo/tview"
@@ -165,7 +166,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "IAM.Groups":
 				item = NewIAMGroups(s.repos["IAM"].(*repo.IAM), s.clients["IAM"].(*iam.Client), "", s.app)
 			case "IAM.Managed Policies":
-				item = NewIAMPolicies(s.clients["IAM"].(*iam.Client), IAMIdentityTypeAll, "", s.app)
+				item = NewIAMPolicies(s.repos["IAM"].(*repo.IAM), s.clients["IAM"].(*iam.Client), model.IAMIdentityTypeAll, "", s.app)
 			case "KMS.Keys":
 				item = NewKmsKeys(s.repos["KMS"].(*repo.KMS), s.app)
 			case "KMS.Custom Key Stores":

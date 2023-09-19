@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -62,7 +63,7 @@ func (i IAMUsers) policiesHandler() {
 	if err != nil {
 		return
 	}
-	policiesView := NewIAMPolicies(i.iamClient, IAMIdentityTypeUser, userName, i.app)
+	policiesView := NewIAMPolicies(i.repo, i.iamClient, model.IAMIdentityTypeUser, userName, i.app)
 	i.app.AddAndSwitch(policiesView)
 }
 
@@ -71,7 +72,7 @@ func (i IAMUsers) permissionsBoundaryHandler() {
 	if err != nil {
 		return
 	}
-	permissionsBoundaryView := NewIAMPolicy(i.iamClient, IAMIdentityTypeUser, IAMPolicyTypePermissionsBoundary, userName, "", "", i.app)
+	permissionsBoundaryView := NewIAMPolicy(i.repo, model.IAMIdentityTypeUser, IAMPolicyTypePermissionsBoundary, userName, "", "", i.app)
 	i.app.AddAndSwitch(permissionsBoundaryView)
 }
 

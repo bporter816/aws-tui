@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/iam"
+	"github.com/bporter816/aws-tui/model"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type IAMPolicy struct {
 	*ui.Text
-	iamClient    *iam.Client
-	identityType IAMIdentityType
+	repo         *repo.IAM
+	identityType model.IAMIdentityType
 	policyType   IAMPolicyType
 	identityName string
 	policyName   string
@@ -17,8 +18,8 @@ type IAMPolicy struct {
 }
 
 func NewIAMPolicy(
-	iamClient *iam.Client,
-	identityType IAMIdentityType,
+	repo *repo.IAM,
+	identityType model.IAMIdentityType,
 	policyType IAMPolicyType,
 	identityName string,
 	policyName string,
@@ -27,7 +28,7 @@ func NewIAMPolicy(
 ) *IAMPolicy {
 	i := &IAMPolicy{
 		Text:         ui.NewText(true, "json"),
-		iamClient:    iamClient,
+		repo:         repo,
 		identityType: identityType,
 		policyType:   policyType,
 		identityName: identityName,
@@ -61,13 +62,13 @@ func (i IAMPolicy) Render() {
 	var err error
 	switch i.policyType {
 	case IAMPolicyTypeManaged:
-		policy, err = getIAMManagedPolicy(i.iamClient, i.policyArn)
+		policy, err = i.repo.GetIAMManagedPolicy(i.policyArn)
 	case IAMPolicyTypeInline:
-		policy, err = getIAMInlinePolicy(i.iamClient, i.identityType, i.identityName, i.policyName)
+		policy, err = i.repo.GetIAMInlinePolicy(i.identityType, i.identityName, i.policyName)
 	case IAMPolicyTypePermissionsBoundary:
-		policy, err = getIAMPermissionsBoundary(i.iamClient, i.identityName, i.identityType)
+		policy, err = i.repo.GetIAMPermissionsBoundary(i.identityName, i.identityType)
 	case IAMPolicyTypeAssumeRolePolicy:
-		policy, err = getIAMAssumeRolePolicy(i.iamClient, i.identityName)
+		policy, err = i.repo.GetIAMAssumeRolePolicy(i.identityName)
 	}
 	if err != nil {
 		panic(err)

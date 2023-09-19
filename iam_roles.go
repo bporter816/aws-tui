@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -48,7 +49,7 @@ func (i IAMRoles) policiesHandler() {
 	if err != nil {
 		return
 	}
-	policiesView := NewIAMPolicies(i.iamClient, IAMIdentityTypeRole, roleName, i.app)
+	policiesView := NewIAMPolicies(i.repo, i.iamClient, model.IAMIdentityTypeRole, roleName, i.app)
 	i.app.AddAndSwitch(policiesView)
 }
 
@@ -57,7 +58,7 @@ func (i IAMRoles) assumeRolePolicyHandler() {
 	if err != nil {
 		return
 	}
-	assumeRolePolicyView := NewIAMPolicy(i.iamClient, IAMIdentityTypeRole, IAMPolicyTypeAssumeRolePolicy, roleName, "", "", i.app)
+	assumeRolePolicyView := NewIAMPolicy(i.repo, model.IAMIdentityTypeRole, IAMPolicyTypeAssumeRolePolicy, roleName, "", "", i.app)
 	i.app.AddAndSwitch(assumeRolePolicyView)
 }
 
@@ -66,7 +67,7 @@ func (i IAMRoles) permissionsBoundaryHandler() {
 	if err != nil {
 		return
 	}
-	permissionsBoundaryView := NewIAMPolicy(i.iamClient, IAMIdentityTypeRole, IAMPolicyTypePermissionsBoundary, roleName, "", "", i.app)
+	permissionsBoundaryView := NewIAMPolicy(i.repo, model.IAMIdentityTypeRole, IAMPolicyTypePermissionsBoundary, roleName, "", "", i.app)
 	i.app.AddAndSwitch(permissionsBoundaryView)
 }
 

@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -52,7 +53,7 @@ func (i IAMGroups) policiesHandler() {
 	if err != nil {
 		return
 	}
-	policiesView := NewIAMPolicies(i.iamClient, IAMIdentityTypeGroup, groupName, i.app)
+	policiesView := NewIAMPolicies(i.repo, i.iamClient, model.IAMIdentityTypeGroup, groupName, i.app)
 	i.app.AddAndSwitch(policiesView)
 }
 

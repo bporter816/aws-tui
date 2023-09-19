@@ -10,3 +10,12 @@ type (
 		LastUsed iamTypes.AccessKeyLastUsed
 	}
 )
+
+type IAMIdentityType string
+
+const (
+	IAMIdentityTypeUser  IAMIdentityType = "User"
+	IAMIdentityTypeRole  IAMIdentityType = "Role"
+	IAMIdentityTypeGroup IAMIdentityType = "Group"
+	IAMIdentityTypeAll   IAMIdentityType = "All"
+)

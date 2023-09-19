@@ -5,26 +5,30 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
+	"github.com/bporter816/aws-tui/model"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 )
 
 type IAMPolicies struct {
 	*ui.Table
+	repo              *repo.IAM
 	iamClient         *iam.Client
-	identityType      IAMIdentityType
+	identityType      model.IAMIdentityType
 	id                string
 	app               *Application
 	managedArns       []string
 	numInlinePolicies int
 }
 
-func NewIAMPolicies(iamClient *iam.Client, identityType IAMIdentityType, id string, app *Application) *IAMPolicies {
+func NewIAMPolicies(repo *repo.IAM, iamClient *iam.Client, identityType model.IAMIdentityType, id string, app *Application) *IAMPolicies {
 	i := &IAMPolicies{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"TYPE",
 		}, 1, 0),
+		repo:         repo,
 		iamClient:    iamClient,
 		identityType: identityType,
 		id:           id,
@@ -57,9 +61,9 @@ func (i IAMPolicies) policyDocumentHandler() {
 	enumVal := IAMPolicyType(policyType)
 	var policyDocumentView *IAMPolicy
 	if enumVal == IAMPolicyTypeManaged {
-		policyDocumentView = NewIAMPolicy(i.iamClient, i.identityType, enumVal, i.id, policyName, i.managedArns[row-1-i.numInlinePolicies], i.app)
+		policyDocumentView = NewIAMPolicy(i.repo, i.identityType, enumVal, i.id, policyName, i.managedArns[row-1-i.numInlinePolicies], i.app)
 	} else {
-		policyDocumentView = NewIAMPolicy(i.iamClient, i.identityType, enumVal, i.id, policyName, "", i.app)
+		policyDocumentView = NewIAMPolicy(i.repo, i.identityType, enumVal, i.id, policyName, "", i.app)
 	}
 	i.app.AddAndSwitch(policyDocumentView)
 }
@@ -81,7 +85,7 @@ func (i *IAMPolicies) Render() {
 		// inline policies
 		var inlinePolicyNames []string
 		switch i.identityType {
-		case IAMIdentityTypeUser:
+		case model.IAMIdentityTypeUser:
 			pg := iam.NewListUserPoliciesPaginator(
 				i.iamClient,
 				&iam.ListUserPoliciesInput{
@@ -95,7 +99,7 @@ func (i *IAMPolicies) Render() {
 				}
 				inlinePolicyNames = append(inlinePolicyNames, out.PolicyNames...)
 			}
-		case IAMIdentityTypeRole:
+		case model.IAMIdentityTypeRole:
 			pg := iam.NewListRolePoliciesPaginator(
 				i.iamClient,
 				&iam.ListRolePoliciesInput{
@@ -109,7 +113,7 @@ func (i *IAMPolicies) Render() {
 				}
 				inlinePolicyNames = append(inlinePolicyNames, out.PolicyNames...)
 			}
-		case IAMIdentityTypeGroup:
+		case model.IAMIdentityTypeGroup:
 			pg := iam.NewListGroupPoliciesPaginator(
 				i.iamClient,
 				&iam.ListGroupPoliciesInput{
@@ -168,7 +172,7 @@ func (i *IAMPolicies) Render() {
 		// policies attached to a user, role, or group
 		var attachedPolicies []iamTypes.AttachedPolicy
 		switch i.identityType {
-		case IAMIdentityTypeUser:
+		case model.IAMIdentityTypeUser:
 			pg := iam.NewListAttachedUserPoliciesPaginator(
 				i.iamClient,
 				&iam.ListAttachedUserPoliciesInput{
@@ -182,7 +186,7 @@ func (i *IAMPolicies) Render() {
 				}
 				attachedPolicies = append(attachedPolicies, out.AttachedPolicies...)
 			}
-		case IAMIdentityTypeRole:
+		case model.IAMIdentityTypeRole:
 			pg := iam.NewListAttachedRolePoliciesPaginator(
 				i.iamClient,
 				&iam.ListAttachedRolePoliciesInput{
@@ -196,7 +200,7 @@ func (i *IAMPolicies) Render() {
 				}
 				attachedPolicies = append(attachedPolicies, out.AttachedPolicies...)
 			}
-		case IAMIdentityTypeGroup:
+		case model.IAMIdentityTypeGroup:
 			pg := iam.NewListAttachedGroupPoliciesPaginator(
 				i.iamClient,
 				&iam.ListAttachedGroupPoliciesInput{

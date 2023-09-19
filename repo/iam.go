@@ -2,10 +2,12 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/model"
+	"net/url"
 )
 
 type IAM struct {
@@ -16,6 +18,151 @@ func NewIAM(iamClient *iam.Client) *IAM {
 	return &IAM{
 		iamClient: iamClient,
 	}
+}
+
+func (i IAM) getIAMManagedPolicyCurrentVersion(policyArn string) (string, error) {
+	// get the managed policy
+	policyOut, err := i.iamClient.GetPolicy(
+		context.TODO(),
+		&iam.GetPolicyInput{
+			PolicyArn: aws.String(policyArn),
+		},
+	)
+	if err != nil || policyOut.Policy == nil || policyOut.Policy.DefaultVersionId == nil {
+		return "", err
+	}
+
+	// get the current version of the policy
+	versionOut, err := i.iamClient.GetPolicyVersion(
+		context.TODO(),
+		&iam.GetPolicyVersionInput{
+			PolicyArn: aws.String(policyArn),
+			VersionId: policyOut.Policy.DefaultVersionId, // TODO use aws.String?
+		},
+	)
+	if err != nil || versionOut.PolicyVersion == nil || versionOut.PolicyVersion.Document == nil {
+		return "", err
+	}
+
+	// decode the policy
+	decodedStr, err := url.QueryUnescape(*versionOut.PolicyVersion.Document)
+	if err != nil {
+		return "", errors.New("error decoding policy document")
+	}
+
+	return decodedStr, nil
+}
+
+func (i IAM) GetIAMManagedPolicy(policyArn string) (string, error) {
+	return i.getIAMManagedPolicyCurrentVersion(policyArn)
+}
+
+func (i IAM) GetIAMInlinePolicy(identityType model.IAMIdentityType, identityName string, policyName string) (string, error) {
+	var policyDocument *string
+	switch identityType {
+	case model.IAMIdentityTypeUser:
+		out, err := i.iamClient.GetUserPolicy(
+			context.TODO(),
+			&iam.GetUserPolicyInput{
+				UserName:   aws.String(identityName),
+				PolicyName: aws.String(policyName),
+			},
+		)
+		if err != nil {
+			return "", err
+		}
+		policyDocument = out.PolicyDocument
+	case model.IAMIdentityTypeRole:
+		out, err := i.iamClient.GetRolePolicy(
+			context.TODO(),
+			&iam.GetRolePolicyInput{
+				RoleName:   aws.String(identityName),
+				PolicyName: aws.String(policyName),
+			},
+		)
+		if err != nil {
+			return "", err
+		}
+		policyDocument = out.PolicyDocument
+	case model.IAMIdentityTypeGroup:
+		out, err := i.iamClient.GetGroupPolicy(
+			context.TODO(),
+			&iam.GetGroupPolicyInput{
+				GroupName:  aws.String(identityName),
+				PolicyName: aws.String(policyName),
+			},
+		)
+		if err != nil {
+			return "", err
+		}
+		policyDocument = out.PolicyDocument
+	default:
+		return "", errors.New("invalid identity type for inline policy, support types are user, role, and group")
+	}
+	if policyDocument == nil || *policyDocument == "" {
+		return "", nil
+	}
+
+	decodedStr, err := url.QueryUnescape(*policyDocument)
+	if err != nil {
+		return "", errors.New("error decoding policy document")
+	}
+
+	return decodedStr, nil
+}
+
+func (i IAM) GetIAMPermissionsBoundary(name string, identityType model.IAMIdentityType) (string, error) {
+	var attachment *iamTypes.AttachedPermissionsBoundary
+	switch identityType {
+	case model.IAMIdentityTypeUser:
+		out, err := i.iamClient.GetUser(
+			context.TODO(),
+			&iam.GetUserInput{
+				UserName: aws.String(name),
+			},
+		)
+		if err != nil || out.User == nil {
+			return "", err
+		}
+		attachment = out.User.PermissionsBoundary
+	case model.IAMIdentityTypeRole:
+		out, err := i.iamClient.GetRole(
+			context.TODO(),
+			&iam.GetRoleInput{
+				RoleName: aws.String(name),
+			},
+		)
+		if err != nil || out.Role == nil {
+			return "", err
+		}
+		attachment = out.Role.PermissionsBoundary
+	default:
+		panic("invalid identity type for permissions boundary, supported types are user and role")
+	}
+	if attachment == nil || attachment.PermissionsBoundaryArn == nil || *attachment.PermissionsBoundaryArn == "" {
+		return "", nil
+	}
+
+	return i.getIAMManagedPolicyCurrentVersion(*attachment.PermissionsBoundaryArn)
+}
+
+func (i IAM) GetIAMAssumeRolePolicy(roleName string) (string, error) {
+	out, err := i.iamClient.GetRole(
+		context.TODO(),
+		&iam.GetRoleInput{
+			RoleName: aws.String(roleName),
+		},
+	)
+	if err != nil || out.Role == nil || out.Role.AssumeRolePolicyDocument == nil {
+		return "", err
+	}
+
+	decodedStr, err := url.QueryUnescape(*out.Role.AssumeRolePolicyDocument)
+	if err != nil {
+		return "", errors.New("error decoding policy document")
+	}
+
+	return decodedStr, nil
 }
 
 func (i IAM) getAccessKeyLastUsed(accessKeyId string) (iamTypes.AccessKeyLastUsed, error) {
