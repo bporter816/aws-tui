@@ -20,6 +20,17 @@ func NewIAM(iamClient *iam.Client) *IAM {
 	}
 }
 
+func (i IAM) ListAccountAliases() ([]string, error) {
+	out, err := i.iamClient.ListAccountAliases(
+		context.TODO(),
+		&iam.ListAccountAliasesInput{},
+	)
+	if err != nil {
+		return []string{}, err
+	}
+	return out.AccountAliases, nil
+}
+
 func (i IAM) getIAMManagedPolicyCurrentVersion(policyArn string) (string, error) {
 	// get the managed policy
 	policyOut, err := i.iamClient.GetPolicy(

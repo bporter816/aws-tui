@@ -82,7 +82,7 @@ func NewApplication() *Application {
 	pages := tview.NewPages()
 	pages.SetBorder(true)
 
-	header := NewHeader(repos["STS"].(*repo.STS), iamClient, a)
+	header := NewHeader(repos["STS"].(*repo.STS), repos["IAM"].(*repo.IAM), a)
 	footer := NewFooter(a)
 
 	flex := tview.NewFlex()

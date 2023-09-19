@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/rivo/tview"
 	"os/exec"
@@ -13,13 +11,13 @@ import (
 type Header struct {
 	*tview.Flex
 	stsRepo     *repo.STS
-	iamClient   *iam.Client
+	iamRepo     *repo.IAM
 	app         *Application
 	accountInfo *tview.TextView
 	keybindInfo *tview.Grid
 }
 
-func NewHeader(stsRepo *repo.STS, i *iam.Client, app *Application) *Header {
+func NewHeader(stsRepo *repo.STS, iamRepo *repo.IAM, app *Application) *Header {
 	accountInfo := tview.NewTextView()
 	accountInfo.SetDynamicColors(true)
 	accountInfo.SetWrap(false)
@@ -36,7 +34,7 @@ func NewHeader(stsRepo *repo.STS, i *iam.Client, app *Application) *Header {
 	h := &Header{
 		Flex:        flex,
 		stsRepo:     stsRepo,
-		iamClient:   i,
+		iamRepo:     iamRepo,
 		accountInfo: accountInfo,
 		keybindInfo: keybindInfo,
 		app:         app,
@@ -67,17 +65,17 @@ func (h Header) Render() {
 		userId = *identityModel.UserId
 	}
 
-	aliasesOutput, err := h.iamClient.ListAccountAliases(context.TODO(), &iam.ListAccountAliasesInput{})
 	if err != nil {
 		panic(err)
 	}
 
-	var aliases string
-	if len(aliasesOutput.AccountAliases) > 0 {
-		aliases = fmt.Sprintf(" (%v)", strings.Join(aliasesOutput.AccountAliases, ", "))
+	aliases, err := h.iamRepo.ListAccountAliases()
+	var aliasesStr string
+	if len(aliases) > 0 {
+		aliasesStr = fmt.Sprintf(" (%v)", strings.Join(aliases, ", "))
 	}
 
-	accountInfoStr := fmt.Sprintf("[orange::b]Account:[white::-] %v%v\n", account, aliases)
+	accountInfoStr := fmt.Sprintf("[orange::b]Account:[white::-] %v%v\n", account, aliasesStr)
 	accountInfoStr += fmt.Sprintf("[orange::b]ARN:[white::-]     %v\n", arn)
 	accountInfoStr += fmt.Sprintf("[orange::b]User ID:[white::-] %v\n", userId)
 	accountInfoStr += fmt.Sprintf("[orange::b]Region:[white::-]  %v", string(regionOutput))
