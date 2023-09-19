@@ -72,6 +72,7 @@ func NewApplication() *Application {
 		"IAM":             repo.NewIAM(iamClient),
 		"KMS":             repo.NewKMS(kmsClient),
 		"Route 53":        repo.NewRoute53(r53Client),
+		"S3":              repo.NewS3(s3Client),
 		"SQS":             repo.NewSQS(sqsClient),
 		"STS":             repo.NewSTS(stsClient),
 		"Secrets Manager": repo.NewSecretsManager(smClient),

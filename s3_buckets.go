@@ -1,9 +1,8 @@
 package main
 
 import (
-	"context"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -11,16 +10,18 @@ import (
 
 type S3Buckets struct {
 	*ui.Table
+	repo     *repo.S3
 	s3Client *s3.Client
 	app      *Application
 }
 
-func NewS3Buckets(s3Client *s3.Client, app *Application) *S3Buckets {
+func NewS3Buckets(repo *repo.S3, s3Client *s3.Client, app *Application) *S3Buckets {
 	s := &S3Buckets{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"CREATED",
 		}, 1, 0),
+		repo:     repo,
 		s3Client: s3Client,
 		app:      app,
 	}
@@ -79,18 +80,13 @@ func (s S3Buckets) GetKeyActions() []KeyAction {
 }
 
 func (s S3Buckets) Render() {
-	var buckets []s3Types.Bucket
-	out, err := s.s3Client.ListBuckets(
-		context.TODO(),
-		&s3.ListBucketsInput{},
-	)
+	model, err := s.repo.ListBuckets()
 	if err != nil {
 		panic(err)
 	}
-	buckets = out.Buckets
 
 	var data [][]string
-	for _, v := range buckets {
+	for _, v := range model {
 		var name, created string
 		if v.Name != nil {
 			name = *v.Name

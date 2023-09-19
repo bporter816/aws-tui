@@ -176,7 +176,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "Route 53.Health Checks":
 				item = NewRoute53HealthChecks(s.repos["Route 53"].(*repo.Route53), s.app)
 			case "S3.Buckets":
-				item = NewS3Buckets(s.clients["S3"].(*s3.Client), s.app)
+				item = NewS3Buckets(s.repos["S3"].(*repo.S3), s.clients["S3"].(*s3.Client), s.app)
 			case "SQS.Queues":
 				item = NewSQSQueues(s.repos["SQS"].(*repo.SQS), s.app)
 			case "Secrets Manager.Secrets":
