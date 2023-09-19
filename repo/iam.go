@@ -31,6 +31,24 @@ func (i IAM) ListAccountAliases() ([]string, error) {
 	return out.AccountAliases, nil
 }
 
+func (i IAM) ListRoles() ([]model.IAMRole, error) {
+	pg := iam.NewListRolesPaginator(
+		i.iamClient,
+		&iam.ListRolesInput{},
+	)
+	var roles []model.IAMRole
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.IAMRole{}, err
+		}
+		for _, v := range out.Roles {
+			roles = append(roles, model.IAMRole(v))
+		}
+	}
+	return roles, nil
+}
+
 func (i IAM) getIAMManagedPolicyCurrentVersion(policyArn string) (string, error) {
 	// get the managed policy
 	policyOut, err := i.iamClient.GetPolicy(

@@ -5,6 +5,7 @@ import (
 )
 
 type (
+	IAMRole iamTypes.Role
 	IAMAccessKey struct {
 		iamTypes.AccessKeyMetadata
 		LastUsed iamTypes.AccessKeyLastUsed

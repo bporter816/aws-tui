@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
-	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -106,21 +104,13 @@ func (i IAMRoles) GetKeyActions() []KeyAction {
 }
 
 func (i IAMRoles) Render() {
-	var roles []iamTypes.Role
-	pg := iam.NewListRolesPaginator(
-		i.iamClient,
-		&iam.ListRolesInput{},
-	)
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		roles = append(roles, out.Roles...)
+	model, err := i.repo.ListRoles()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range roles {
+	for _, v := range model {
 		var roleId, roleName, path, maxSession, created, description string
 		if v.RoleId != nil {
 			roleId = *v.RoleId
