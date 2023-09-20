@@ -1,28 +1,26 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type S3BucketTags struct {
 	*ui.Table
-	s3Client *s3.Client
-	bucket   string
-	app      *Application
+	repo   *repo.S3
+	bucket string
+	app    *Application
 }
 
-func NewS3BucketTags(s3Client *s3.Client, bucket string, app *Application) *S3BucketTags {
+func NewS3BucketTags(repo *repo.S3, bucket string, app *Application) *S3BucketTags {
 	s := &S3BucketTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		s3Client: s3Client,
-		bucket:   bucket,
-		app:      app,
+		repo:   repo,
+		bucket: bucket,
+		app:    app,
 	}
 	return s
 }
@@ -40,21 +38,16 @@ func (s S3BucketTags) GetKeyActions() []KeyAction {
 }
 
 func (s S3BucketTags) Render() {
-	out, err := s.s3Client.GetBucketTagging(
-		context.TODO(),
-		&s3.GetBucketTaggingInput{
-			Bucket: aws.String(s.bucket),
-		},
-	)
+	model, err := s.repo.ListBucketTags(s.bucket)
 	if err != nil {
 		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range out.TagSet {
+	for _, v := range model {
 		data = append(data, []string{
-			*v.Key,
-			*v.Value,
+			v.Key,
+			v.Value,
 		})
 	}
 	s.SetData(data)

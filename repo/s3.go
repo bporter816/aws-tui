@@ -46,6 +46,23 @@ func (s S3) GetBucketPolicy(bucketName string) (string, error) {
 	return *out.Policy, nil
 }
 
+func (s S3) ListBucketTags(bucketName string) (model.Tags, error) {
+	out, err := s.s3Client.GetBucketTagging(
+		context.TODO(),
+		&s3.GetBucketTaggingInput{
+			Bucket: aws.String(bucketName),
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	var tags model.Tags
+	for _, v := range out.TagSet {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
+}
+
 func (s S3) GetObject(bucketName string, key string) ([]byte, error) {
 	out, err := s.s3Client.GetObject(
 		context.TODO(),
