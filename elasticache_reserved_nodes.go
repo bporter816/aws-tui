@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
-	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
-	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -13,13 +11,12 @@ import (
 
 type ElasticacheReservedCacheNodes struct {
 	*ui.Table
-	repo     *repo.Elasticache
-	ecClient *ec.Client
-	app      *Application
-	arns     []string
+	repo  *repo.Elasticache
+	app   *Application
+	model []model.ElasticacheReservedNode
 }
 
-func NewElasticacheReservedCacheNodes(repo *repo.Elasticache, ecClient *ec.Client, app *Application) *ElasticacheReservedCacheNodes {
+func NewElasticacheReservedCacheNodes(repo *repo.Elasticache, app *Application) *ElasticacheReservedCacheNodes {
 	e := &ElasticacheReservedCacheNodes{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -29,9 +26,8 @@ func NewElasticacheReservedCacheNodes(repo *repo.Elasticache, ecClient *ec.Clien
 			"NODES",
 			"STATUS",
 		}, 1, 0),
-		repo:     repo,
-		ecClient: ecClient,
-		app:      app,
+		repo: repo,
+		app:  app,
 	}
 	return e
 }
@@ -53,7 +49,10 @@ func (e ElasticacheReservedCacheNodes) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeReservedNode, e.arns[row-1], name, e.app)
+	if e.model[row-1].ReservationARN == nil {
+		return
+	}
+	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeReservedNode, *e.model[row-1].ReservationARN, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
@@ -68,23 +67,14 @@ func (e ElasticacheReservedCacheNodes) GetKeyActions() []KeyAction {
 }
 
 func (e *ElasticacheReservedCacheNodes) Render() {
-	pg := ec.NewDescribeReservedCacheNodesPaginator(
-		e.ecClient,
-		&ec.DescribeReservedCacheNodesInput{},
-	)
-	var reservations []ecTypes.ReservedCacheNode
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		reservations = append(reservations, out.ReservedCacheNodes...)
+	model, err := e.repo.ListReservedNodes()
+	if err != nil {
+		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
-	e.arns = make([]string, len(reservations))
-	for i, v := range reservations {
-		e.arns[i] = *v.ReservationARN
+	for _, v := range model {
 		data = append(data, []string{
 			*v.ReservedCacheNodeId,
 			*v.OfferingType,

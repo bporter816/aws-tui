@@ -6,6 +6,8 @@ import (
 
 type (
 	ElasticacheEvent ecTypes.Event
+	ElasticacheReservedNode ecTypes.ReservedCacheNode
+	ElasticacheSnapshot ecTypes.Snapshot
 	ElasticacheParameterGroup ecTypes.CacheParameterGroup
 	ElasticacheParameter ecTypes.Parameter
 )

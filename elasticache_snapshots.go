@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
-	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
-	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -14,13 +12,12 @@ import (
 
 type ElasticacheSnapshots struct {
 	*ui.Table
-	repo     *repo.Elasticache
-	ecClient *ec.Client
-	app      *Application
-	arns     []string
+	repo  *repo.Elasticache
+	app   *Application
+	model []model.ElasticacheSnapshot
 }
 
-func NewElasticacheSnapshots(repo *repo.Elasticache, ecClient *ec.Client, app *Application) *ElasticacheSnapshots {
+func NewElasticacheSnapshots(repo *repo.Elasticache, app *Application) *ElasticacheSnapshots {
 	e := &ElasticacheSnapshots{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -31,9 +28,8 @@ func NewElasticacheSnapshots(repo *repo.Elasticache, ecClient *ec.Client, app *A
 			"SHARDS",
 			"SIZE",
 		}, 1, 0),
-		repo:     repo,
-		ecClient: ecClient,
-		app:      app,
+		repo: repo,
+		app:  app,
 	}
 	return e
 }
@@ -55,7 +51,10 @@ func (e ElasticacheSnapshots) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeSnapshot, e.arns[row-1], name, e.app)
+	if e.model[row-1].ARN == nil {
+		return
+	}
+	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeSnapshot, *e.model[row-1].ARN, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
@@ -70,23 +69,14 @@ func (e ElasticacheSnapshots) GetKeyActions() []KeyAction {
 }
 
 func (e *ElasticacheSnapshots) Render() {
-	pg := ec.NewDescribeSnapshotsPaginator(
-		e.ecClient,
-		&ec.DescribeSnapshotsInput{},
-	)
-	var snapshots []ecTypes.Snapshot
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		snapshots = append(snapshots, out.Snapshots...)
+	model, err := e.repo.ListSnapshots()
+	if err != nil {
+		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
-	e.arns = make([]string, len(snapshots))
-	for i, v := range snapshots {
-		e.arns[i] = *v.ARN
+	for _, v := range model {
 		var name, cluster, snapshotType, created, status, size string
 		shards := "-"
 		if v.SnapshotName != nil {

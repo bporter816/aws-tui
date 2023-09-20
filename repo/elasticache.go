@@ -39,6 +39,42 @@ func (e Elasticache) ListEvents() ([]model.ElasticacheEvent, error) {
 	return events, nil
 }
 
+func (e Elasticache) ListReservedNodes() ([]model.ElasticacheReservedNode, error) {
+	pg := ec.NewDescribeReservedCacheNodesPaginator(
+		e.ecClient,
+		&ec.DescribeReservedCacheNodesInput{},
+	)
+	var reservations []model.ElasticacheReservedNode
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheReservedNode{}, err
+		}
+		for _, v := range out.ReservedCacheNodes {
+			reservations = append(reservations, model.ElasticacheReservedNode(v))
+		}
+	}
+	return reservations, nil
+}
+
+func (e Elasticache) ListSnapshots() ([]model.ElasticacheSnapshot, error) {
+	pg := ec.NewDescribeSnapshotsPaginator(
+		e.ecClient,
+		&ec.DescribeSnapshotsInput{},
+	)
+	var snapshots []model.ElasticacheSnapshot
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheSnapshot{}, err
+		}
+		for _, v := range out.Snapshots {
+			snapshots = append(snapshots, model.ElasticacheSnapshot(v))
+		}
+	}
+	return snapshots, nil
+}
+
 func (e Elasticache) ListParameterGroups() ([]model.ElasticacheParameterGroup, error) {
 	pg := ec.NewDescribeCacheParameterGroupsPaginator(
 		e.ecClient,
