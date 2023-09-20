@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"time"
@@ -12,11 +13,12 @@ import (
 
 type ElasticacheEvents struct {
 	*ui.Table
+	repo     *repo.Elasticache
 	ecClient *ec.Client
 	app      *Application
 }
 
-func NewElasticacheEvents(ecClient *ec.Client, app *Application) *ElasticacheEvents {
+func NewElasticacheEvents(repo *repo.Elasticache, ecClient *ec.Client, app *Application) *ElasticacheEvents {
 	e := &ElasticacheEvents{
 		Table: ui.NewTable([]string{
 			"DATE",
@@ -24,6 +26,7 @@ func NewElasticacheEvents(ecClient *ec.Client, app *Application) *ElasticacheEve
 			"TYPE",
 			"MESSAGE",
 		}, 1, 0),
+		repo:     repo,
 		ecClient: ecClient,
 		app:      app,
 	}

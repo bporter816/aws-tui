@@ -4,6 +4,7 @@ import (
 	"context"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -13,12 +14,13 @@ import (
 
 type ElasticacheSnapshots struct {
 	*ui.Table
+	repo     *repo.Elasticache
 	ecClient *ec.Client
 	app      *Application
 	arns     []string
 }
 
-func NewElasticacheSnapshots(ecClient *ec.Client, app *Application) *ElasticacheSnapshots {
+func NewElasticacheSnapshots(repo *repo.Elasticache, ecClient *ec.Client, app *Application) *ElasticacheSnapshots {
 	e := &ElasticacheSnapshots{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -29,6 +31,7 @@ func NewElasticacheSnapshots(ecClient *ec.Client, app *Application) *Elasticache
 			"SHARDS",
 			"SIZE",
 		}, 1, 0),
+		repo:     repo,
 		ecClient: ecClient,
 		app:      app,
 	}
@@ -52,7 +55,7 @@ func (e ElasticacheSnapshots) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.ecClient, ElasticacheResourceTypeSnapshot, e.arns[row-1], name, e.app)
+	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeSnapshot, e.arns[row-1], name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

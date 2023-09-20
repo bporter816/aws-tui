@@ -1,21 +1,18 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
-	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type ElasticacheParameters struct {
 	*ui.Table
-	ecClient           *ec.Client
+	repo               *repo.Elasticache
 	parameterGroupName string
 	app                *Application
 }
 
-func NewElasticacheParameters(ecClient *ec.Client, parameterGroupName string, app *Application) *ElasticacheParameters {
+func NewElasticacheParameters(repo *repo.Elasticache, parameterGroupName string, app *Application) *ElasticacheParameters {
 	e := &ElasticacheParameters{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -27,7 +24,7 @@ func NewElasticacheParameters(ecClient *ec.Client, parameterGroupName string, ap
 			"SOURCE",
 			"DESCRIPTION",
 		}, 1, 0),
-		ecClient:           ecClient,
+		repo:               repo,
 		parameterGroupName: parameterGroupName,
 		app:                app,
 	}
@@ -47,23 +44,13 @@ func (e ElasticacheParameters) GetKeyActions() []KeyAction {
 }
 
 func (e ElasticacheParameters) Render() {
-	pg := ec.NewDescribeCacheParametersPaginator(
-		e.ecClient,
-		&ec.DescribeCacheParametersInput{
-			CacheParameterGroupName: aws.String(e.parameterGroupName),
-		},
-	)
-	var parameters []ecTypes.Parameter
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		parameters = append(parameters, out.Parameters...)
+	model, err := e.repo.ListParameters(e.parameterGroupName)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range parameters {
+	for _, v := range model {
 		name, allowedValues, value, dataType, isModifiable, source, description := "", "", "", "", "No", "", ""
 		if v.ParameterName != nil {
 			name = *v.ParameterName

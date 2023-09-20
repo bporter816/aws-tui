@@ -1,15 +1,13 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 )
 
 type ElasticacheTags struct {
 	*ui.Table
-	ecClient     *ec.Client
+	repo         *repo.Elasticache
 	resourceType ElasticacheResourceType
 	resourceArn  string
 	resourceName string
@@ -24,13 +22,13 @@ const (
 	ElasticacheResourceTypeSnapshot     ElasticacheResourceType = "Snapshots"
 )
 
-func NewElasticacheTags(ecClient *ec.Client, resourceType ElasticacheResourceType, resourceArn string, resourceName string, app *Application) *ElasticacheTags {
+func NewElasticacheTags(repo *repo.Elasticache, resourceType ElasticacheResourceType, resourceArn string, resourceName string, app *Application) *ElasticacheTags {
 	e := &ElasticacheTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
-		ecClient:     ecClient,
+		repo:         repo,
 		resourceType: resourceType,
 		resourceArn:  resourceArn,
 		resourceName: resourceName,
@@ -52,21 +50,16 @@ func (e ElasticacheTags) GetKeyActions() []KeyAction {
 }
 
 func (e ElasticacheTags) Render() {
-	out, err := e.ecClient.ListTagsForResource(
-		context.TODO(),
-		&ec.ListTagsForResourceInput{
-			ResourceName: aws.String(e.resourceArn),
-		},
-	)
+	model, err := e.repo.ListTags(e.resourceArn)
 	if err != nil {
 		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range out.TagList {
+	for _, v := range model {
 		data = append(data, []string{
-			*v.Key,
-			*v.Value,
+			v.Key,
+			v.Value,
 		})
 	}
 	e.SetData(data)

@@ -4,17 +4,19 @@ import (
 	"context"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
 )
 
 type ElasticacheParameterGroups struct {
 	*ui.Table
+	repo     *repo.Elasticache
 	ecClient *ec.Client
 	app      *Application
 }
 
-func NewElasticacheParameterGroups(ecClient *ec.Client, app *Application) *ElasticacheParameterGroups {
+func NewElasticacheParameterGroups(repo *repo.Elasticache, ecClient *ec.Client, app *Application) *ElasticacheParameterGroups {
 	e := &ElasticacheParameterGroups{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -22,6 +24,7 @@ func NewElasticacheParameterGroups(ecClient *ec.Client, app *Application) *Elast
 			"DESCRIPTION",
 			"GLOBAL",
 		}, 1, 0),
+		repo:     repo,
 		ecClient: ecClient,
 		app:      app,
 	}
@@ -41,7 +44,7 @@ func (e ElasticacheParameterGroups) viewParametersHandler() {
 	if err != nil {
 		return
 	}
-	parametersView := NewElasticacheParameters(e.ecClient, name, e.app)
+	parametersView := NewElasticacheParameters(e.repo, name, e.app)
 	e.app.AddAndSwitch(parametersView)
 }
 

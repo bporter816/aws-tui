@@ -4,6 +4,7 @@ import (
 	"context"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
@@ -12,12 +13,13 @@ import (
 
 type ElasticacheClusters struct {
 	*ui.Table
+	repo     *repo.Elasticache
 	ecClient *ec.Client
 	app      *Application
 	arns     []string
 }
 
-func NewElasticacheClusters(ecClient *ec.Client, app *Application) *ElasticacheClusters {
+func NewElasticacheClusters(repo *repo.Elasticache, ecClient *ec.Client, app *Application) *ElasticacheClusters {
 	e := &ElasticacheClusters{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -29,6 +31,7 @@ func NewElasticacheClusters(ecClient *ec.Client, app *Application) *ElasticacheC
 			"SHARDS",
 			"NODES",
 		}, 1, 0),
+		repo:     repo,
 		ecClient: ecClient,
 		app:      app,
 	}
@@ -52,7 +55,7 @@ func (e ElasticacheClusters) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.ecClient, ElasticacheResourceTypeCluster, e.arns[row-1], name, e.app)
+	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeCluster, e.arns[row-1], name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

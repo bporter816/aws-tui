@@ -146,15 +146,15 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "EC2.Key Pairs":
 				item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
 			case "Elasticache.Clusters":
-				item = NewElasticacheClusters(s.clients["Elasticache"].(*ec.Client), s.app)
+				item = NewElasticacheClusters(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":
-				item = NewElasticacheEvents(s.clients["Elasticache"].(*ec.Client), s.app)
+				item = NewElasticacheEvents(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Parameter Groups":
-				item = NewElasticacheParameterGroups(s.clients["Elasticache"].(*ec.Client), s.app)
+				item = NewElasticacheParameterGroups(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Reserved Nodes":
-				item = NewElasticacheReservedCacheNodes(s.clients["Elasticache"].(*ec.Client), s.app)
+				item = NewElasticacheReservedCacheNodes(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Snapshots":
-				item = NewElasticacheSnapshots(s.clients["Elasticache"].(*ec.Client), s.app)
+				item = NewElasticacheSnapshots(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
 			case "ELB.Load Balancers":
 				item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
 			case "ELB.Target Groups":
