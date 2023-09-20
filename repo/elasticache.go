@@ -33,7 +33,8 @@ func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
 			return []model.ElasticacheCluster{}, err
 		}
 		for _, v := range out.CacheClusters {
-			clusters = append(clusters, model.ElasticacheCluster{CacheCluster: &v})
+			vCopy := v
+			clusters = append(clusters, model.ElasticacheCluster{CacheCluster: &vCopy})
 			if v.CacheClusterId != nil && v.EngineVersion != nil && v.ReplicationGroupId != nil {
 				clusterToEngineVersion[*v.CacheClusterId] = *v.EngineVersion
 			}
