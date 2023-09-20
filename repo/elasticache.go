@@ -18,6 +18,49 @@ func NewElasticache(ecClient *ec.Client) *Elasticache {
 	}
 }
 
+func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
+	// DescribeReplicationGroups doesn't return engine version, so we have to get it from the list of member cluster names
+	clusterToEngineVersion := make(map[string]string)
+
+	clustersPg := ec.NewDescribeCacheClustersPaginator(
+		e.ecClient,
+		&ec.DescribeCacheClustersInput{},
+	)
+	var clusters []model.ElasticacheCluster
+	for clustersPg.HasMorePages() {
+		out, err := clustersPg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheCluster{}, err
+		}
+		for _, v := range out.CacheClusters {
+			clusters = append(clusters, model.ElasticacheCluster{CacheCluster: &v})
+			if v.CacheClusterId != nil && v.EngineVersion != nil && v.ReplicationGroupId != nil {
+				clusterToEngineVersion[*v.CacheClusterId] = *v.EngineVersion
+			}
+		}
+	}
+
+	replicationGroupsPg := ec.NewDescribeReplicationGroupsPaginator(
+		e.ecClient,
+		&ec.DescribeReplicationGroupsInput{},
+	)
+	for replicationGroupsPg.HasMorePages() {
+		out, err := replicationGroupsPg.NextPage(context.TODO())
+		if err != nil {
+			// TODO more elegantly handle errors
+			return clusters, err
+		}
+		for _, v := range out.ReplicationGroups {
+			m := model.ElasticacheCluster{ReplicationGroup: &v}
+			if ev, ok := clusterToEngineVersion[v.MemberClusters[0]]; ok {
+				m.ReplicationGroupEngineVersion = ev
+			}
+			clusters = append(clusters, m)
+		}
+	}
+	return clusters, nil
+}
+
 func (e Elasticache) ListEvents() ([]model.ElasticacheEvent, error) {
 	oneWeekAgo := time.Now().AddDate(0, 0, -13) // TODO get this closer to the max 14 days
 	pg := ec.NewDescribeEventsPaginator(

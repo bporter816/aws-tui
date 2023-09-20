@@ -59,9 +59,8 @@ func NewApplication() *Application {
 	a := &Application{}
 
 	clients := map[string]interface{}{
-		"Elasticache": ecClient,
-		"IAM":         iamClient,
-		"S3":          s3Client,
+		"IAM": iamClient,
+		"S3":  s3Client,
 	}
 
 	repos := map[string]interface{}{

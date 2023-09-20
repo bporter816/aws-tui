@@ -5,6 +5,12 @@ import (
 )
 
 type (
+	// A cluster is either a cache cluster or a replication group
+	ElasticacheCluster struct {
+		CacheCluster *ecTypes.CacheCluster
+		ReplicationGroup *ecTypes.ReplicationGroup
+		ReplicationGroupEngineVersion string
+	}
 	ElasticacheEvent ecTypes.Event
 	ElasticacheReservedNode ecTypes.ReservedCacheNode
 	ElasticacheSnapshot ecTypes.Snapshot

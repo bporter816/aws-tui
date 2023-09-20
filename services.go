@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/bporter816/aws-tui/model"
@@ -146,7 +145,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "EC2.Key Pairs":
 				item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
 			case "Elasticache.Clusters":
-				item = NewElasticacheClusters(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
+				item = NewElasticacheClusters(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Events":
 				item = NewElasticacheEvents(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Parameter Groups":
