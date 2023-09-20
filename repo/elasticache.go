@@ -5,6 +5,7 @@ import (
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/bporter816/aws-tui/model"
+	"time"
 )
 
 type Elasticache struct {
@@ -15,6 +16,45 @@ func NewElasticache(ecClient *ec.Client) *Elasticache {
 	return &Elasticache{
 		ecClient: ecClient,
 	}
+}
+
+func (e Elasticache) ListEvents() ([]model.ElasticacheEvent, error) {
+	oneWeekAgo := time.Now().AddDate(0, 0, -13) // TODO get this closer to the max 14 days
+	pg := ec.NewDescribeEventsPaginator(
+		e.ecClient,
+		&ec.DescribeEventsInput{
+			StartTime: aws.Time(oneWeekAgo),
+		},
+	)
+	var events []model.ElasticacheEvent
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheEvent{}, err
+		}
+		for _, v := range out.Events {
+			events = append(events, model.ElasticacheEvent(v))
+		}
+	}
+	return events, nil
+}
+
+func (e Elasticache) ListParameterGroups() ([]model.ElasticacheParameterGroup, error) {
+	pg := ec.NewDescribeCacheParameterGroupsPaginator(
+		e.ecClient,
+		&ec.DescribeCacheParameterGroupsInput{},
+	)
+	var parameterGroups []model.ElasticacheParameterGroup
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheParameterGroup{}, err
+		}
+		for _, v := range out.CacheParameterGroups {
+			parameterGroups = append(parameterGroups, model.ElasticacheParameterGroup(v))
+		}
+	}
+	return parameterGroups, nil
 }
 
 func (e Elasticache) ListParameters(parameterGroupName string) ([]model.ElasticacheParameter, error) {

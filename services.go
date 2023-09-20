@@ -148,9 +148,9 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "Elasticache.Clusters":
 				item = NewElasticacheClusters(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Events":
-				item = NewElasticacheEvents(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
+				item = NewElasticacheEvents(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Parameter Groups":
-				item = NewElasticacheParameterGroups(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
+				item = NewElasticacheParameterGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Reserved Nodes":
 				item = NewElasticacheReservedCacheNodes(s.repos["Elasticache"].(*repo.Elasticache), s.clients["Elasticache"].(*ec.Client), s.app)
 			case "Elasticache.Snapshots":

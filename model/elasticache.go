@@ -5,5 +5,7 @@ import (
 )
 
 type (
+	ElasticacheEvent ecTypes.Event
+	ElasticacheParameterGroup ecTypes.CacheParameterGroup
 	ElasticacheParameter ecTypes.Parameter
 )

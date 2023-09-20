@@ -1,24 +1,18 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
-	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
-	"time"
 )
 
 type ElasticacheEvents struct {
 	*ui.Table
-	repo     *repo.Elasticache
-	ecClient *ec.Client
-	app      *Application
+	repo *repo.Elasticache
+	app  *Application
 }
 
-func NewElasticacheEvents(repo *repo.Elasticache, ecClient *ec.Client, app *Application) *ElasticacheEvents {
+func NewElasticacheEvents(repo *repo.Elasticache, app *Application) *ElasticacheEvents {
 	e := &ElasticacheEvents{
 		Table: ui.NewTable([]string{
 			"DATE",
@@ -26,9 +20,8 @@ func NewElasticacheEvents(repo *repo.Elasticache, ecClient *ec.Client, app *Appl
 			"TYPE",
 			"MESSAGE",
 		}, 1, 0),
-		repo:     repo,
-		ecClient: ecClient,
-		app:      app,
+		repo: repo,
+		app:  app,
 	}
 	return e
 }
@@ -46,24 +39,13 @@ func (e ElasticacheEvents) GetKeyActions() []KeyAction {
 }
 
 func (e ElasticacheEvents) Render() {
-	oneWeekAgo := time.Now().AddDate(0, 0, -13) // TODO get this closer to the max 14 days
-	pg := ec.NewDescribeEventsPaginator(
-		e.ecClient,
-		&ec.DescribeEventsInput{
-			StartTime: aws.Time(oneWeekAgo),
-		},
-	)
-	var events []ecTypes.Event
-	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
-		if err != nil {
-			panic(err)
-		}
-		events = append(events, out.Events...)
+	model, err := e.repo.ListEvents()
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range events {
+	for _, v := range model {
 		var date, sourceId, sourceType, message string
 		if v.Date != nil {
 			date = v.Date.Format(utils.DefaultTimeFormat)
