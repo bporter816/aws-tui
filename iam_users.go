@@ -1,10 +1,7 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
-	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -16,11 +13,11 @@ type IAMUsers struct {
 	*ui.Table
 	repo      *repo.IAM
 	iamClient *iam.Client
-	groupName string
+	groupName *string
 	app       *Application
 }
 
-func NewIAMUsers(repo *repo.IAM, iamClient *iam.Client, groupName string, app *Application) *IAMUsers {
+func NewIAMUsers(repo *repo.IAM, iamClient *iam.Client, groupName *string, app *Application) *IAMUsers {
 	i := &IAMUsers{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -42,10 +39,10 @@ func (i IAMUsers) GetService() string {
 }
 
 func (i IAMUsers) GetLabels() []string {
-	if i.groupName == "" {
+	if i.groupName == nil {
 		return []string{"Users"}
 	} else {
-		return []string{i.groupName, "Users"}
+		return []string{*i.groupName, "Users"}
 	}
 }
 
@@ -81,7 +78,7 @@ func (i IAMUsers) groupsHandler() {
 	if err != nil {
 		return
 	}
-	groupsView := NewIAMGroups(i.repo, i.iamClient, userName, i.app)
+	groupsView := NewIAMGroups(i.repo, i.iamClient, &userName, i.app)
 	i.app.AddAndSwitch(groupsView)
 }
 
@@ -125,38 +122,13 @@ func (i IAMUsers) GetKeyActions() []KeyAction {
 }
 
 func (i IAMUsers) Render() {
-	var users []iamTypes.User
-
-	if i.groupName == "" {
-		pg := iam.NewListUsersPaginator(
-			i.iamClient,
-			&iam.ListUsersInput{},
-		)
-		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
-			if err != nil {
-				panic(err)
-			}
-			users = append(users, out.Users...)
-		}
-	} else {
-		pg := iam.NewGetGroupPaginator(
-			i.iamClient,
-			&iam.GetGroupInput{
-				GroupName: aws.String(i.groupName),
-			},
-		)
-		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
-			if err != nil {
-				panic(err)
-			}
-			users = append(users, out.Users...)
-		}
+	model, err := i.repo.ListUsers(i.groupName)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range users {
+	for _, v := range model {
 		var userId, userName, path, created, passwordLastUsed string
 		if v.UserId != nil {
 			userId = *v.UserId

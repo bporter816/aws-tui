@@ -5,6 +5,8 @@ import (
 )
 
 type (
+	IAMUser iamTypes.User
+	IAMGroup iamTypes.Group
 	IAMRole iamTypes.Role
 	IAMAccessKey struct {
 		iamTypes.AccessKeyMetadata

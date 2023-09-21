@@ -1,10 +1,7 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
-	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -16,11 +13,11 @@ type IAMGroups struct {
 	*ui.Table
 	repo      *repo.IAM
 	iamClient *iam.Client
-	userName  string
+	userName  *string
 	app       *Application
 }
 
-func NewIAMGroups(repo *repo.IAM, iamClient *iam.Client, userName string, app *Application) *IAMGroups {
+func NewIAMGroups(repo *repo.IAM, iamClient *iam.Client, userName *string, app *Application) *IAMGroups {
 	i := &IAMGroups{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -41,10 +38,10 @@ func (i IAMGroups) GetService() string {
 }
 
 func (i IAMGroups) GetLabels() []string {
-	if i.userName == "" {
+	if i.userName == nil {
 		return []string{"Groups"}
 	} else {
-		return []string{i.userName, "Groups"}
+		return []string{*i.userName, "Groups"}
 	}
 }
 
@@ -62,7 +59,7 @@ func (i IAMGroups) usersHandler() {
 	if err != nil {
 		return
 	}
-	usersView := NewIAMUsers(i.repo, i.iamClient, groupName, i.app)
+	usersView := NewIAMUsers(i.repo, i.iamClient, &groupName, i.app)
 	i.app.AddAndSwitch(usersView)
 }
 
@@ -82,39 +79,13 @@ func (i IAMGroups) GetKeyActions() []KeyAction {
 }
 
 func (i IAMGroups) Render() {
-	var groups []iamTypes.Group
-
-	// IAM has different APIs for the user-scoped and global groups lists
-	if i.userName == "" {
-		pg := iam.NewListGroupsPaginator(
-			i.iamClient,
-			&iam.ListGroupsInput{},
-		)
-		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
-			if err != nil {
-				panic(err)
-			}
-			groups = append(groups, out.Groups...)
-		}
-	} else {
-		pg := iam.NewListGroupsForUserPaginator(
-			i.iamClient,
-			&iam.ListGroupsForUserInput{
-				UserName: aws.String(i.userName),
-			},
-		)
-		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
-			if err != nil {
-				panic(err)
-			}
-			groups = append(groups, out.Groups...)
-		}
+	model, err := i.repo.ListGroups(i.userName)
+	if err != nil {
+		panic(err)
 	}
 
 	var data [][]string
-	for _, v := range groups {
+	for _, v := range model {
 		var groupId, groupName, path, created string
 		if v.GroupId != nil {
 			groupId = *v.GroupId

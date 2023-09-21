@@ -31,6 +31,78 @@ func (i IAM) ListAccountAliases() ([]string, error) {
 	return out.AccountAliases, nil
 }
 
+func (i IAM) ListUsers(groupName *string) ([]model.IAMUser, error) {
+	var users []model.IAMUser
+	if groupName == nil {
+		pg := iam.NewListUsersPaginator(
+			i.iamClient,
+			&iam.ListUsersInput{},
+		)
+		for pg.HasMorePages() {
+			out, err := pg.NextPage(context.TODO())
+			if err != nil {
+				return []model.IAMUser{}, err
+			}
+			for _, v := range out.Users {
+				users = append(users, model.IAMUser(v))
+			}
+		}
+	} else {
+		pg := iam.NewGetGroupPaginator(
+			i.iamClient,
+			&iam.GetGroupInput{
+				GroupName: groupName,
+			},
+		)
+		for pg.HasMorePages() {
+			out, err := pg.NextPage(context.TODO())
+			if err != nil {
+				return []model.IAMUser{}, err
+			}
+			for _, v := range out.Users {
+				users = append(users, model.IAMUser(v))
+			}
+		}
+	}
+	return users, nil
+}
+
+func (i IAM) ListGroups(userName *string) ([]model.IAMGroup, error) {
+	var groups []model.IAMGroup
+	if userName == nil {
+		pg := iam.NewListGroupsPaginator(
+			i.iamClient,
+			&iam.ListGroupsInput{},
+		)
+		for pg.HasMorePages() {
+			out, err := pg.NextPage(context.TODO())
+			if err != nil {
+				return []model.IAMGroup{}, err
+			}
+			for _, v := range out.Groups {
+				groups = append(groups, model.IAMGroup(v))
+			}
+		}
+	} else {
+		pg := iam.NewListGroupsForUserPaginator(
+			i.iamClient,
+			&iam.ListGroupsForUserInput{
+				UserName: aws.String(*userName),
+			},
+		)
+		for pg.HasMorePages() {
+			out, err := pg.NextPage(context.TODO())
+			if err != nil {
+				return []model.IAMGroup{}, err
+			}
+			for _, v := range out.Groups {
+				groups = append(groups, model.IAMGroup(v))
+			}
+		}
+	}
+	return groups, nil
+}
+
 func (i IAM) ListRoles() ([]model.IAMRole, error) {
 	pg := iam.NewListRolesPaginator(
 		i.iamClient,
