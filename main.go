@@ -63,27 +63,41 @@ func NewApplication() *Application {
 		"S3":  s3Client,
 	}
 
+	cfRepo := repo.NewCloudfront(cfClient)
+	ddbRepo := repo.NewDynamoDB(ddbClient)
+	ec2Repo := repo.NewEC2(ec2Client)
+	elbRepo := repo.NewELB(elbClient)
+	ecRepo := repo.NewElasticache(ecClient)
+	iamRepo := repo.NewIAM(iamClient)
+	kmsRepo := repo.NewKMS(kmsClient)
+	r53Repo := repo.NewRoute53(r53Client)
+	s3Repo := repo.NewS3(s3Client)
+	sqsRepo := repo.NewSQS(sqsClient)
+	stsRepo := repo.NewSTS(stsClient)
+	smRepo := repo.NewSecretsManager(smClient)
+	sqRepo := repo.NewServiceQuotas(sqClient)
+
 	repos := map[string]interface{}{
-		"Cloudfront":      repo.NewCloudfront(cfClient),
-		"DynamoDB":        repo.NewDynamoDB(ddbClient),
-		"EC2":             repo.NewEC2(ec2Client),
-		"ELB":             repo.NewELB(elbClient),
-		"Elasticache":     repo.NewElasticache(ecClient),
-		"IAM":             repo.NewIAM(iamClient),
-		"KMS":             repo.NewKMS(kmsClient),
-		"Route 53":        repo.NewRoute53(r53Client),
-		"S3":              repo.NewS3(s3Client),
-		"SQS":             repo.NewSQS(sqsClient),
-		"STS":             repo.NewSTS(stsClient),
-		"Secrets Manager": repo.NewSecretsManager(smClient),
-		"Service Quotas":  repo.NewServiceQuotas(sqClient),
+		"Cloudfront":      cfRepo,
+		"DynamoDB":        ddbRepo,
+		"EC2":             ec2Repo,
+		"ELB":             elbRepo,
+		"Elasticache":     ecRepo,
+		"IAM":             iamRepo,
+		"KMS":             kmsRepo,
+		"Route 53":        r53Repo,
+		"S3":              s3Repo,
+		"SQS":             sqsRepo,
+		"STS":             stsRepo,
+		"Secrets Manager": smRepo,
+		"Service Quotas":  sqRepo,
 	}
 
 	services := NewServices(clients, repos, a)
 	pages := tview.NewPages()
 	pages.SetBorder(true)
 
-	header := NewHeader(repos["STS"].(*repo.STS), repos["IAM"].(*repo.IAM), a)
+	header := NewHeader(stsRepo, iamRepo, a)
 	footer := NewFooter(a)
 
 	flex := tview.NewFlex()
