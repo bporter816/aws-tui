@@ -1,10 +1,6 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/gdamore/tcell/v2"
@@ -14,21 +10,19 @@ import (
 
 type S3Objects struct {
 	*ui.Tree
-	repo     *repo.S3
-	s3Client *s3.Client
-	bucket   string
-	app      *Application
+	repo   *repo.S3
+	bucket string
+	app    *Application
 }
 
-func NewS3Objects(repo *repo.S3, s3Client *s3.Client, bucket string, app *Application) *S3Objects {
+func NewS3Objects(repo *repo.S3, bucket string, app *Application) *S3Objects {
 	root := tview.NewTreeNode("/")
 	root.SetReference("")
 	s := &S3Objects{
-		Tree:     ui.NewTree(root),
-		repo:     repo,
-		s3Client: s3Client,
-		bucket:   bucket,
-		app:      app,
+		Tree:   ui.NewTree(root),
+		repo:   repo,
+		bucket: bucket,
+		app:    app,
 	}
 	s.SetSelectedFunc(s.selectHandler)
 	return s
@@ -107,26 +101,12 @@ func (s S3Objects) expandDir(n *tview.TreeNode) {
 		}
 
 		ref := n.GetReference().(string)
-		pg := s3.NewListObjectsV2Paginator(
-			s.s3Client,
-			&s3.ListObjectsV2Input{
-				Bucket:    aws.String(s.bucket),
-				Delimiter: aws.String("/"),
-				Prefix:    aws.String(ref),
-			},
-		)
-		var prefixes []s3Types.CommonPrefix
-		var objects []s3Types.Object
-		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
-			if err != nil {
-				panic(err)
-			}
-			prefixes = append(prefixes, out.CommonPrefixes...)
-			objects = append(objects, out.Contents...)
+		prefixes, objects, err := s.repo.ListObjects(s.bucket, ref)
+		if err != nil {
+			panic(err)
 		}
 		for _, prefix := range prefixes {
-			arr := strings.Split(*prefix.Prefix, "/")
+			arr := strings.Split(prefix, "/")
 			label := arr[len(arr)-2] + "/"
 			c := tview.NewTreeNode(label)
 			c.SetColor(tcell.ColorGreen)
@@ -134,11 +114,10 @@ func (s S3Objects) expandDir(n *tview.TreeNode) {
 			n.AddChild(c)
 		}
 		for _, object := range objects {
-			key := *object.Key
-			if strings.HasSuffix(key, "/") {
+			if strings.HasSuffix(object, "/") {
 				continue
 			}
-			label := key[strings.LastIndex(key, "/")+1:]
+			label := object[strings.LastIndex(object, "/")+1:]
 			c := tview.NewTreeNode(label)
 			c.SetReference(ref + label)
 			n.AddChild(c)

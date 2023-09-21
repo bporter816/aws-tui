@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -10,20 +9,18 @@ import (
 
 type S3Buckets struct {
 	*ui.Table
-	repo     *repo.S3
-	s3Client *s3.Client
-	app      *Application
+	repo *repo.S3
+	app  *Application
 }
 
-func NewS3Buckets(repo *repo.S3, s3Client *s3.Client, app *Application) *S3Buckets {
+func NewS3Buckets(repo *repo.S3, app *Application) *S3Buckets {
 	s := &S3Buckets{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"CREATED",
 		}, 1, 0),
-		repo:     repo,
-		s3Client: s3Client,
-		app:      app,
+		repo: repo,
+		app:  app,
 	}
 	s.SetSelectedFunc(s.selectHandler)
 	return s
@@ -42,7 +39,7 @@ func (s S3Buckets) selectHandler(row, col int) {
 	if err != nil {
 		return
 	}
-	objectsView := NewS3Objects(s.repo, s.s3Client, bucket, s.app)
+	objectsView := NewS3Objects(s.repo, bucket, s.app)
 	s.app.AddAndSwitch(objectsView)
 }
 
