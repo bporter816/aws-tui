@@ -1,10 +1,6 @@
 package main
 
 import (
-	"context"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/iam"
-	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -13,23 +9,20 @@ import (
 
 type IAMPolicies struct {
 	*ui.Table
-	repo              *repo.IAM
-	iamClient         *iam.Client
-	identityType      model.IAMIdentityType
-	id                string
-	app               *Application
-	managedArns       []string
-	numInlinePolicies int
+	repo         *repo.IAM
+	identityType model.IAMIdentityType
+	id           *string
+	app          *Application
+	model        []model.IAMPolicy
 }
 
-func NewIAMPolicies(repo *repo.IAM, iamClient *iam.Client, identityType model.IAMIdentityType, id string, app *Application) *IAMPolicies {
+func NewIAMPolicies(repo *repo.IAM, identityType model.IAMIdentityType, id *string, app *Application) *IAMPolicies {
 	i := &IAMPolicies{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"TYPE",
 		}, 1, 0),
 		repo:         repo,
-		iamClient:    iamClient,
 		identityType: identityType,
 		id:           id,
 		app:          app,
@@ -42,7 +35,7 @@ func (i IAMPolicies) GetService() string {
 }
 
 func (i IAMPolicies) GetLabels() []string {
-	return []string{i.id, "Policies"}
+	return []string{*i.id, "Policies"}
 }
 
 func (i IAMPolicies) policyDocumentHandler() {
@@ -58,12 +51,15 @@ func (i IAMPolicies) policyDocumentHandler() {
 	if err != nil {
 		return
 	}
-	enumVal := IAMPolicyType(policyType)
+	enumVal := model.IAMPolicyType(policyType)
 	var policyDocumentView *IAMPolicy
-	if enumVal == IAMPolicyTypeManaged {
-		policyDocumentView = NewIAMPolicy(i.repo, i.identityType, enumVal, i.id, policyName, i.managedArns[row-1-i.numInlinePolicies], i.app)
+	if enumVal == model.IAMPolicyTypeManaged {
+		if i.model[row-1].Arn == nil {
+			return
+		}
+		policyDocumentView = NewIAMPolicy(i.repo, i.identityType, enumVal, *i.id, policyName, *i.model[row-1].Arn, i.app)
 	} else {
-		policyDocumentView = NewIAMPolicy(i.repo, i.identityType, enumVal, i.id, policyName, "", i.app)
+		policyDocumentView = NewIAMPolicy(i.repo, i.identityType, enumVal, *i.id, policyName, "", i.app)
 	}
 	i.app.AddAndSwitch(policyDocumentView)
 }
@@ -79,158 +75,18 @@ func (i IAMPolicies) GetKeyActions() []KeyAction {
 }
 
 func (i *IAMPolicies) Render() {
+	model, err := i.repo.ListPolicies(i.id, i.identityType)
+	if err != nil {
+		panic(err)
+	}
+	i.model = model
+
 	var data [][]string
-
-	if i.id != "" {
-		// inline policies
-		var inlinePolicyNames []string
-		switch i.identityType {
-		case model.IAMIdentityTypeUser:
-			pg := iam.NewListUserPoliciesPaginator(
-				i.iamClient,
-				&iam.ListUserPoliciesInput{
-					UserName: aws.String(i.id),
-				},
-			)
-			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
-				if err != nil {
-					panic(err)
-				}
-				inlinePolicyNames = append(inlinePolicyNames, out.PolicyNames...)
-			}
-		case model.IAMIdentityTypeRole:
-			pg := iam.NewListRolePoliciesPaginator(
-				i.iamClient,
-				&iam.ListRolePoliciesInput{
-					RoleName: aws.String(i.id),
-				},
-			)
-			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
-				if err != nil {
-					panic(err)
-				}
-				inlinePolicyNames = append(inlinePolicyNames, out.PolicyNames...)
-			}
-		case model.IAMIdentityTypeGroup:
-			pg := iam.NewListGroupPoliciesPaginator(
-				i.iamClient,
-				&iam.ListGroupPoliciesInput{
-					GroupName: aws.String(i.id),
-				},
-			)
-			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
-				if err != nil {
-					panic(err)
-				}
-				inlinePolicyNames = append(inlinePolicyNames, out.PolicyNames...)
-			}
-		default:
-			panic("invalid identity type for policy list")
-		}
-
-		i.numInlinePolicies = len(inlinePolicyNames)
-		for _, v := range inlinePolicyNames {
-			data = append(data, []string{
-				v,
-				string(IAMPolicyTypeInline),
-			})
-		}
+	for _, v := range model {
+		data = append(data, []string{
+			v.Name,
+			string(v.PolicyType),
+		})
 	}
-
-	// managed policies
-	if i.id == "" {
-		// all policies in account
-		var policies []iamTypes.Policy
-		pg := iam.NewListPoliciesPaginator(
-			i.iamClient,
-			&iam.ListPoliciesInput{},
-		)
-		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
-			if err != nil {
-				panic(err)
-			}
-			policies = append(policies, out.Policies...)
-		}
-
-		i.managedArns = make([]string, len(policies))
-		for idx, v := range policies {
-			i.managedArns[idx] = *v.Arn
-			var name string
-			if v.PolicyName != nil {
-				name = *v.PolicyName
-			}
-			data = append(data, []string{
-				name,
-				string(IAMPolicyTypeManaged),
-			})
-		}
-	} else {
-		// policies attached to a user, role, or group
-		var attachedPolicies []iamTypes.AttachedPolicy
-		switch i.identityType {
-		case model.IAMIdentityTypeUser:
-			pg := iam.NewListAttachedUserPoliciesPaginator(
-				i.iamClient,
-				&iam.ListAttachedUserPoliciesInput{
-					UserName: aws.String(i.id),
-				},
-			)
-			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
-				if err != nil {
-					panic(err)
-				}
-				attachedPolicies = append(attachedPolicies, out.AttachedPolicies...)
-			}
-		case model.IAMIdentityTypeRole:
-			pg := iam.NewListAttachedRolePoliciesPaginator(
-				i.iamClient,
-				&iam.ListAttachedRolePoliciesInput{
-					RoleName: aws.String(i.id),
-				},
-			)
-			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
-				if err != nil {
-					panic(err)
-				}
-				attachedPolicies = append(attachedPolicies, out.AttachedPolicies...)
-			}
-		case model.IAMIdentityTypeGroup:
-			pg := iam.NewListAttachedGroupPoliciesPaginator(
-				i.iamClient,
-				&iam.ListAttachedGroupPoliciesInput{
-					GroupName: aws.String(i.id),
-				},
-			)
-			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
-				if err != nil {
-					panic(err)
-				}
-				attachedPolicies = append(attachedPolicies, out.AttachedPolicies...)
-			}
-		default:
-			panic("invalid identity type for policy list")
-		}
-
-		i.managedArns = make([]string, len(attachedPolicies))
-		for idx, v := range attachedPolicies {
-			i.managedArns[idx] = *v.PolicyArn
-			var name string
-			if v.PolicyName != nil {
-				name = *v.PolicyName
-			}
-			data = append(data, []string{
-				name,
-				string(IAMPolicyTypeManaged),
-			})
-		}
-	}
-
 	i.SetData(data)
 }

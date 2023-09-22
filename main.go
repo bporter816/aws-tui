@@ -59,7 +59,6 @@ func NewApplication() *Application {
 	a := &Application{}
 
 	clients := map[string]interface{}{
-		"IAM": iamClient,
 	}
 
 	cfRepo := repo.NewCloudfront(cfClient)

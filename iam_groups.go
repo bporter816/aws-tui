@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -11,13 +10,12 @@ import (
 
 type IAMGroups struct {
 	*ui.Table
-	repo      *repo.IAM
-	iamClient *iam.Client
-	userName  *string
-	app       *Application
+	repo     *repo.IAM
+	userName *string
+	app      *Application
 }
 
-func NewIAMGroups(repo *repo.IAM, iamClient *iam.Client, userName *string, app *Application) *IAMGroups {
+func NewIAMGroups(repo *repo.IAM, userName *string, app *Application) *IAMGroups {
 	i := &IAMGroups{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -25,10 +23,9 @@ func NewIAMGroups(repo *repo.IAM, iamClient *iam.Client, userName *string, app *
 			"PATH",
 			"CREATED",
 		}, 1, 0),
-		repo:      repo,
-		iamClient: iamClient,
-		userName:  userName,
-		app:       app,
+		repo:     repo,
+		userName: userName,
+		app:      app,
 	}
 	return i
 }
@@ -50,7 +47,7 @@ func (i IAMGroups) policiesHandler() {
 	if err != nil {
 		return
 	}
-	policiesView := NewIAMPolicies(i.repo, i.iamClient, model.IAMIdentityTypeGroup, groupName, i.app)
+	policiesView := NewIAMPolicies(i.repo, model.IAMIdentityTypeGroup, &groupName, i.app)
 	i.app.AddAndSwitch(policiesView)
 }
 
@@ -59,7 +56,7 @@ func (i IAMGroups) usersHandler() {
 	if err != nil {
 		return
 	}
-	usersView := NewIAMUsers(i.repo, i.iamClient, &groupName, i.app)
+	usersView := NewIAMUsers(i.repo, &groupName, i.app)
 	i.app.AddAndSwitch(usersView)
 }
 

@@ -121,6 +121,180 @@ func (i IAM) ListRoles() ([]model.IAMRole, error) {
 	return roles, nil
 }
 
+// TODO split this up
+func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]model.IAMPolicy, error) {
+	var policies []model.IAMPolicy
+	// inline policies
+	if id != nil {
+		switch identityType {
+		case model.IAMIdentityTypeUser:
+			pg := iam.NewListUserPoliciesPaginator(
+				i.iamClient,
+				&iam.ListUserPoliciesInput{
+					UserName: id,
+				},
+			)
+			for pg.HasMorePages() {
+				out, err := pg.NextPage(context.TODO())
+				if err != nil {
+					return []model.IAMPolicy{}, err
+				}
+				for _, v := range out.PolicyNames {
+					policies = append(policies, model.IAMPolicy{
+						Name: v,
+						PolicyType: model.IAMPolicyTypeInline,
+					})
+				}
+			}
+		case model.IAMIdentityTypeRole:
+			pg := iam.NewListRolePoliciesPaginator(
+				i.iamClient,
+				&iam.ListRolePoliciesInput{
+					RoleName: id,
+				},
+			)
+			for pg.HasMorePages() {
+				out, err := pg.NextPage(context.TODO())
+				if err != nil {
+					return []model.IAMPolicy{}, err
+				}
+				for _, v := range out.PolicyNames {
+					policies = append(policies, model.IAMPolicy{
+						Name: v,
+						PolicyType: model.IAMPolicyTypeInline,
+					})
+				}
+			}
+		case model.IAMIdentityTypeGroup:
+			pg := iam.NewListGroupPoliciesPaginator(
+				i.iamClient,
+				&iam.ListGroupPoliciesInput{
+					GroupName: id,
+				},
+			)
+			for pg.HasMorePages() {
+				out, err := pg.NextPage(context.TODO())
+				if err != nil {
+					return []model.IAMPolicy{}, err
+				}
+				for _, v := range out.PolicyNames {
+					policies = append(policies, model.IAMPolicy{
+						Name: v,
+						PolicyType: model.IAMPolicyTypeInline,
+					})
+				}
+			}
+		default:
+			return []model.IAMPolicy{}, errors.New("invalid identity type for policy list")
+		}
+	}
+
+	// managed policies
+	if id == nil {
+		// all policies in account
+		pg := iam.NewListPoliciesPaginator(
+			i.iamClient,
+			&iam.ListPoliciesInput{},
+		)
+		for pg.HasMorePages() {
+			out, err := pg.NextPage(context.TODO())
+			if err != nil {
+				return policies, err
+			}
+			for _, v := range out.Policies {
+				var name string
+				if v.PolicyName != nil {
+					name = *v.PolicyName
+				}
+				policies = append(policies, model.IAMPolicy{
+					Name: name,
+					PolicyType: model.IAMPolicyTypeManaged,
+					Arn: v.Arn,
+				})
+			}
+		}
+	} else {
+		// policies attached to a user, role, or group
+		switch identityType {
+		case model.IAMIdentityTypeUser:
+			pg := iam.NewListAttachedUserPoliciesPaginator(
+				i.iamClient,
+				&iam.ListAttachedUserPoliciesInput{
+					UserName: id,
+				},
+			)
+			for pg.HasMorePages() {
+				out, err := pg.NextPage(context.TODO())
+				if err != nil {
+					return policies, err
+				}
+				for _, v := range out.AttachedPolicies {
+					var name string
+					if v.PolicyName != nil {
+						name = *v.PolicyName
+					}
+					policies = append(policies, model.IAMPolicy{
+						Name: name,
+						PolicyType: model.IAMPolicyTypeManaged,
+						Arn: v.PolicyArn,
+					})
+				}
+			}
+		case model.IAMIdentityTypeRole:
+			pg := iam.NewListAttachedRolePoliciesPaginator(
+				i.iamClient,
+				&iam.ListAttachedRolePoliciesInput{
+					RoleName: id,
+				},
+			)
+			for pg.HasMorePages() {
+				out, err := pg.NextPage(context.TODO())
+				if err != nil {
+					return policies, err
+				}
+				for _, v := range out.AttachedPolicies {
+					var name string
+					if v.PolicyName != nil {
+						name = *v.PolicyName
+					}
+					policies = append(policies, model.IAMPolicy{
+						Name: name,
+						PolicyType: model.IAMPolicyTypeManaged,
+						Arn: v.PolicyArn,
+					})
+				}
+			}
+		case model.IAMIdentityTypeGroup:
+			pg := iam.NewListAttachedGroupPoliciesPaginator(
+				i.iamClient,
+				&iam.ListAttachedGroupPoliciesInput{
+					GroupName: id,
+				},
+			)
+			for pg.HasMorePages() {
+				out, err := pg.NextPage(context.TODO())
+				if err != nil {
+					return policies, err
+				}
+				for _, v := range out.AttachedPolicies {
+					var name string
+					if v.PolicyName != nil {
+						name = *v.PolicyName
+					}
+					policies = append(policies, model.IAMPolicy{
+						Name: name,
+						PolicyType: model.IAMPolicyTypeManaged,
+						Arn: v.PolicyArn,
+					})
+				}
+			}
+		default:
+			return policies, errors.New("invalid identity type for policy list")
+		}
+	}
+	return policies, nil
+}
+
 func (i IAM) getIAMManagedPolicyCurrentVersion(policyArn string) (string, error) {
 	// get the managed policy
 	policyOut, err := i.iamClient.GetPolicy(

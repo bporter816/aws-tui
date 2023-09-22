@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -12,12 +11,11 @@ import (
 type IAMUsers struct {
 	*ui.Table
 	repo      *repo.IAM
-	iamClient *iam.Client
 	groupName *string
 	app       *Application
 }
 
-func NewIAMUsers(repo *repo.IAM, iamClient *iam.Client, groupName *string, app *Application) *IAMUsers {
+func NewIAMUsers(repo *repo.IAM, groupName *string, app *Application) *IAMUsers {
 	i := &IAMUsers{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -27,7 +25,6 @@ func NewIAMUsers(repo *repo.IAM, iamClient *iam.Client, groupName *string, app *
 			"PASSWORD LAST USED",
 		}, 1, 0),
 		repo:      repo,
-		iamClient: iamClient,
 		groupName: groupName,
 		app:       app,
 	}
@@ -60,7 +57,7 @@ func (i IAMUsers) policiesHandler() {
 	if err != nil {
 		return
 	}
-	policiesView := NewIAMPolicies(i.repo, i.iamClient, model.IAMIdentityTypeUser, userName, i.app)
+	policiesView := NewIAMPolicies(i.repo, model.IAMIdentityTypeUser, &userName, i.app)
 	i.app.AddAndSwitch(policiesView)
 }
 
@@ -69,7 +66,7 @@ func (i IAMUsers) permissionsBoundaryHandler() {
 	if err != nil {
 		return
 	}
-	permissionsBoundaryView := NewIAMPolicy(i.repo, model.IAMIdentityTypeUser, IAMPolicyTypePermissionsBoundary, userName, "", "", i.app)
+	permissionsBoundaryView := NewIAMPolicy(i.repo, model.IAMIdentityTypeUser, model.IAMPolicyTypePermissionsBoundary, userName, "", "", i.app)
 	i.app.AddAndSwitch(permissionsBoundaryView)
 }
 
@@ -78,7 +75,7 @@ func (i IAMUsers) groupsHandler() {
 	if err != nil {
 		return
 	}
-	groupsView := NewIAMGroups(i.repo, i.iamClient, &userName, i.app)
+	groupsView := NewIAMGroups(i.repo, &userName, i.app)
 	i.app.AddAndSwitch(groupsView)
 }
 

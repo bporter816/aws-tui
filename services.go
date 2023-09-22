@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -158,13 +157,13 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "ELB.Target Groups":
 				item = NewELBTargetGroups(s.repos["ELB"].(*repo.ELB), s.app)
 			case "IAM.Users":
-				item = NewIAMUsers(s.repos["IAM"].(*repo.IAM), s.clients["IAM"].(*iam.Client), nil, s.app)
+				item = NewIAMUsers(s.repos["IAM"].(*repo.IAM), nil, s.app)
 			case "IAM.Roles":
-				item = NewIAMRoles(s.repos["IAM"].(*repo.IAM), s.clients["IAM"].(*iam.Client), s.app)
+				item = NewIAMRoles(s.repos["IAM"].(*repo.IAM), s.app)
 			case "IAM.Groups":
-				item = NewIAMGroups(s.repos["IAM"].(*repo.IAM), s.clients["IAM"].(*iam.Client), nil, s.app)
+				item = NewIAMGroups(s.repos["IAM"].(*repo.IAM), nil, s.app)
 			case "IAM.Managed Policies":
-				item = NewIAMPolicies(s.repos["IAM"].(*repo.IAM), s.clients["IAM"].(*iam.Client), model.IAMIdentityTypeAll, "", s.app)
+				item = NewIAMPolicies(s.repos["IAM"].(*repo.IAM), model.IAMIdentityTypeAll, nil, s.app)
 			case "KMS.Keys":
 				item = NewKmsKeys(s.repos["KMS"].(*repo.KMS), s.app)
 			case "KMS.Custom Key Stores":

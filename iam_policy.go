@@ -10,7 +10,7 @@ type IAMPolicy struct {
 	*ui.Text
 	repo         *repo.IAM
 	identityType model.IAMIdentityType
-	policyType   IAMPolicyType
+	policyType   model.IAMPolicyType
 	identityName string
 	policyName   string
 	policyArn    string // only for managed policies
@@ -20,7 +20,7 @@ type IAMPolicy struct {
 func NewIAMPolicy(
 	repo *repo.IAM,
 	identityType model.IAMIdentityType,
-	policyType IAMPolicyType,
+	policyType model.IAMPolicyType,
 	identityName string,
 	policyName string,
 	policyArn string,
@@ -44,9 +44,9 @@ func (i IAMPolicy) GetService() string {
 }
 
 func (i IAMPolicy) GetLabels() []string {
-	if i.policyType == IAMPolicyTypePermissionsBoundary || i.policyType == IAMPolicyTypeAssumeRolePolicy {
+	if i.policyType == model.IAMPolicyTypePermissionsBoundary || i.policyType == model.IAMPolicyTypeAssumeRolePolicy {
 		return []string{i.identityName, string(i.policyType)}
-	} else if i.policyType == IAMPolicyTypeManaged || i.policyType == IAMPolicyTypeInline {
+	} else if i.policyType == model.IAMPolicyTypeManaged || i.policyType == model.IAMPolicyTypeInline {
 		return []string{i.policyName, "Policy Document"}
 	} else {
 		panic("invalid policy type")
@@ -61,13 +61,13 @@ func (i IAMPolicy) Render() {
 	var policy string
 	var err error
 	switch i.policyType {
-	case IAMPolicyTypeManaged:
+	case model.IAMPolicyTypeManaged:
 		policy, err = i.repo.GetIAMManagedPolicy(i.policyArn)
-	case IAMPolicyTypeInline:
+	case model.IAMPolicyTypeInline:
 		policy, err = i.repo.GetIAMInlinePolicy(i.identityType, i.identityName, i.policyName)
-	case IAMPolicyTypePermissionsBoundary:
+	case model.IAMPolicyTypePermissionsBoundary:
 		policy, err = i.repo.GetIAMPermissionsBoundary(i.identityName, i.identityType)
-	case IAMPolicyTypeAssumeRolePolicy:
+	case model.IAMPolicyTypeAssumeRolePolicy:
 		policy, err = i.repo.GetIAMAssumeRolePolicy(i.identityName)
 	}
 	if err != nil {
