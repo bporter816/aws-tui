@@ -55,7 +55,8 @@ func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
 			return clusters, err
 		}
 		for _, v := range out.ReplicationGroups {
-			m := model.ElasticacheCluster{ReplicationGroup: &v}
+			vCopy := v
+			m := model.ElasticacheCluster{ReplicationGroup: &vCopy}
 			if ev, ok := clusterToEngineVersion[v.MemberClusters[0]]; ok {
 				m.ReplicationGroupEngineVersion = ev
 			}
