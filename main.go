@@ -9,6 +9,7 @@ import (
 	// "net/http"
 	"github.com/aws/aws-sdk-go-v2/config"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	cw "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
@@ -43,6 +44,7 @@ func NewApplication() *Application {
 	app := tview.NewApplication()
 
 	cfClient := cf.NewFromConfig(cfg)
+	cwClient := cw.NewFromConfig(cfg)
 	ddbClient := ddb.NewFromConfig(cfg)
 	ecClient := ec.NewFromConfig(cfg)
 	ec2Client := ec2.NewFromConfig(cfg)
@@ -62,7 +64,7 @@ func NewApplication() *Application {
 	ddbRepo := repo.NewDynamoDB(ddbClient)
 	ec2Repo := repo.NewEC2(ec2Client)
 	elbRepo := repo.NewELB(elbClient)
-	ecRepo := repo.NewElasticache(ecClient)
+	ecRepo := repo.NewElasticache(ecClient, cwClient)
 	iamRepo := repo.NewIAM(iamClient)
 	kmsRepo := repo.NewKMS(kmsClient)
 	r53Repo := repo.NewRoute53(r53Client)

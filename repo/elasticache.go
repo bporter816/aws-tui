@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	cw "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/bporter816/aws-tui/model"
@@ -10,11 +11,13 @@ import (
 
 type Elasticache struct {
 	ecClient *ec.Client
+	cwClient *cw.Client
 }
 
-func NewElasticache(ecClient *ec.Client) *Elasticache {
+func NewElasticache(ecClient *ec.Client, cwClient *cw.Client) *Elasticache {
 	return &Elasticache{
 		ecClient: ecClient,
+		cwClient: cwClient,
 	}
 }
 
