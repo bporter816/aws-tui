@@ -16,4 +16,5 @@ type (
 	ElasticacheSnapshot ecTypes.Snapshot
 	ElasticacheParameterGroup ecTypes.CacheParameterGroup
 	ElasticacheParameter ecTypes.Parameter
+	ElasticacheUser ecTypes.User
 )

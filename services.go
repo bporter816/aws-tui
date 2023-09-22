@@ -36,6 +36,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"Parameter Groups",
 			"Reserved Nodes",
 			"Snapshots",
+			"Users",
 		},
 		"ELB": []string{
 			"Load Balancers",
@@ -150,6 +151,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewElasticacheReservedCacheNodes(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Snapshots":
 				item = NewElasticacheSnapshots(s.repos["Elasticache"].(*repo.Elasticache), s.app)
+			case "Elasticache.Users":
+				item = NewElasticacheUsers(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "ELB.Load Balancers":
 				item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
 			case "ELB.Target Groups":

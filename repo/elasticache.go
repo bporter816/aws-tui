@@ -160,6 +160,24 @@ func (e Elasticache) ListParameters(parameterGroupName string) ([]model.Elastica
 	return parameters, nil
 }
 
+func (e Elasticache) ListUsers() ([]model.ElasticacheUser, error) {
+	pg := ec.NewDescribeUsersPaginator(
+		e.ecClient,
+		&ec.DescribeUsersInput{},
+	)
+	var users []model.ElasticacheUser
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheUser{}, err
+		}
+		for _, v := range out.Users {
+			users = append(users, model.ElasticacheUser(v))
+		}
+	}
+	return users, nil
+}
+
 func (e Elasticache) ListTags(arn string) (model.Tags, error) {
 	out, err := e.ecClient.ListTagsForResource(
 		context.TODO(),
