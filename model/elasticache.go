@@ -17,4 +17,5 @@ type (
 	ElasticacheParameterGroup ecTypes.CacheParameterGroup
 	ElasticacheParameter ecTypes.Parameter
 	ElasticacheUser ecTypes.User
+	ElasticacheGroup ecTypes.UserGroup
 )

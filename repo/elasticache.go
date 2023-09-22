@@ -179,6 +179,24 @@ func (e Elasticache) ListUsers() ([]model.ElasticacheUser, error) {
 	return users, nil
 }
 
+func (e Elasticache) ListGroups() ([]model.ElasticacheGroup, error) {
+	pg := ec.NewDescribeUserGroupsPaginator(
+		e.ecClient,
+		&ec.DescribeUserGroupsInput{},
+	)
+	var users []model.ElasticacheGroup
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheGroup{}, err
+		}
+		for _, v := range out.UserGroups {
+			users = append(users, model.ElasticacheGroup(v))
+		}
+	}
+	return users, nil
+}
+
 func (e Elasticache) ListTags(arn string) (model.Tags, error) {
 	out, err := e.ecClient.ListTagsForResource(
 		context.TODO(),
