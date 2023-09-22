@@ -58,9 +58,6 @@ func NewApplication() *Application {
 
 	a := &Application{}
 
-	clients := map[string]interface{}{
-	}
-
 	cfRepo := repo.NewCloudfront(cfClient)
 	ddbRepo := repo.NewDynamoDB(ddbClient)
 	ec2Repo := repo.NewEC2(ec2Client)
@@ -91,7 +88,7 @@ func NewApplication() *Application {
 		"Service Quotas":  sqRepo,
 	}
 
-	services := NewServices(clients, repos, a)
+	services := NewServices(repos, a)
 	pages := tview.NewPages()
 	pages.SetBorder(true)
 

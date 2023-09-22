@@ -11,12 +11,11 @@ import (
 
 type Services struct {
 	*ui.Tree
-	clients map[string]interface{}
-	repos   map[string]interface{}
-	app     *Application
+	repos map[string]interface{}
+	app   *Application
 }
 
-func NewServices(clients map[string]interface{}, repos map[string]interface{}, app *Application) *Services {
+func NewServices(repos map[string]interface{}, app *Application) *Services {
 	m := map[string][]string{
 		"Cloudfront": []string{
 			"Distributions",
@@ -71,10 +70,9 @@ func NewServices(clients map[string]interface{}, repos map[string]interface{}, a
 	}
 	root := tview.NewTreeNode("Services")
 	s := &Services{
-		Tree:    ui.NewTree(root),
-		clients: clients,
-		repos:   repos,
-		app:     app,
+		Tree:  ui.NewTree(root),
+		repos: repos,
+		app:   app,
 	}
 	// sort the keys
 	var keys []string
