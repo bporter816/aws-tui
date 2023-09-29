@@ -123,6 +123,24 @@ func (e Elasticache) ListSnapshots() ([]model.ElasticacheSnapshot, error) {
 	return snapshots, nil
 }
 
+func (e Elasticache) ListSubnetGroups() ([]model.ElasticacheSubnetGroup, error) {
+	pg := ec.NewDescribeCacheSubnetGroupsPaginator(
+		e.ecClient,
+		&ec.DescribeCacheSubnetGroupsInput{},
+	)
+	var subnetGroups []model.ElasticacheSubnetGroup
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheSubnetGroup{}, err
+		}
+		for _, v := range out.CacheSubnetGroups {
+			subnetGroups = append(subnetGroups, model.ElasticacheSubnetGroup(v))
+		}
+	}
+	return subnetGroups, nil
+}
+
 func (e Elasticache) ListParameterGroups() ([]model.ElasticacheParameterGroup, error) {
 	pg := ec.NewDescribeCacheParameterGroupsPaginator(
 		e.ecClient,

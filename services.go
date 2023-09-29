@@ -35,6 +35,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"Clusters",
 			"Events",
 			"Parameter Groups",
+			"Subnet Groups",
 			"Reserved Nodes",
 			"Snapshots",
 			"Users",
@@ -151,6 +152,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewElasticacheEvents(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Parameter Groups":
 				item = NewElasticacheParameterGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
+			case "Elasticache.Subnet Groups":
+				item = NewElasticacheSubnetGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Reserved Nodes":
 				item = NewElasticacheReservedCacheNodes(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Snapshots":
