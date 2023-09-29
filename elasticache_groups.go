@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type ElasticacheGroups struct {
@@ -51,7 +52,7 @@ func (e ElasticacheGroups) Render() {
 			id = *v.UserGroupId
 		}
 		if v.Status != nil {
-			status = *v.Status
+			status = utils.TitleCase(*v.Status)
 		}
 		users = fmt.Sprintf("%v", len(v.UserIds))
 		clusters = fmt.Sprintf("%v", len(v.ReplicationGroups))

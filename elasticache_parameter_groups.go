@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -61,7 +62,7 @@ func (e ElasticacheParameterGroups) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		name, family, description, isGlobal := "", "", "", "No"
+		var name, family, description, isGlobal string
 		if v.CacheParameterGroupName != nil {
 			name = *v.CacheParameterGroupName
 		}
@@ -71,9 +72,7 @@ func (e ElasticacheParameterGroups) Render() {
 		if v.Description != nil {
 			description = *v.Description
 		}
-		if v.IsGlobal {
-			isGlobal = "Yes"
-		}
+		isGlobal = utils.BoolToString(v.IsGlobal, "Yes", "No")
 		data = append(data, []string{
 			name,
 			family,

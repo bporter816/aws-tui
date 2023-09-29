@@ -51,7 +51,7 @@ func (s ServiceQuotasQuotas) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		name, appliedValue, defaultValue, adjustable := "", "Not available", "", "No"
+		name, appliedValue, defaultValue, adjustable := "", "Not available", "", ""
 		if v.QuotaName != nil {
 			name = *v.QuotaName
 		}
@@ -59,9 +59,7 @@ func (s ServiceQuotasQuotas) Render() {
 		if v.AppliedValue != nil {
 			appliedValue = formatValue(v.AppliedValue, v.Unit)
 		}
-		if v.Adjustable {
-			adjustable = "Yes"
-		}
+		adjustable = utils.BoolToString(v.Adjustable, "Yes", "No")
 		data = append(data, []string{
 			name,
 			appliedValue,

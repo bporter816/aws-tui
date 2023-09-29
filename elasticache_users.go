@@ -5,6 +5,7 @@ import (
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type ElasticacheUsers struct {
@@ -60,7 +61,7 @@ func (e ElasticacheUsers) Render() {
 			accessString = *v.AccessString
 		}
 		if v.Status != nil {
-			status = *v.Status
+			status = utils.TitleCase(*v.Status)
 		}
 		if a := v.Authentication; a != nil {
 			authType = string(a.Type)

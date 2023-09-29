@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -16,7 +17,7 @@ func NewEC2Instances(repo *repo.EC2, app *Application) *EC2Instances {
 	e := &EC2Instances{
 		Table: ui.NewTable([]string{
 			"NAME",
-			"ID",
+			"INSTANCE ID",
 			"STATE",
 			"PUBLIC IP",
 			"INSTANCE TYPE",
@@ -74,7 +75,7 @@ func (e EC2Instances) Render() {
 			id = *v.InstanceId
 		}
 		if v.State != nil {
-			state = string(v.State.Name)
+			state = utils.TitleCase(string(v.State.Name))
 		}
 		if v.PublicIpAddress != nil {
 			publicIP = *v.PublicIpAddress

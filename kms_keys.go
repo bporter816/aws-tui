@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type KmsKeys struct {
@@ -109,7 +109,7 @@ func (k KmsKeys) Render() {
 			keyId,
 			renderAliases(v.Aliases),
 			description,
-			strconv.FormatBool(v.Enabled),
+			utils.BoolToString(v.Enabled, "Yes", "No"),
 			string(v.KeyState),
 			string(v.KeySpec),
 			string(v.KeyUsage),

@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type SMSecrets struct {
@@ -76,8 +76,7 @@ func (s SMSecrets) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, primaryRegion, desc string
-		var rotationEnabled bool
+		var name, primaryRegion, rotationEnabled, desc string
 		if v.Name != nil {
 			name = *v.Name
 		}
@@ -85,7 +84,7 @@ func (s SMSecrets) Render() {
 			primaryRegion = *v.PrimaryRegion
 		}
 		if v.RotationEnabled != nil {
-			rotationEnabled = *v.RotationEnabled
+			rotationEnabled = utils.BoolToString(*v.RotationEnabled, "Yes", "No")
 		}
 		if v.Description != nil {
 			desc = *v.Description
@@ -93,7 +92,7 @@ func (s SMSecrets) Render() {
 		data = append(data, []string{
 			name,
 			primaryRegion,
-			strconv.FormatBool(rotationEnabled),
+			rotationEnabled,
 			desc,
 		})
 	}

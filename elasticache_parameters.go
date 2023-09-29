@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type ElasticacheParameters struct {
@@ -51,16 +52,14 @@ func (e ElasticacheParameters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		name, allowedValues, value, dataType, isModifiable, source, description := "", "", "", "", "No", "", ""
+		var name, allowedValues, value, dataType, isModifiable, source, description string
 		if v.ParameterName != nil {
 			name = *v.ParameterName
 		}
 		if v.AllowedValues != nil {
 			allowedValues = *v.AllowedValues
 		}
-		if v.IsModifiable {
-			isModifiable = "Yes"
-		}
+		isModifiable = utils.BoolToString(v.IsModifiable, "Yes", "No")
 		if v.ParameterValue != nil {
 			value = *v.ParameterValue
 		}
