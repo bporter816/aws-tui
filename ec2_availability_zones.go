@@ -61,6 +61,8 @@ func (e EC2AvailabilityZones) Render() {
 				}
 			}
 			messages = messages[2:]
+		} else {
+			messages = "-"
 		}
 		data = append(data, []string{
 			name,
