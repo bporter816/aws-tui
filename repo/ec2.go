@@ -140,6 +140,21 @@ func (e EC2) ListVPCs() ([]model.EC2VPC, error) {
 	return vpcs, nil
 }
 
+func (e EC2) ListAvailabilityZones() ([]model.EC2AvailabilityZone, error) {
+	out, err := e.ec2Client.DescribeAvailabilityZones(
+		context.TODO(),
+		&ec2.DescribeAvailabilityZonesInput{},
+	)
+	if err != nil {
+		return []model.EC2AvailabilityZone{}, err
+	}
+	var availabilityZones []model.EC2AvailabilityZone
+	for _, v := range out.AvailabilityZones {
+		availabilityZones = append(availabilityZones, model.EC2AvailabilityZone(v))
+	}
+	return availabilityZones, nil
+}
+
 func (e EC2) ListInstanceTags(instanceId string) (model.Tags, error) {
 	out, err := e.ec2Client.DescribeInstances(
 		context.TODO(),
