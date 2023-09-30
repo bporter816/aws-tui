@@ -3,15 +3,18 @@ package main
 import (
 	"fmt"
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ElasticacheUsers struct {
 	*ui.Table
-	repo *repo.Elasticache
-	app  *Application
+	repo  *repo.Elasticache
+	app   *Application
+	model []model.ElasticacheUser
 }
 
 func NewElasticacheUsers(repo *repo.Elasticache, app *Application) *ElasticacheUsers {
@@ -38,15 +41,38 @@ func (e ElasticacheUsers) GetLabels() []string {
 	return []string{"Users"}
 }
 
-func (e ElasticacheUsers) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (e ElasticacheUsers) tagsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	name, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	if e.model[row-1].ARN == nil {
+		return
+	}
+	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
+	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheUsers) Render() {
+func (e ElasticacheUsers) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
+}
+
+func (e *ElasticacheUsers) Render() {
 	model, err := e.repo.ListUsers()
 	if err != nil {
 		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
 	for _, v := range model {
