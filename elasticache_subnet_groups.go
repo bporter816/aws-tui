@@ -58,12 +58,29 @@ func (e ElasticacheSubnetGroups) subnetsHandler() {
 	e.app.AddAndSwitch(subnetsView)
 }
 
+func (e ElasticacheSubnetGroups) tagsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if e.model[row-1].ARN == nil || e.model[row-1].CacheSubnetGroupName == nil {
+		return
+	}
+	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeSubnetGroup, *e.model[row-1].ARN, *e.model[row-1].CacheSubnetGroupName, e.app)
+	e.app.AddAndSwitch(tagsView)
+}
+
 func (e ElasticacheSubnetGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
 			Description: "Subnets",
 			Action:      e.subnetsHandler,
+		},
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
 		},
 	}
 }

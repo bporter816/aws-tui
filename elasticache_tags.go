@@ -20,6 +20,7 @@ const (
 	ElasticacheResourceTypeCluster      ElasticacheResourceType = "Clusters"
 	ElasticacheResourceTypeReservedNode ElasticacheResourceType = "Reserved Nodes"
 	ElasticacheResourceTypeSnapshot     ElasticacheResourceType = "Snapshots"
+	ElasticacheResourceTypeSubnetGroup  ElasticacheResourceType = "Subnet Groups"
 )
 
 func NewElasticacheTags(repo *repo.Elasticache, resourceType ElasticacheResourceType, resourceArn string, resourceName string, app *Application) *ElasticacheTags {
