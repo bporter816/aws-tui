@@ -1,18 +1,22 @@
 package main
 
 import (
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
 type ElasticacheSubnetGroups struct {
 	*ui.Table
-	repo *repo.Elasticache
-	app  *Application
+	repo    *repo.Elasticache
+	ec2Repo *repo.EC2
+	app     *Application
+	model   []model.ElasticacheSubnetGroup
 }
 
-func NewElasticacheSubnetGroups(repo *repo.Elasticache, app *Application) *ElasticacheSubnetGroups {
+func NewElasticacheSubnetGroups(repo *repo.Elasticache, ec2Repo *repo.EC2, app *Application) *ElasticacheSubnetGroups {
 	e := &ElasticacheSubnetGroups{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -21,8 +25,9 @@ func NewElasticacheSubnetGroups(repo *repo.Elasticache, app *Application) *Elast
 			"NETWORK TYPES",
 			"DESCRIPTION",
 		}, 1, 0),
-		repo: repo,
-		app:  app,
+		repo:    repo,
+		ec2Repo: ec2Repo,
+		app:     app,
 	}
 	return e
 }
@@ -32,18 +37,43 @@ func (e ElasticacheSubnetGroups) GetService() string {
 }
 
 func (e ElasticacheSubnetGroups) GetLabels() []string {
-	return []string{"Events"}
+	return []string{"Subnet Groups"}
+}
+
+func (e ElasticacheSubnetGroups) subnetsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	var subnetIds []string
+	for _, v := range e.model[row-1].Subnets {
+		if v.SubnetIdentifier != nil {
+			subnetIds = append(subnetIds, *v.SubnetIdentifier)
+		}
+	}
+	if e.model[row-1].CacheSubnetGroupName == nil {
+		return
+	}
+	subnetsView := NewEC2Subnets(e.ec2Repo, subnetIds, *e.model[row-1].CacheSubnetGroupName, e.app)
+	e.app.AddAndSwitch(subnetsView)
 }
 
 func (e ElasticacheSubnetGroups) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
+			Description: "Subnets",
+			Action:      e.subnetsHandler,
+		},
+	}
 }
 
-func (e ElasticacheSubnetGroups) Render() {
+func (e *ElasticacheSubnetGroups) Render() {
 	model, err := e.repo.ListSubnetGroups()
 	if err != nil {
 		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
 	for _, v := range model {

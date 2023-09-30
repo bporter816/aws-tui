@@ -142,7 +142,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "EC2.VPCs":
 				item = NewEC2VPCs(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.Subnets":
-				item = NewEC2Subnets(s.repos["EC2"].(*repo.EC2), s.app)
+				item = NewEC2Subnets(s.repos["EC2"].(*repo.EC2), []string{}, "", s.app)
 			case "EC2.Availability Zones":
 				item = NewEC2AvailabilityZones(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.Security Groups":
@@ -156,7 +156,7 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			case "Elasticache.Parameter Groups":
 				item = NewElasticacheParameterGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Subnet Groups":
-				item = NewElasticacheSubnetGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
+				item = NewElasticacheSubnetGroups(s.repos["Elasticache"].(*repo.Elasticache), s.repos["EC2"].(*repo.EC2), s.app)
 			case "Elasticache.Reserved Nodes":
 				item = NewElasticacheReservedCacheNodes(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Snapshots":

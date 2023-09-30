@@ -9,11 +9,13 @@ import (
 
 type EC2Subnets struct {
 	*ui.Table
-	repo *repo.EC2
-	app  *Application
+	repo      *repo.EC2
+	subnetIds []string
+	label     string
+	app       *Application
 }
 
-func NewEC2Subnets(repo *repo.EC2, app *Application) *EC2Subnets {
+func NewEC2Subnets(repo *repo.EC2, subnetIds []string, label string, app *Application) *EC2Subnets {
 	e := &EC2Subnets{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -23,8 +25,10 @@ func NewEC2Subnets(repo *repo.EC2, app *Application) *EC2Subnets {
 			"IPV4 CIDR",
 			"VPC ID",
 		}, 1, 0),
-		repo: repo,
-		app:  app,
+		repo:      repo,
+		subnetIds: subnetIds,
+		label:     label,
+		app:       app,
 	}
 	return e
 }
@@ -34,7 +38,11 @@ func (e EC2Subnets) GetService() string {
 }
 
 func (e EC2Subnets) GetLabels() []string {
-	return []string{"Subnets"}
+	if len(e.subnetIds) > 0 {
+		return []string{e.label, "Subnets"}
+	} else {
+		return []string{"Subnets"}
+	}
 }
 
 func (e EC2Subnets) GetKeyActions() []KeyAction {
@@ -42,7 +50,7 @@ func (e EC2Subnets) GetKeyActions() []KeyAction {
 }
 
 func (e EC2Subnets) Render() {
-	model, err := e.repo.ListSubnets()
+	model, err := e.repo.ListSubnets(e.subnetIds)
 	if err != nil {
 		panic(err)
 	}

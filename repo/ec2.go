@@ -140,11 +140,21 @@ func (e EC2) ListVPCs() ([]model.EC2VPC, error) {
 	return vpcs, nil
 }
 
-func (e EC2) ListSubnets() ([]model.EC2Subnet, error) {
-	pg := ec2.NewDescribeSubnetsPaginator(
-		e.ec2Client,
-		&ec2.DescribeSubnetsInput{},
-	)
+func (e EC2) ListSubnets(subnetIds []string) ([]model.EC2Subnet, error) {
+	var pg *ec2.DescribeSubnetsPaginator
+	if len(subnetIds) > 0 {
+		pg = ec2.NewDescribeSubnetsPaginator(
+			e.ec2Client,
+			&ec2.DescribeSubnetsInput{
+				SubnetIds: subnetIds,
+			},
+		)
+	} else {
+		pg = ec2.NewDescribeSubnetsPaginator(
+			e.ec2Client,
+			&ec2.DescribeSubnetsInput{},
+		)
+	}
 	var subnets []model.EC2Subnet
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
