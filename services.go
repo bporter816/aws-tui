@@ -27,6 +27,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		"EC2": []string{
 			"Instances",
 			"VPCs",
+			"Subnets",
 			"Availability Zones",
 			"Security Groups",
 			"Key Pairs",
@@ -140,6 +141,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewEC2Instances(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.VPCs":
 				item = NewEC2VPCs(s.repos["EC2"].(*repo.EC2), s.app)
+			case "EC2.Subnets":
+				item = NewEC2Subnets(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.Availability Zones":
 				item = NewEC2AvailabilityZones(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.Security Groups":

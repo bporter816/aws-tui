@@ -140,6 +140,24 @@ func (e EC2) ListVPCs() ([]model.EC2VPC, error) {
 	return vpcs, nil
 }
 
+func (e EC2) ListSubnets() ([]model.EC2Subnet, error) {
+	pg := ec2.NewDescribeSubnetsPaginator(
+		e.ec2Client,
+		&ec2.DescribeSubnetsInput{},
+	)
+	var subnets []model.EC2Subnet
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.EC2Subnet{}, err
+		}
+		for _, v := range out.Subnets {
+			subnets = append(subnets, model.EC2Subnet(v))
+		}
+	}
+	return subnets, nil
+}
+
 func (e EC2) ListAvailabilityZones() ([]model.EC2AvailabilityZone, error) {
 	out, err := e.ec2Client.DescribeAvailabilityZones(
 		context.TODO(),
