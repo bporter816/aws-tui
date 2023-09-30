@@ -66,7 +66,7 @@ func (e ElasticacheSubnetGroups) tagsHandler() {
 	if e.model[row-1].ARN == nil || e.model[row-1].CacheSubnetGroupName == nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeSubnetGroup, *e.model[row-1].ARN, *e.model[row-1].CacheSubnetGroupName, e.app)
+	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ARN, *e.model[row-1].CacheSubnetGroupName, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

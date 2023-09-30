@@ -8,7 +8,6 @@ import (
 type ElasticacheTags struct {
 	*ui.Table
 	repo         *repo.Elasticache
-	resourceType ElasticacheResourceType
 	resourceArn  string
 	resourceName string
 	app          *Application
@@ -16,21 +15,13 @@ type ElasticacheTags struct {
 
 type ElasticacheResourceType string
 
-const (
-	ElasticacheResourceTypeCluster      ElasticacheResourceType = "Clusters"
-	ElasticacheResourceTypeReservedNode ElasticacheResourceType = "Reserved Nodes"
-	ElasticacheResourceTypeSnapshot     ElasticacheResourceType = "Snapshots"
-	ElasticacheResourceTypeSubnetGroup  ElasticacheResourceType = "Subnet Groups"
-)
-
-func NewElasticacheTags(repo *repo.Elasticache, resourceType ElasticacheResourceType, resourceArn string, resourceName string, app *Application) *ElasticacheTags {
+func NewElasticacheTags(repo *repo.Elasticache, resourceArn string, resourceName string, app *Application) *ElasticacheTags {
 	e := &ElasticacheTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
 		repo:         repo,
-		resourceType: resourceType,
 		resourceArn:  resourceArn,
 		resourceName: resourceName,
 		app:          app,

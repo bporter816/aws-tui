@@ -54,7 +54,7 @@ func (e ElasticacheSnapshots) tagsHandler() {
 	if e.model[row-1].ARN == nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeSnapshot, *e.model[row-1].ARN, name, e.app)
+	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

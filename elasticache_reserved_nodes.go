@@ -52,7 +52,7 @@ func (e ElasticacheReservedCacheNodes) tagsHandler() {
 	if e.model[row-1].ReservationARN == nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, ElasticacheResourceTypeReservedNode, *e.model[row-1].ReservationARN, name, e.app)
+	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ReservationARN, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

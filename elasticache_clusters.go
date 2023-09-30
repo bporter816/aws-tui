@@ -57,12 +57,12 @@ func (e ElasticacheClusters) tagsHandler() {
 		if e.model[row-1].CacheCluster.ARN == nil {
 			return
 		}
-		tagsView = NewElasticacheTags(e.repo, ElasticacheResourceTypeCluster, *e.model[row-1].CacheCluster.ARN, name, e.app)
+		tagsView = NewElasticacheTags(e.repo, *e.model[row-1].CacheCluster.ARN, name, e.app)
 	} else if e.model[row-1].ReplicationGroup != nil {
 		if e.model[row-1].ReplicationGroup.ARN == nil {
 			return
 		}
-		tagsView = NewElasticacheTags(e.repo, ElasticacheResourceTypeCluster, *e.model[row-1].ReplicationGroup.ARN, name, e.app)
+		tagsView = NewElasticacheTags(e.repo, *e.model[row-1].ReplicationGroup.ARN, name, e.app)
 	}
 	e.app.AddAndSwitch(tagsView)
 }
