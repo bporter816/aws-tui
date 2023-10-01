@@ -291,3 +291,23 @@ func (e EC2) ListVPCTags(vpcId string) (model.Tags, error) {
 	}
 	return tags, nil
 }
+
+func (e EC2) ListSubnetTags(subnetId string) (model.Tags, error) {
+	out, err := e.ec2Client.DescribeSubnets(
+		context.TODO(),
+		&ec2.DescribeSubnetsInput{
+			SubnetIds: []string{subnetId},
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	if len(out.Subnets) != 1 {
+		return model.Tags{}, errors.New("should get exactly 1 subnet")
+	}
+	var tags model.Tags
+	for _, v := range out.Subnets[0].Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
+}

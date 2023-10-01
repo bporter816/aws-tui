@@ -5,6 +5,7 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/gdamore/tcell/v2"
 )
 
 type EC2Subnets struct {
@@ -45,8 +46,23 @@ func (e EC2Subnets) GetLabels() []string {
 	}
 }
 
+func (e EC2Subnets) tagsHandler() {
+	subnetId, err := e.GetColSelection("SUBNET ID")
+	if err != nil {
+		return
+	}
+	tagsView := NewEC2SubnetTags(e.repo, subnetId, e.app)
+	e.app.AddAndSwitch(tagsView)
+}
+
 func (e EC2Subnets) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
 }
 
 func (e EC2Subnets) Render() {
