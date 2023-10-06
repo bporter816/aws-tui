@@ -1,16 +1,20 @@
 package main
 
 import (
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
+	"strings"
 )
 
 type CloudwatchLogGroups struct {
 	*ui.Table
-	repo *repo.Cloudwatch
-	app  *Application
+	repo  *repo.Cloudwatch
+	app   *Application
+	model []model.CloudwatchLogGroup
 }
 
 func NewCloudwatchLogGroups(repo *repo.Cloudwatch, app *Application) *CloudwatchLogGroups {
@@ -36,15 +40,42 @@ func (c CloudwatchLogGroups) GetLabels() []string {
 	return []string{"Log Groups"}
 }
 
-func (c CloudwatchLogGroups) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (c CloudwatchLogGroups) tagsHandler() {
+	row, err := c.GetRowSelection()
+	if err != nil {
+		return
+	}
+	name, err := c.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	if c.model[row-1].Arn == nil {
+		return
+	}
+	arn := *c.model[row-1].Arn
+	if strings.HasSuffix(arn, ":*") {
+		arn = arn[:len(arn)-2]
+	}
+	tagsView := NewCloudwatchTags(c.repo, arn, name, c.app)
+	c.app.AddAndSwitch(tagsView)
 }
 
-func (c CloudwatchLogGroups) Render() {
+func (c CloudwatchLogGroups) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      c.tagsHandler,
+		},
+	}
+}
+
+func (c *CloudwatchLogGroups) Render() {
 	model, err := c.repo.ListLogGroups()
 	if err != nil {
 		panic(err)
 	}
+	c.model = model
 
 	var data [][]string
 	for _, v := range model {
