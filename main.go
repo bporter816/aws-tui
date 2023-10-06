@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cw "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
+	cwLogs "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
@@ -45,6 +46,7 @@ func NewApplication() *Application {
 
 	cfClient := cf.NewFromConfig(cfg)
 	cwClient := cw.NewFromConfig(cfg)
+	cwLogsClient := cwLogs.NewFromConfig(cfg)
 	ddbClient := ddb.NewFromConfig(cfg)
 	ecClient := ec.NewFromConfig(cfg)
 	ec2Client := ec2.NewFromConfig(cfg)
@@ -61,6 +63,7 @@ func NewApplication() *Application {
 	a := &Application{}
 
 	cfRepo := repo.NewCloudfront(cfClient)
+	cwRepo := repo.NewCloudwatch(cwLogsClient)
 	ddbRepo := repo.NewDynamoDB(ddbClient)
 	ec2Repo := repo.NewEC2(ec2Client)
 	elbRepo := repo.NewELB(elbClient)
@@ -76,6 +79,7 @@ func NewApplication() *Application {
 
 	repos := map[string]interface{}{
 		"Cloudfront":      cfRepo,
+		"Cloudwatch":      cwRepo,
 		"DynamoDB":        ddbRepo,
 		"EC2":             ec2Repo,
 		"ELB":             elbRepo,
