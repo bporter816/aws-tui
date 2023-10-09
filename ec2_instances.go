@@ -39,7 +39,7 @@ func (e EC2Instances) GetLabels() []string {
 }
 
 func (e EC2Instances) tagsHandler() {
-	instanceId, err := e.GetColSelection("ID")
+	instanceId, err := e.GetColSelection("INSTANCE ID")
 	if err != nil {
 		return
 	}
