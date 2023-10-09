@@ -59,6 +59,35 @@ func TestSimplifyFloat(t *testing.T) {
 	}
 }
 
+func TestBoolToString(t *testing.T) {
+	tests := []struct {
+		boolean  bool
+		yesStr   string
+		noStr    string
+		expected string
+	}{
+		{
+			boolean:  true,
+			yesStr:   "yes",
+			noStr:    "no",
+			expected: "yes",
+		},
+		{
+			boolean:  false,
+			yesStr:   "yes",
+			noStr:    "no",
+			expected: "no",
+		},
+	}
+
+	for _, tc := range tests {
+		got := BoolToString(tc.boolean, tc.yesStr, tc.noStr)
+		if got != tc.expected {
+			t.Fatalf("expected: %v, got: %v", tc.expected, got)
+		}
+	}
+}
+
 func TestGetResourceNameFromArn(t *testing.T) {
 	// examples from https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	tests := []struct {
