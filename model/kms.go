@@ -9,6 +9,6 @@ type (
 		kmsTypes.KeyMetadata
 		Aliases []string
 	}
-	KMSGrant kmsTypes.GrantListEntry
+	KMSGrant          kmsTypes.GrantListEntry
 	KMSCustomKeyStore kmsTypes.CustomKeyStoresListEntry
 )

@@ -2,9 +2,9 @@ package repo
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/bporter816/aws-tui/model"
 )
 

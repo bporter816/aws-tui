@@ -6,19 +6,19 @@ import (
 
 func TestAutoCase(t *testing.T) {
 	tests := []struct {
-		input string
+		input    string
 		expected string
 	}{
 		{
-			input: "TEST_CASE-1",
+			input:    "TEST_CASE-1",
 			expected: "Test case 1",
 		},
 		{
-			input: "HTTPS_ONLY",
+			input:    "HTTPS_ONLY",
 			expected: "HTTPS only",
 		},
 		{
-			input: "hello there",
+			input:    "hello there",
 			expected: "Hello there",
 		},
 	}

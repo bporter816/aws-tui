@@ -34,28 +34,28 @@ func (s S3) ListBuckets() ([]model.S3Bucket, error) {
 }
 
 func (s S3) ListObjects(bucketName string, prefix string) ([]string, []string, error) {
-		pg := s3.NewListObjectsV2Paginator(
-			s.s3Client,
-			&s3.ListObjectsV2Input{
-				Bucket:    aws.String(bucketName),
-				Delimiter: aws.String("/"),
-				Prefix:    aws.String(prefix),
-			},
-		)
-		var prefixes, objects []string
-		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
-			if err != nil {
-				return []string{}, []string{}, err
-			}
-			for _, v := range out.CommonPrefixes {
-				prefixes = append(prefixes, *v.Prefix)
-			}
-			for _, v := range out.Contents {
-				objects = append(objects, *v.Key)
-			}
+	pg := s3.NewListObjectsV2Paginator(
+		s.s3Client,
+		&s3.ListObjectsV2Input{
+			Bucket:    aws.String(bucketName),
+			Delimiter: aws.String("/"),
+			Prefix:    aws.String(prefix),
+		},
+	)
+	var prefixes, objects []string
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []string{}, []string{}, err
 		}
-		return prefixes, objects, nil
+		for _, v := range out.CommonPrefixes {
+			prefixes = append(prefixes, *v.Prefix)
+		}
+		for _, v := range out.Contents {
+			objects = append(objects, *v.Key)
+		}
+	}
+	return prefixes, objects, nil
 }
 
 func (s S3) GetBucketPolicy(bucketName string) (string, error) {

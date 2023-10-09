@@ -5,13 +5,13 @@ import (
 )
 
 type (
-	IAMUser iamTypes.User
-	IAMGroup iamTypes.Group
-	IAMRole iamTypes.Role
+	IAMUser   iamTypes.User
+	IAMGroup  iamTypes.Group
+	IAMRole   iamTypes.Role
 	IAMPolicy struct {
-		Name string
+		Name       string
 		PolicyType IAMPolicyType
-		Arn *string // ARN for managed policies
+		Arn        *string // ARN for managed policies
 	}
 	IAMAccessKey struct {
 		iamTypes.AccessKeyMetadata

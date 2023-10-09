@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/bporter816/aws-tui/model"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"github.com/bporter816/aws-tui/model"
 )
 
 type Route53 struct {

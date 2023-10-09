@@ -3,9 +3,9 @@ package repo
 import (
 	"context"
 	"errors"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/bporter816/aws-tui/model"
-	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 type ELB struct {

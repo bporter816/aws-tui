@@ -75,7 +75,7 @@ func (c Cloudfront) GetDistributionCacheBehaviors(distributionId string) ([]mode
 	// the default cache behavior is a different type, so merge them
 	if d := out.DefaultCacheBehavior; d != nil {
 		cacheBehaviors = append(cacheBehaviors, model.CloudfrontDistributionCacheBehavior{
-			PathPattern: aws.String("Default (*)"),
+			PathPattern:             aws.String("Default (*)"),
 			TargetOriginId:          d.TargetOriginId,
 			ViewerProtocolPolicy:    d.ViewerProtocolPolicy,
 			CachePolicyId:           d.CachePolicyId,

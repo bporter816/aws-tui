@@ -5,9 +5,9 @@ import (
 )
 
 type (
-	DynamoDBTable ddbTypes.TableDescription
+	DynamoDBTable   ddbTypes.TableDescription
 	DynamoDBIndexes struct {
 		Global []ddbTypes.GlobalSecondaryIndexDescription
-		Local []ddbTypes.LocalSecondaryIndexDescription
+		Local  []ddbTypes.LocalSecondaryIndexDescription
 	}
 )

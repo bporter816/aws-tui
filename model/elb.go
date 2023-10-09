@@ -6,10 +6,10 @@ import (
 
 type (
 	ELBLoadBalancer elbTypes.LoadBalancer
-	ELBListener struct {
+	ELBListener     struct {
 		elbTypes.Listener
 		Rules int
 	}
 	ELBListenerRule elbTypes.Rule
-	ELBTargetGroup elbTypes.TargetGroup
+	ELBTargetGroup  elbTypes.TargetGroup
 )

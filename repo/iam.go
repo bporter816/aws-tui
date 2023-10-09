@@ -141,7 +141,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				}
 				for _, v := range out.PolicyNames {
 					policies = append(policies, model.IAMPolicy{
-						Name: v,
+						Name:       v,
 						PolicyType: model.IAMPolicyTypeInline,
 					})
 				}
@@ -160,7 +160,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				}
 				for _, v := range out.PolicyNames {
 					policies = append(policies, model.IAMPolicy{
-						Name: v,
+						Name:       v,
 						PolicyType: model.IAMPolicyTypeInline,
 					})
 				}
@@ -179,7 +179,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				}
 				for _, v := range out.PolicyNames {
 					policies = append(policies, model.IAMPolicy{
-						Name: v,
+						Name:       v,
 						PolicyType: model.IAMPolicyTypeInline,
 					})
 				}
@@ -207,9 +207,9 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 					name = *v.PolicyName
 				}
 				policies = append(policies, model.IAMPolicy{
-					Name: name,
+					Name:       name,
 					PolicyType: model.IAMPolicyTypeManaged,
-					Arn: v.Arn,
+					Arn:        v.Arn,
 				})
 			}
 		}
@@ -234,9 +234,9 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 						name = *v.PolicyName
 					}
 					policies = append(policies, model.IAMPolicy{
-						Name: name,
+						Name:       name,
 						PolicyType: model.IAMPolicyTypeManaged,
-						Arn: v.PolicyArn,
+						Arn:        v.PolicyArn,
 					})
 				}
 			}
@@ -258,9 +258,9 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 						name = *v.PolicyName
 					}
 					policies = append(policies, model.IAMPolicy{
-						Name: name,
+						Name:       name,
 						PolicyType: model.IAMPolicyTypeManaged,
-						Arn: v.PolicyArn,
+						Arn:        v.PolicyArn,
 					})
 				}
 			}
@@ -282,9 +282,9 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 						name = *v.PolicyName
 					}
 					policies = append(policies, model.IAMPolicy{
-						Name: name,
+						Name:       name,
 						PolicyType: model.IAMPolicyTypeManaged,
-						Arn: v.PolicyArn,
+						Arn:        v.PolicyArn,
 					})
 				}
 			}

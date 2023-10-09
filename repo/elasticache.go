@@ -2,9 +2,9 @@ package repo
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	cw "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/bporter816/aws-tui/model"
 	"time"
 )

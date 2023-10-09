@@ -2,8 +2,8 @@ package repo
 
 import (
 	"context"
-	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/bporter816/aws-tui/model"
 )
 

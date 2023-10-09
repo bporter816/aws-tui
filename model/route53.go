@@ -5,7 +5,7 @@ import (
 )
 
 type (
-	Route53HostedZone r53Types.HostedZone
-	Route53Record r53Types.ResourceRecordSet
+	Route53HostedZone  r53Types.HostedZone
+	Route53Record      r53Types.ResourceRecordSet
 	Route53HealthCheck r53Types.HealthCheck
 )

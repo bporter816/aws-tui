@@ -2,12 +2,12 @@ package utils
 
 import (
 	"fmt"
-	"math"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-	"github.com/aws/aws-sdk-go-v2/aws/arn"
-	"strings"
+	"math"
 	"regexp"
+	"strings"
 )
 
 const (
@@ -18,7 +18,7 @@ var (
 	titleCaser = cases.Title(language.English)
 	upperCaser = cases.Upper(language.English)
 	lowerCaser = cases.Lower(language.English)
-	re = regexp.MustCompile("[-_]")
+	re         = regexp.MustCompile("[-_]")
 
 	replacements = map[string]string{
 		"http":  "HTTP",

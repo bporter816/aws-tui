@@ -2,10 +2,10 @@ package repo
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/service/sqs"
-	sqsTypes "github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	sqsTypes "github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"github.com/bporter816/aws-tui/model"
 )
 
@@ -23,7 +23,7 @@ func (s SQS) getAttributes(queueUrl string, attributeNames []sqsTypes.QueueAttri
 	out, err := s.sqsClient.GetQueueAttributes(
 		context.TODO(),
 		&sqs.GetQueueAttributesInput{
-			QueueUrl: aws.String(queueUrl),
+			QueueUrl:       aws.String(queueUrl),
 			AttributeNames: attributeNames,
 		},
 	)
