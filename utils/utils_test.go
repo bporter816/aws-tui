@@ -36,6 +36,29 @@ func TestAutoCase(t *testing.T) {
 	}
 }
 
+func TestSimplifyFloat(t *testing.T) {
+	tests := []struct {
+		input    float64
+		expected string
+	}{
+		{
+			input:    1.0,
+			expected: "1",
+		},
+		{
+			input:    1.5,
+			expected: "1.5",
+		},
+	}
+
+	for _, tc := range tests {
+		got := SimplifyFloat(tc.input)
+		if got != tc.expected {
+			t.Fatalf("expected: %v, got: %v", tc.expected, got)
+		}
+	}
+}
+
 func TestGetResourceNameFromArn(t *testing.T) {
 	// examples from https://docs.aws.amazon.com/IAM/latest/UserGuide/reference-arns.html
 	tests := []struct {

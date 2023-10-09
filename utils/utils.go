@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"math"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -69,9 +69,9 @@ func AutoCase(str string) string {
 
 func SimplifyFloat(value float64) string {
 	if value == math.Trunc(value) {
-		return fmt.Sprintf("%v", int(value))
+		return strconv.Itoa(int(value))
 	} else {
-		return fmt.Sprintf("%f", value)
+		return strconv.FormatFloat(value, 'f', -1, 64)
 	}
 }
 
