@@ -96,6 +96,10 @@ func GetResourceNameFromArn(arn arn.ARN) string {
 	parts := strings.Split(arn.Resource, "/")
 	if len(parts) == 2 {
 		return parts[len(parts)-1]
+	} else if len(parts) > 2 {
+		// path based resources
+		idx := strings.Index(arn.Resource, "/")
+		return arn.Resource[idx:]
 	}
 
 	// colon delimited resources
@@ -104,6 +108,5 @@ func GetResourceNameFromArn(arn arn.ARN) string {
 		return parts[len(parts)-1]
 	}
 
-	// path based resources
 	return arn.Resource
 }

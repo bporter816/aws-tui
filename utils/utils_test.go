@@ -62,6 +62,10 @@ func TestGetResourceNameFromArn(t *testing.T) {
 			input:    "arn:aws:cloudfront::123456789012:distribution/myCloudfrontDistribution",
 			expected: "myCloudfrontDistribution",
 		},
+		{
+			input:    "arn:aws:s3:::bucket/path/to/object",
+			expected: "/path/to/object",
+		},
 	}
 
 	for _, tc := range tests {
