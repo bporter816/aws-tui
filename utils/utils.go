@@ -7,6 +7,7 @@ import (
 	"golang.org/x/text/language"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"strings"
+	"regexp"
 )
 
 const (
@@ -16,6 +17,16 @@ const (
 var (
 	titleCaser = cases.Title(language.English)
 	upperCaser = cases.Upper(language.English)
+	lowerCaser = cases.Lower(language.English)
+	re = regexp.MustCompile("[-_]")
+
+	replacements = map[string]string{
+		"http":  "HTTP",
+		"https": "HTTPS",
+		"iam":   "IAM",
+		"ipv4":  "IPv4",
+		"ipv6":  "IPv6",
+	}
 
 	abbreviations = map[string]string{
 		"Milliseconds": "ms",
@@ -34,6 +45,26 @@ func TitleCase(str string) string {
 
 func UpperCase(str string) string {
 	return upperCaser.String(str)
+}
+
+func LowerCase(str string) string {
+	return lowerCaser.String(str)
+}
+
+func AutoCase(str string) string {
+	strWithSpaces := re.ReplaceAllString(str, " ")
+	words := strings.Split(strWithSpaces, " ")
+	for i, w := range words {
+		lower := LowerCase(w)
+		if replacement, ok := replacements[lower]; ok {
+			words[i] = replacement
+		} else if i == 0 {
+			words[i] = TitleCase(w)
+		} else {
+			words[i] = lower
+		}
+	}
+	return strings.Join(words, " ")
 }
 
 func SimplifyFloat(value float64) string {

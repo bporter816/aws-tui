@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 )
 
 type CFDistributionCacheBehaviors struct {
@@ -57,7 +58,7 @@ func (c CFDistributionCacheBehaviors) Render() {
 		if v.TargetOriginId != nil {
 			origin = *v.TargetOriginId
 		}
-		viewerProtocolPolicy = viewerProtocolPolicyToString(v.ViewerProtocolPolicy)
+		viewerProtocolPolicy = utils.AutoCase(string(v.ViewerProtocolPolicy))
 		if v.CachePolicyId != nil {
 			cachePolicyId = *v.CachePolicyId
 		}

@@ -4,6 +4,7 @@ import (
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
@@ -103,7 +104,7 @@ func (e *ElasticacheSubnetGroups) Render() {
 			vpcId = *v.VpcId
 		}
 		for i, n := range v.SupportedNetworkTypes {
-			networkTypes += string(n)
+			networkTypes += utils.AutoCase(string(n))
 			if i < len(v.SupportedNetworkTypes)-1 {
 				networkTypes += ", "
 			}

@@ -90,7 +90,7 @@ func (e *ElasticacheUsers) Render() {
 			status = utils.TitleCase(*v.Status)
 		}
 		if a := v.Authentication; a != nil {
-			authType = string(a.Type)
+			authType = utils.AutoCase(string(a.Type))
 			if a.Type == ecTypes.AuthenticationTypePassword && a.PasswordCount != nil {
 				authType += fmt.Sprintf(" (%v)", *a.PasswordCount)
 			}
