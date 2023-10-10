@@ -8,12 +8,12 @@ import (
 
 type CFDistributionCacheBehaviors struct {
 	*ui.Table
-	repo           *repo.Cloudfront
+	repo           *repo.CloudFront
 	distributionId string
 	app            *Application
 }
 
-func NewCFDistributionCacheBehaviors(repo *repo.Cloudfront, distributionId string, app *Application) *CFDistributionCacheBehaviors {
+func NewCFDistributionCacheBehaviors(repo *repo.CloudFront, distributionId string, app *Application) *CFDistributionCacheBehaviors {
 	c := &CFDistributionCacheBehaviors{
 		Table: ui.NewTable([]string{
 			"PATH",
@@ -31,7 +31,7 @@ func NewCFDistributionCacheBehaviors(repo *repo.Cloudfront, distributionId strin
 }
 
 func (c CFDistributionCacheBehaviors) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
 
 func (c CFDistributionCacheBehaviors) GetLabels() []string {

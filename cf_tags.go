@@ -9,12 +9,12 @@ import (
 
 type CFTags struct {
 	*ui.Table
-	repo *repo.Cloudfront
+	repo *repo.CloudFront
 	id   string
 	app  *Application
 }
 
-func NewCFTags(repo *repo.Cloudfront, id string, app *Application) *CFTags {
+func NewCFTags(repo *repo.CloudFront, id string, app *Application) *CFTags {
 	c := &CFTags{
 		Table: ui.NewTable([]string{
 			"KEY",
@@ -28,7 +28,7 @@ func NewCFTags(repo *repo.Cloudfront, id string, app *Application) *CFTags {
 }
 
 func (c CFTags) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
 func (c CFTags) GetLabels() []string {
 	// TODO generalize for other resources

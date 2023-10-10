@@ -7,13 +7,13 @@ import (
 
 type CFDistributionInvalidationPaths struct {
 	*ui.Table
-	repo           *repo.Cloudfront
+	repo           *repo.CloudFront
 	distributionId string
 	invalidationId string
 	app            *Application
 }
 
-func NewCFDistributionInvalidationPaths(repo *repo.Cloudfront, distributionId string, invalidationId string, app *Application) *CFDistributionInvalidationPaths {
+func NewCFDistributionInvalidationPaths(repo *repo.CloudFront, distributionId string, invalidationId string, app *Application) *CFDistributionInvalidationPaths {
 	c := &CFDistributionInvalidationPaths{
 		Table: ui.NewTable([]string{
 			"PATH",
@@ -27,7 +27,7 @@ func NewCFDistributionInvalidationPaths(repo *repo.Cloudfront, distributionId st
 }
 
 func (c CFDistributionInvalidationPaths) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
 
 func (c CFDistributionInvalidationPaths) GetLabels() []string {

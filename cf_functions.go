@@ -8,11 +8,11 @@ import (
 
 type CFFunctions struct {
 	*ui.Table
-	repo *repo.Cloudfront
+	repo *repo.CloudFront
 	app  *Application
 }
 
-func NewCFFunctions(repo *repo.Cloudfront, app *Application) *CFFunctions {
+func NewCFFunctions(repo *repo.CloudFront, app *Application) *CFFunctions {
 	c := &CFFunctions{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -29,7 +29,7 @@ func NewCFFunctions(repo *repo.Cloudfront, app *Application) *CFFunctions {
 }
 
 func (c CFFunctions) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
 
 func (c CFFunctions) GetLabels() []string {

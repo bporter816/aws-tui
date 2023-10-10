@@ -8,17 +8,17 @@ import (
 	"github.com/bporter816/aws-tui/model"
 )
 
-type Cloudfront struct {
+type CloudFront struct {
 	cfClient *cf.Client
 }
 
-func NewCloudfront(cfClient *cf.Client) *Cloudfront {
-	return &Cloudfront{
+func NewCloudFront(cfClient *cf.Client) *CloudFront {
+	return &CloudFront{
 		cfClient: cfClient,
 	}
 }
 
-func (c Cloudfront) getDistributionConfig(distributionId string) (*cfTypes.DistributionConfig, error) {
+func (c CloudFront) getDistributionConfig(distributionId string) (*cfTypes.DistributionConfig, error) {
 	out, err := c.cfClient.GetDistributionConfig(
 		context.TODO(),
 		&cf.GetDistributionConfigInput{
@@ -31,50 +31,50 @@ func (c Cloudfront) getDistributionConfig(distributionId string) (*cfTypes.Distr
 	return out.DistributionConfig, nil
 }
 
-func (c Cloudfront) ListDistributions() ([]model.CloudfrontDistribution, error) {
+func (c CloudFront) ListDistributions() ([]model.CloudFrontDistribution, error) {
 	pg := cf.NewListDistributionsPaginator(
 		c.cfClient,
 		&cf.ListDistributionsInput{},
 	)
-	var distributions []model.CloudfrontDistribution
+	var distributions []model.CloudFrontDistribution
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil || out.DistributionList == nil {
-			return []model.CloudfrontDistribution{}, err
+			return []model.CloudFrontDistribution{}, err
 		}
 		for _, v := range out.DistributionList.Items {
-			distributions = append(distributions, model.CloudfrontDistribution(v))
+			distributions = append(distributions, model.CloudFrontDistribution(v))
 		}
 	}
 	return distributions, nil
 }
 
-func (c Cloudfront) GetDistributionOrigins(distributionId string) ([]model.CloudfrontDistributionOrigin, error) {
+func (c CloudFront) GetDistributionOrigins(distributionId string) ([]model.CloudFrontDistributionOrigin, error) {
 	out, err := c.getDistributionConfig(distributionId)
 	if err != nil || out.Origins == nil {
-		return []model.CloudfrontDistributionOrigin{}, err
+		return []model.CloudFrontDistributionOrigin{}, err
 	}
-	var origins []model.CloudfrontDistributionOrigin
+	var origins []model.CloudFrontDistributionOrigin
 	for _, v := range out.Origins.Items {
-		origins = append(origins, model.CloudfrontDistributionOrigin(v))
+		origins = append(origins, model.CloudFrontDistributionOrigin(v))
 	}
 	return origins, nil
 }
 
-func (c Cloudfront) GetDistributionCacheBehaviors(distributionId string) ([]model.CloudfrontDistributionCacheBehavior, error) {
+func (c CloudFront) GetDistributionCacheBehaviors(distributionId string) ([]model.CloudFrontDistributionCacheBehavior, error) {
 	out, err := c.getDistributionConfig(distributionId)
 	if err != nil {
-		return []model.CloudfrontDistributionCacheBehavior{}, err
+		return []model.CloudFrontDistributionCacheBehavior{}, err
 	}
-	var cacheBehaviors []model.CloudfrontDistributionCacheBehavior
+	var cacheBehaviors []model.CloudFrontDistributionCacheBehavior
 	if out.CacheBehaviors != nil {
 		for _, v := range out.CacheBehaviors.Items {
-			cacheBehaviors = append(cacheBehaviors, model.CloudfrontDistributionCacheBehavior(v))
+			cacheBehaviors = append(cacheBehaviors, model.CloudFrontDistributionCacheBehavior(v))
 		}
 	}
 	// the default cache behavior is a different type, so merge them
 	if d := out.DefaultCacheBehavior; d != nil {
-		cacheBehaviors = append(cacheBehaviors, model.CloudfrontDistributionCacheBehavior{
+		cacheBehaviors = append(cacheBehaviors, model.CloudFrontDistributionCacheBehavior{
 			PathPattern:             aws.String("Default (*)"),
 			TargetOriginId:          d.TargetOriginId,
 			ViewerProtocolPolicy:    d.ViewerProtocolPolicy,
@@ -86,39 +86,39 @@ func (c Cloudfront) GetDistributionCacheBehaviors(distributionId string) ([]mode
 	return cacheBehaviors, nil
 }
 
-func (c Cloudfront) GetDistributionCustomErrorResponses(distributionId string) ([]model.CloudfrontDistributionCustomErrorResponse, error) {
+func (c CloudFront) GetDistributionCustomErrorResponses(distributionId string) ([]model.CloudFrontDistributionCustomErrorResponse, error) {
 	out, err := c.getDistributionConfig(distributionId)
 	if err != nil || out.CustomErrorResponses == nil {
-		return []model.CloudfrontDistributionCustomErrorResponse{}, err
+		return []model.CloudFrontDistributionCustomErrorResponse{}, err
 	}
-	var customErrorResponses []model.CloudfrontDistributionCustomErrorResponse
+	var customErrorResponses []model.CloudFrontDistributionCustomErrorResponse
 	for _, v := range out.CustomErrorResponses.Items {
-		customErrorResponses = append(customErrorResponses, model.CloudfrontDistributionCustomErrorResponse(v))
+		customErrorResponses = append(customErrorResponses, model.CloudFrontDistributionCustomErrorResponse(v))
 	}
 	return customErrorResponses, nil
 }
 
-func (c Cloudfront) ListInvalidations(distributionId string) ([]model.CloudfrontInvalidation, error) {
+func (c CloudFront) ListInvalidations(distributionId string) ([]model.CloudFrontInvalidation, error) {
 	pg := cf.NewListInvalidationsPaginator(
 		c.cfClient,
 		&cf.ListInvalidationsInput{
 			DistributionId: aws.String(distributionId),
 		},
 	)
-	var invalidations []model.CloudfrontInvalidation
+	var invalidations []model.CloudFrontInvalidation
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil || out.InvalidationList == nil {
-			return []model.CloudfrontInvalidation{}, err
+			return []model.CloudFrontInvalidation{}, err
 		}
 		for _, v := range out.InvalidationList.Items {
-			invalidations = append(invalidations, model.CloudfrontInvalidation(v))
+			invalidations = append(invalidations, model.CloudFrontInvalidation(v))
 		}
 	}
 	return invalidations, nil
 }
 
-func (c Cloudfront) ListInvalidationPaths(distributionId string, invalidationId string) ([]model.CloudfrontInvalidationPath, error) {
+func (c CloudFront) ListInvalidationPaths(distributionId string, invalidationId string) ([]model.CloudFrontInvalidationPath, error) {
 	out, err := c.cfClient.GetInvalidation(
 		context.TODO(),
 		&cf.GetInvalidationInput{
@@ -127,18 +127,18 @@ func (c Cloudfront) ListInvalidationPaths(distributionId string, invalidationId 
 		},
 	)
 	if err != nil || out.Invalidation == nil || out.Invalidation.InvalidationBatch == nil || out.Invalidation.InvalidationBatch.Paths == nil {
-		return []model.CloudfrontInvalidationPath{}, err
+		return []model.CloudFrontInvalidationPath{}, err
 	}
-	var paths []model.CloudfrontInvalidationPath
+	var paths []model.CloudFrontInvalidationPath
 	for _, v := range out.Invalidation.InvalidationBatch.Paths.Items {
-		paths = append(paths, model.CloudfrontInvalidationPath(v))
+		paths = append(paths, model.CloudFrontInvalidationPath(v))
 	}
 	return paths, nil
 }
 
-func (c Cloudfront) ListFunctions() ([]model.CloudfrontFunction, error) {
+func (c CloudFront) ListFunctions() ([]model.CloudFrontFunction, error) {
 	// ListFunctions doesn't have a paginator
-	var functions []model.CloudfrontFunction
+	var functions []model.CloudFrontFunction
 	var marker *string
 	for {
 		out, err := c.cfClient.ListFunctions(
@@ -148,10 +148,10 @@ func (c Cloudfront) ListFunctions() ([]model.CloudfrontFunction, error) {
 			},
 		)
 		if err != nil || out.FunctionList == nil {
-			return []model.CloudfrontFunction{}, err
+			return []model.CloudFrontFunction{}, err
 		}
 		for _, v := range out.FunctionList.Items {
-			functions = append(functions, model.CloudfrontFunction(v))
+			functions = append(functions, model.CloudFrontFunction(v))
 		}
 		marker = out.FunctionList.NextMarker
 		if marker == nil {
@@ -161,7 +161,7 @@ func (c Cloudfront) ListFunctions() ([]model.CloudfrontFunction, error) {
 	return functions, nil
 }
 
-func (c Cloudfront) ListTags(resourceId string) (model.Tags, error) {
+func (c CloudFront) ListTags(resourceId string) (model.Tags, error) {
 	out, err := c.cfClient.ListTagsForResource(
 		context.TODO(),
 		&cf.ListTagsForResourceInput{

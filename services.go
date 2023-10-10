@@ -17,7 +17,7 @@ type Services struct {
 
 func NewServices(repos map[string]interface{}, app *Application) *Services {
 	m := map[string][]string{
-		"Cloudfront": []string{
+		"CloudFront": []string{
 			"Distributions",
 			"Functions",
 		},
@@ -135,10 +135,10 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 			view := fmt.Sprintf("%v.%v", parent.GetText(), node.GetText())
 			var item Component
 			switch view {
-			case "Cloudfront.Distributions":
-				item = NewCFDistributions(s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
-			case "Cloudfront.Functions":
-				item = NewCFFunctions(s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
+			case "CloudFront.Distributions":
+				item = NewCFDistributions(s.repos["CloudFront"].(*repo.CloudFront), s.app)
+			case "CloudFront.Functions":
+				item = NewCFFunctions(s.repos["CloudFront"].(*repo.CloudFront), s.app)
 			case "CloudWatch.Log Groups":
 				item = NewCloudWatchLogGroups(s.repos["CloudWatch"].(*repo.CloudWatch), s.app)
 			case "DynamoDB.Tables":

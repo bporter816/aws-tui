@@ -5,11 +5,11 @@ import (
 )
 
 type (
-	CloudfrontDistribution                    cfTypes.DistributionSummary
-	CloudfrontDistributionOrigin              cfTypes.Origin
-	CloudfrontDistributionCacheBehavior       cfTypes.CacheBehavior
-	CloudfrontDistributionCustomErrorResponse cfTypes.CustomErrorResponse
-	CloudfrontInvalidation                    cfTypes.InvalidationSummary
-	CloudfrontInvalidationPath                string
-	CloudfrontFunction                        cfTypes.FunctionSummary
+	CloudFrontDistribution                    cfTypes.DistributionSummary
+	CloudFrontDistributionOrigin              cfTypes.Origin
+	CloudFrontDistributionCacheBehavior       cfTypes.CacheBehavior
+	CloudFrontDistributionCustomErrorResponse cfTypes.CustomErrorResponse
+	CloudFrontInvalidation                    cfTypes.InvalidationSummary
+	CloudFrontInvalidationPath                string
+	CloudFrontFunction                        cfTypes.FunctionSummary
 )

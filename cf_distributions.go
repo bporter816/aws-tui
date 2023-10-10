@@ -10,12 +10,12 @@ import (
 
 type CFDistributions struct {
 	*ui.Table
-	repo  *repo.Cloudfront
+	repo  *repo.CloudFront
 	app   *Application
-	model []model.CloudfrontDistribution
+	model []model.CloudFrontDistribution
 }
 
-func NewCFDistributions(repo *repo.Cloudfront, app *Application) *CFDistributions {
+func NewCFDistributions(repo *repo.CloudFront, app *Application) *CFDistributions {
 	c := &CFDistributions{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -32,7 +32,7 @@ func NewCFDistributions(repo *repo.Cloudfront, app *Application) *CFDistribution
 }
 
 func (c CFDistributions) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
 
 func (c CFDistributions) GetLabels() []string {

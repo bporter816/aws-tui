@@ -62,7 +62,7 @@ func NewApplication() *Application {
 
 	a := &Application{}
 
-	cfRepo := repo.NewCloudfront(cfClient)
+	cfRepo := repo.NewCloudFront(cfClient)
 	cwRepo := repo.NewCloudWatch(cwLogsClient)
 	ddbRepo := repo.NewDynamoDB(ddbClient)
 	ec2Repo := repo.NewEC2(ec2Client)
@@ -78,7 +78,7 @@ func NewApplication() *Application {
 	sqRepo := repo.NewServiceQuotas(sqClient)
 
 	repos := map[string]interface{}{
-		"Cloudfront":      cfRepo,
+		"CloudFront":      cfRepo,
 		"CloudWatch":      cwRepo,
 		"DynamoDB":        ddbRepo,
 		"EC2":             ec2Repo,

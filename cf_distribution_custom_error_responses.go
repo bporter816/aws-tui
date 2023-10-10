@@ -8,12 +8,12 @@ import (
 
 type CFDistributionCustomErrorResponses struct {
 	*ui.Table
-	repo           *repo.Cloudfront
+	repo           *repo.CloudFront
 	distributionId string
 	app            *Application
 }
 
-func NewCFDistributionCustomErrorResponses(repo *repo.Cloudfront, distributionId string, app *Application) *CFDistributionCustomErrorResponses {
+func NewCFDistributionCustomErrorResponses(repo *repo.CloudFront, distributionId string, app *Application) *CFDistributionCustomErrorResponses {
 	c := &CFDistributionCustomErrorResponses{
 		Table: ui.NewTable([]string{
 			"ERROR CODE",
@@ -29,7 +29,7 @@ func NewCFDistributionCustomErrorResponses(repo *repo.Cloudfront, distributionId
 }
 
 func (c CFDistributionCustomErrorResponses) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
 
 func (c CFDistributionCustomErrorResponses) GetLabels() []string {

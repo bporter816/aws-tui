@@ -9,12 +9,12 @@ import (
 
 type CFDistributionInvalidations struct {
 	*ui.Table
-	repo           *repo.Cloudfront
+	repo           *repo.CloudFront
 	distributionId string
 	app            *Application
 }
 
-func NewCFDistributionInvalidations(repo *repo.Cloudfront, distributionId string, app *Application) *CFDistributionInvalidations {
+func NewCFDistributionInvalidations(repo *repo.CloudFront, distributionId string, app *Application) *CFDistributionInvalidations {
 	c := &CFDistributionInvalidations{
 		Table: ui.NewTable([]string{
 			"ID",
@@ -29,7 +29,7 @@ func NewCFDistributionInvalidations(repo *repo.Cloudfront, distributionId string
 }
 
 func (c CFDistributionInvalidations) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
 
 func (c CFDistributionInvalidations) GetLabels() []string {

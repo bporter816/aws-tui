@@ -7,12 +7,12 @@ import (
 
 type CFDistributionOrigins struct {
 	*ui.Table
-	repo           *repo.Cloudfront
+	repo           *repo.CloudFront
 	distributionId string
 	app            *Application
 }
 
-func NewCFDistributionOrigins(repo *repo.Cloudfront, distributionId string, app *Application) *CFDistributionOrigins {
+func NewCFDistributionOrigins(repo *repo.CloudFront, distributionId string, app *Application) *CFDistributionOrigins {
 	c := &CFDistributionOrigins{
 		Table: ui.NewTable([]string{
 			"NAME",
@@ -28,7 +28,7 @@ func NewCFDistributionOrigins(repo *repo.Cloudfront, distributionId string, app 
 }
 
 func (c CFDistributionOrigins) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
 
 func (c CFDistributionOrigins) GetLabels() []string {

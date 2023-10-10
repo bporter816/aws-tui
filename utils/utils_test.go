@@ -111,8 +111,8 @@ func TestGetResourceNameFromArn(t *testing.T) {
 			expected: "myDynamoDBTable",
 		},
 		{
-			input:    "arn:aws:cloudfront::123456789012:distribution/myCloudfrontDistribution",
-			expected: "myCloudfrontDistribution",
+			input:    "arn:aws:cloudfront::123456789012:distribution/myCloudFrontDistribution",
+			expected: "myCloudFrontDistribution",
 		},
 		{
 			input:    "arn:aws:s3:::bucket/path/to/object",
