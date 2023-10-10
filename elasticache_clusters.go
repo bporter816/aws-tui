@@ -43,12 +43,32 @@ func (e ElasticacheClusters) GetLabels() []string {
 	return []string{"Clusters"}
 }
 
+func (e ElasticacheClusters) serviceUpdateStatusHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	id, err := e.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	var updateActionsView *ElasticacheUpdateActions
+	if e.model[row-1].CacheCluster != nil {
+		updateActionsView = NewElasticacheUpdateActions(e.repo, e.app, []string{id}, []string{}, "")
+	} else if e.model[row-1].ReplicationGroup != nil {
+		updateActionsView = NewElasticacheUpdateActions(e.repo, e.app, []string{}, []string{id}, "")
+	} else {
+		return
+	}
+	e.app.AddAndSwitch(updateActionsView)
+}
+
 func (e ElasticacheClusters) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
 	}
-	name, err := e.GetColSelection("ID")
+	id, err := e.GetColSelection("ID")
 	if err != nil {
 		return
 	}
@@ -57,18 +77,25 @@ func (e ElasticacheClusters) tagsHandler() {
 		if e.model[row-1].CacheCluster.ARN == nil {
 			return
 		}
-		tagsView = NewElasticacheTags(e.repo, *e.model[row-1].CacheCluster.ARN, name, e.app)
+		tagsView = NewElasticacheTags(e.repo, *e.model[row-1].CacheCluster.ARN, id, e.app)
 	} else if e.model[row-1].ReplicationGroup != nil {
 		if e.model[row-1].ReplicationGroup.ARN == nil {
 			return
 		}
-		tagsView = NewElasticacheTags(e.repo, *e.model[row-1].ReplicationGroup.ARN, name, e.app)
+		tagsView = NewElasticacheTags(e.repo, *e.model[row-1].ReplicationGroup.ARN, id, e.app)
+	} else {
+		return
 	}
 	e.app.AddAndSwitch(tagsView)
 }
 
 func (e ElasticacheClusters) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
+			Description: "Service Update Status",
+			Action:      e.serviceUpdateStatusHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
@@ -87,10 +114,6 @@ func (e *ElasticacheClusters) Render() {
 	var data [][]string
 	for _, v := range model {
 		if vv := v.CacheCluster; vv != nil {
-			// skip clusters in replication groups as those are retrieved from DescribeReplicationGroups
-			if vv.ReplicationGroupId != nil {
-				continue
-			}
 			var clusterMode string = "-"
 			if *vv.Engine == "redis" {
 				clusterMode = string(ecTypes.ClusterModeDisabled)

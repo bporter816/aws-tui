@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cw "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
@@ -36,6 +37,10 @@ func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
 			return []model.ElasticacheCluster{}, err
 		}
 		for _, v := range out.CacheClusters {
+			// skip clusters in replication groups as those are retrieved from DescribeReplicationGroups
+			if v.ReplicationGroupId != nil {
+				continue
+			}
 			vCopy := v
 			clusters = append(clusters, model.ElasticacheCluster{CacheCluster: &vCopy})
 			if v.CacheClusterId != nil && v.EngineVersion != nil && v.ReplicationGroupId != nil {
@@ -231,6 +236,50 @@ func (e Elasticache) ListServiceUpdates() ([]model.ElasticacheServiceUpdate, err
 		}
 	}
 	return serviceUpdates, nil
+}
+
+func (e Elasticache) ListUpdateActions(
+	cacheClusterIds []string,
+	replicationGroupIds []string,
+	serviceUpdateName string,
+) ([]model.ElasticacheUpdateAction, error) {
+	hasCacheClusters, hasReplicationGroups, hasServiceUpdate := 0, 0, 0
+	if len(cacheClusterIds) > 0 {
+		hasCacheClusters = 1
+	}
+	if len(replicationGroupIds) > 0 {
+		hasReplicationGroups = 1
+	}
+	if len(serviceUpdateName) > 0 {
+		hasServiceUpdate = 1
+	}
+	if hasCacheClusters+hasReplicationGroups+hasServiceUpdate != 1 {
+		return []model.ElasticacheUpdateAction{}, errors.New("must specify either cacheClusterIds, replicationGroupIds, or serviceUpdateName")
+	}
+
+	var input ec.DescribeUpdateActionsInput
+	if len(cacheClusterIds) > 0 {
+		input.CacheClusterIds = cacheClusterIds
+	} else if len(replicationGroupIds) > 0 {
+		input.ReplicationGroupIds = replicationGroupIds
+	} else {
+		input.ServiceUpdateName = aws.String(serviceUpdateName)
+	}
+	pg := ec.NewDescribeUpdateActionsPaginator(
+		e.ecClient,
+		&input,
+	)
+	var updateActions []model.ElasticacheUpdateAction
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheUpdateAction{}, err
+		}
+		for _, v := range out.UpdateActions {
+			updateActions = append(updateActions, model.ElasticacheUpdateAction(v))
+		}
+	}
+	return updateActions, nil
 }
 
 func (e Elasticache) ListTags(arn string) (model.Tags, error) {

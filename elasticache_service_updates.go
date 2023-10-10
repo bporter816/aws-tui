@@ -4,6 +4,7 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ElasticacheServiceUpdates struct {
@@ -38,8 +39,23 @@ func (e ElasticacheServiceUpdates) GetLabels() []string {
 	return []string{"Service Updates"}
 }
 
+func (e ElasticacheServiceUpdates) statusHandler() {
+	serviceUpdateName, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	statusView := NewElasticacheUpdateActions(e.repo, e.app, []string{}, []string{}, serviceUpdateName)
+	e.app.AddAndSwitch(statusView)
+}
+
 func (e ElasticacheServiceUpdates) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
+			Description: "Status",
+			Action:      e.statusHandler,
+		},
+	}
 }
 
 func (e ElasticacheServiceUpdates) Render() {

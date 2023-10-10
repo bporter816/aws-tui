@@ -20,4 +20,5 @@ type (
 	ElasticacheUser           ecTypes.User
 	ElasticacheGroup          ecTypes.UserGroup
 	ElasticacheServiceUpdate  ecTypes.ServiceUpdate
+	ElasticacheUpdateAction   ecTypes.UpdateAction
 )
