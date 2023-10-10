@@ -5,5 +5,5 @@ import (
 )
 
 type (
-	CloudwatchLogGroup cwLogsTypes.LogGroup
+	CloudWatchLogGroup cwLogsTypes.LogGroup
 )

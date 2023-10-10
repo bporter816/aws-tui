@@ -7,35 +7,35 @@ import (
 	"github.com/bporter816/aws-tui/model"
 )
 
-type Cloudwatch struct {
+type CloudWatch struct {
 	cwLogsClient *cwLogs.Client
 }
 
-func NewCloudwatch(cwLogsClient *cwLogs.Client) *Cloudwatch {
-	return &Cloudwatch{
+func NewCloudWatch(cwLogsClient *cwLogs.Client) *CloudWatch {
+	return &CloudWatch{
 		cwLogsClient: cwLogsClient,
 	}
 }
 
-func (c Cloudwatch) ListLogGroups() ([]model.CloudwatchLogGroup, error) {
+func (c CloudWatch) ListLogGroups() ([]model.CloudWatchLogGroup, error) {
 	pg := cwLogs.NewDescribeLogGroupsPaginator(
 		c.cwLogsClient,
 		&cwLogs.DescribeLogGroupsInput{},
 	)
-	var logGroups []model.CloudwatchLogGroup
+	var logGroups []model.CloudWatchLogGroup
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.CloudwatchLogGroup{}, err
+			return []model.CloudWatchLogGroup{}, err
 		}
 		for _, v := range out.LogGroups {
-			logGroups = append(logGroups, model.CloudwatchLogGroup(v))
+			logGroups = append(logGroups, model.CloudWatchLogGroup(v))
 		}
 	}
 	return logGroups, nil
 }
 
-func (c Cloudwatch) ListTags(resourceArn string) (model.Tags, error) {
+func (c CloudWatch) ListTags(resourceArn string) (model.Tags, error) {
 	out, err := c.cwLogsClient.ListTagsForResource(
 		context.TODO(),
 		&cwLogs.ListTagsForResourceInput{

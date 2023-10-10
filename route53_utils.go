@@ -8,9 +8,9 @@ import (
 func getHealthCheckDescription(v r53Types.HealthCheckConfig) string {
 	if v.Type == r53Types.HealthCheckTypeCalculated {
 		return fmt.Sprintf("Calculated threshold: %v out of %v", *v.HealthThreshold, len(v.ChildHealthChecks))
-	} else if v.Type == r53Types.HealthCheckTypeCloudwatchMetric {
+	} else if v.Type == r53Types.HealthCheckTypeCloudWatchMetric {
 		if v.AlarmIdentifier != nil && v.AlarmIdentifier.Name != nil {
-			return fmt.Sprintf("Cloudwatch alarm: %v (%v)", *v.AlarmIdentifier.Name, v.AlarmIdentifier.Region)
+			return fmt.Sprintf("CloudWatch alarm: %v (%v)", *v.AlarmIdentifier.Name, v.AlarmIdentifier.Region)
 		}
 		return ""
 	} else if v.Type == r53Types.HealthCheckTypeRecoveryControl {

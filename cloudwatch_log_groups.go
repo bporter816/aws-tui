@@ -10,15 +10,15 @@ import (
 	"strings"
 )
 
-type CloudwatchLogGroups struct {
+type CloudWatchLogGroups struct {
 	*ui.Table
-	repo  *repo.Cloudwatch
+	repo  *repo.CloudWatch
 	app   *Application
-	model []model.CloudwatchLogGroup
+	model []model.CloudWatchLogGroup
 }
 
-func NewCloudwatchLogGroups(repo *repo.Cloudwatch, app *Application) *CloudwatchLogGroups {
-	c := &CloudwatchLogGroups{
+func NewCloudWatchLogGroups(repo *repo.CloudWatch, app *Application) *CloudWatchLogGroups {
+	c := &CloudWatchLogGroups{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"RETENTION",
@@ -32,15 +32,15 @@ func NewCloudwatchLogGroups(repo *repo.Cloudwatch, app *Application) *Cloudwatch
 	return c
 }
 
-func (c CloudwatchLogGroups) GetService() string {
-	return "Cloudwatch"
+func (c CloudWatchLogGroups) GetService() string {
+	return "CloudWatch"
 }
 
-func (c CloudwatchLogGroups) GetLabels() []string {
+func (c CloudWatchLogGroups) GetLabels() []string {
 	return []string{"Log Groups"}
 }
 
-func (c CloudwatchLogGroups) tagsHandler() {
+func (c CloudWatchLogGroups) tagsHandler() {
 	row, err := c.GetRowSelection()
 	if err != nil {
 		return
@@ -56,11 +56,11 @@ func (c CloudwatchLogGroups) tagsHandler() {
 	if strings.HasSuffix(arn, ":*") {
 		arn = arn[:len(arn)-2]
 	}
-	tagsView := NewCloudwatchTags(c.repo, arn, name, c.app)
+	tagsView := NewCloudWatchTags(c.repo, arn, name, c.app)
 	c.app.AddAndSwitch(tagsView)
 }
 
-func (c CloudwatchLogGroups) GetKeyActions() []KeyAction {
+func (c CloudWatchLogGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
@@ -70,7 +70,7 @@ func (c CloudwatchLogGroups) GetKeyActions() []KeyAction {
 	}
 }
 
-func (c *CloudwatchLogGroups) Render() {
+func (c *CloudWatchLogGroups) Render() {
 	model, err := c.repo.ListLogGroups()
 	if err != nil {
 		panic(err)

@@ -5,16 +5,16 @@ import (
 	"github.com/bporter816/aws-tui/ui"
 )
 
-type CloudwatchTags struct {
+type CloudWatchTags struct {
 	*ui.Table
-	repo *repo.Cloudwatch
+	repo *repo.CloudWatch
 	arn  string
 	name string
 	app  *Application
 }
 
-func NewCloudwatchTags(repo *repo.Cloudwatch, arn string, name string, app *Application) *CloudwatchTags {
-	c := &CloudwatchTags{
+func NewCloudWatchTags(repo *repo.CloudWatch, arn string, name string, app *Application) *CloudWatchTags {
+	c := &CloudWatchTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
@@ -27,19 +27,19 @@ func NewCloudwatchTags(repo *repo.Cloudwatch, arn string, name string, app *Appl
 	return c
 }
 
-func (c CloudwatchTags) GetService() string {
-	return "Cloudwatch"
+func (c CloudWatchTags) GetService() string {
+	return "CloudWatch"
 }
 
-func (c CloudwatchTags) GetLabels() []string {
+func (c CloudWatchTags) GetLabels() []string {
 	return []string{c.name, "Tags"}
 }
 
-func (c CloudwatchTags) GetKeyActions() []KeyAction {
+func (c CloudWatchTags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (c CloudwatchTags) Render() {
+func (c CloudWatchTags) Render() {
 	model, err := c.repo.ListTags(c.arn)
 	if err != nil {
 		panic(err)

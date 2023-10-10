@@ -21,7 +21,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"Distributions",
 			"Functions",
 		},
-		"Cloudwatch": []string{
+		"CloudWatch": []string{
 			"Log Groups",
 		},
 		"DynamoDB": []string{
@@ -139,8 +139,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewCFDistributions(s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
 			case "Cloudfront.Functions":
 				item = NewCFFunctions(s.repos["Cloudfront"].(*repo.Cloudfront), s.app)
-			case "Cloudwatch.Log Groups":
-				item = NewCloudwatchLogGroups(s.repos["Cloudwatch"].(*repo.Cloudwatch), s.app)
+			case "CloudWatch.Log Groups":
+				item = NewCloudWatchLogGroups(s.repos["CloudWatch"].(*repo.CloudWatch), s.app)
 			case "DynamoDB.Tables":
 				item = NewDynamoDBTables(s.repos["DynamoDB"].(*repo.DynamoDB), s.app)
 			case "EC2.Instances":
