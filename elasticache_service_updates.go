@@ -20,6 +20,9 @@ func NewElasticacheServiceUpdates(repo *repo.Elasticache, app *Application) *Ela
 			"TYPE",
 			"SEVERITY",
 			"STATUS",
+			"RELEASED",
+			"APPLY BY",
+			"AUTO APPLY",
 		}, 1, 0),
 		repo: repo,
 		app:  app,
@@ -47,7 +50,7 @@ func (e ElasticacheServiceUpdates) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, engineVersion, serviceUpdateType, severity, status string
+		var name, engineVersion, serviceUpdateType, severity, status, released, applyBy, autoApply string
 		if v.ServiceUpdateName != nil {
 			name = *v.ServiceUpdateName
 		}
@@ -57,12 +60,24 @@ func (e ElasticacheServiceUpdates) Render() {
 		serviceUpdateType = utils.AutoCase(string(v.ServiceUpdateType))
 		severity = utils.AutoCase(string(v.ServiceUpdateSeverity))
 		status = utils.AutoCase(string(v.ServiceUpdateStatus))
+		if v.ServiceUpdateReleaseDate != nil {
+			released = v.ServiceUpdateReleaseDate.Format(utils.DefaultTimeFormat)
+		}
+		if v.ServiceUpdateRecommendedApplyByDate != nil {
+			applyBy = v.ServiceUpdateRecommendedApplyByDate.Format(utils.DefaultTimeFormat)
+		}
+		if v.AutoUpdateAfterRecommendedApplyByDate != nil {
+			autoApply = utils.BoolToString(*v.AutoUpdateAfterRecommendedApplyByDate, "Yes", "No")
+		}
 		data = append(data, []string{
 			name,
 			engineVersion,
 			serviceUpdateType,
 			severity,
 			status,
+			released,
+			applyBy,
+			autoApply,
 		})
 	}
 	e.SetData(data)
