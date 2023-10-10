@@ -6,14 +6,14 @@ import (
 	"github.com/bporter816/aws-tui/utils"
 )
 
-type ElasticacheEvents struct {
+type ElastiCacheEvents struct {
 	*ui.Table
-	repo *repo.Elasticache
+	repo *repo.ElastiCache
 	app  *Application
 }
 
-func NewElasticacheEvents(repo *repo.Elasticache, app *Application) *ElasticacheEvents {
-	e := &ElasticacheEvents{
+func NewElastiCacheEvents(repo *repo.ElastiCache, app *Application) *ElastiCacheEvents {
+	e := &ElastiCacheEvents{
 		Table: ui.NewTable([]string{
 			"DATE",
 			"SOURCE",
@@ -26,19 +26,19 @@ func NewElasticacheEvents(repo *repo.Elasticache, app *Application) *Elasticache
 	return e
 }
 
-func (e ElasticacheEvents) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheEvents) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheEvents) GetLabels() []string {
+func (e ElastiCacheEvents) GetLabels() []string {
 	return []string{"Events"}
 }
 
-func (e ElasticacheEvents) GetKeyActions() []KeyAction {
+func (e ElastiCacheEvents) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e ElasticacheEvents) Render() {
+func (e ElastiCacheEvents) Render() {
 	model, err := e.repo.ListEvents()
 	if err != nil {
 		panic(err)

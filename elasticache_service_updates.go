@@ -7,14 +7,14 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type ElasticacheServiceUpdates struct {
+type ElastiCacheServiceUpdates struct {
 	*ui.Table
-	repo *repo.Elasticache
+	repo *repo.ElastiCache
 	app  *Application
 }
 
-func NewElasticacheServiceUpdates(repo *repo.Elasticache, app *Application) *ElasticacheServiceUpdates {
-	e := &ElasticacheServiceUpdates{
+func NewElastiCacheServiceUpdates(repo *repo.ElastiCache, app *Application) *ElastiCacheServiceUpdates {
+	e := &ElastiCacheServiceUpdates{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"ENGINE VERSION",
@@ -31,24 +31,24 @@ func NewElasticacheServiceUpdates(repo *repo.Elasticache, app *Application) *Ela
 	return e
 }
 
-func (e ElasticacheServiceUpdates) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheServiceUpdates) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheServiceUpdates) GetLabels() []string {
+func (e ElastiCacheServiceUpdates) GetLabels() []string {
 	return []string{"Service Updates"}
 }
 
-func (e ElasticacheServiceUpdates) statusHandler() {
+func (e ElastiCacheServiceUpdates) statusHandler() {
 	serviceUpdateName, err := e.GetColSelection("NAME")
 	if err != nil {
 		return
 	}
-	statusView := NewElasticacheUpdateActions(e.repo, e.app, []string{}, []string{}, serviceUpdateName)
+	statusView := NewElastiCacheUpdateActions(e.repo, e.app, []string{}, []string{}, serviceUpdateName)
 	e.app.AddAndSwitch(statusView)
 }
 
-func (e ElasticacheServiceUpdates) GetKeyActions() []KeyAction {
+func (e ElastiCacheServiceUpdates) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
@@ -58,7 +58,7 @@ func (e ElasticacheServiceUpdates) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e ElasticacheServiceUpdates) Render() {
+func (e ElastiCacheServiceUpdates) Render() {
 	model, err := e.repo.ListServiceUpdates()
 	if err != nil {
 		panic(err)

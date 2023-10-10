@@ -9,15 +9,15 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type ElasticacheGroups struct {
+type ElastiCacheGroups struct {
 	*ui.Table
-	repo  *repo.Elasticache
+	repo  *repo.ElastiCache
 	app   *Application
-	model []model.ElasticacheGroup
+	model []model.ElastiCacheGroup
 }
 
-func NewElasticacheGroups(repo *repo.Elasticache, app *Application) *ElasticacheGroups {
-	e := &ElasticacheGroups{
+func NewElastiCacheGroups(repo *repo.ElastiCache, app *Application) *ElastiCacheGroups {
+	e := &ElastiCacheGroups{
 		Table: ui.NewTable([]string{
 			"ID",
 			"STATUS",
@@ -30,15 +30,15 @@ func NewElasticacheGroups(repo *repo.Elasticache, app *Application) *Elasticache
 	return e
 }
 
-func (e ElasticacheGroups) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheGroups) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheGroups) GetLabels() []string {
+func (e ElastiCacheGroups) GetLabels() []string {
 	return []string{"Groups"}
 }
 
-func (e ElasticacheGroups) tagsHandler() {
+func (e ElastiCacheGroups) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
@@ -50,11 +50,11 @@ func (e ElasticacheGroups) tagsHandler() {
 	if e.model[row-1].ARN == nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
+	tagsView := NewElastiCacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheGroups) GetKeyActions() []KeyAction {
+func (e ElastiCacheGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
@@ -64,7 +64,7 @@ func (e ElasticacheGroups) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e *ElasticacheGroups) Render() {
+func (e *ElastiCacheGroups) Render() {
 	model, err := e.repo.ListGroups()
 	if err != nil {
 		panic(err)

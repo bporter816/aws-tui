@@ -67,7 +67,7 @@ func NewApplication() *Application {
 	ddbRepo := repo.NewDynamoDB(ddbClient)
 	ec2Repo := repo.NewEC2(ec2Client)
 	elbRepo := repo.NewELB(elbClient)
-	ecRepo := repo.NewElasticache(ecClient, cwClient)
+	ecRepo := repo.NewElastiCache(ecClient, cwClient)
 	iamRepo := repo.NewIAM(iamClient)
 	kmsRepo := repo.NewKMS(kmsClient)
 	r53Repo := repo.NewRoute53(r53Client)
@@ -83,7 +83,7 @@ func NewApplication() *Application {
 		"DynamoDB":        ddbRepo,
 		"EC2":             ec2Repo,
 		"ELB":             elbRepo,
-		"Elasticache":     ecRepo,
+		"ElastiCache":     ecRepo,
 		"IAM":             iamRepo,
 		"KMS":             kmsRepo,
 		"Route 53":        r53Repo,

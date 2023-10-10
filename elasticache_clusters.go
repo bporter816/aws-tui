@@ -10,15 +10,15 @@ import (
 	"strconv"
 )
 
-type ElasticacheClusters struct {
+type ElastiCacheClusters struct {
 	*ui.Table
-	repo  *repo.Elasticache
+	repo  *repo.ElastiCache
 	app   *Application
-	model []model.ElasticacheCluster
+	model []model.ElastiCacheCluster
 }
 
-func NewElasticacheClusters(repo *repo.Elasticache, app *Application) *ElasticacheClusters {
-	e := &ElasticacheClusters{
+func NewElastiCacheClusters(repo *repo.ElastiCache, app *Application) *ElastiCacheClusters {
+	e := &ElastiCacheClusters{
 		Table: ui.NewTable([]string{
 			"ID",
 			"STATUS",
@@ -35,15 +35,15 @@ func NewElasticacheClusters(repo *repo.Elasticache, app *Application) *Elasticac
 	return e
 }
 
-func (e ElasticacheClusters) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheClusters) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheClusters) GetLabels() []string {
+func (e ElastiCacheClusters) GetLabels() []string {
 	return []string{"Clusters"}
 }
 
-func (e ElasticacheClusters) serviceUpdateStatusHandler() {
+func (e ElastiCacheClusters) serviceUpdateStatusHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
@@ -52,18 +52,18 @@ func (e ElasticacheClusters) serviceUpdateStatusHandler() {
 	if err != nil {
 		return
 	}
-	var updateActionsView *ElasticacheUpdateActions
+	var updateActionsView *ElastiCacheUpdateActions
 	if e.model[row-1].CacheCluster != nil {
-		updateActionsView = NewElasticacheUpdateActions(e.repo, e.app, []string{id}, []string{}, "")
+		updateActionsView = NewElastiCacheUpdateActions(e.repo, e.app, []string{id}, []string{}, "")
 	} else if e.model[row-1].ReplicationGroup != nil {
-		updateActionsView = NewElasticacheUpdateActions(e.repo, e.app, []string{}, []string{id}, "")
+		updateActionsView = NewElastiCacheUpdateActions(e.repo, e.app, []string{}, []string{id}, "")
 	} else {
 		return
 	}
 	e.app.AddAndSwitch(updateActionsView)
 }
 
-func (e ElasticacheClusters) tagsHandler() {
+func (e ElastiCacheClusters) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
@@ -72,24 +72,24 @@ func (e ElasticacheClusters) tagsHandler() {
 	if err != nil {
 		return
 	}
-	var tagsView *ElasticacheTags
+	var tagsView *ElastiCacheTags
 	if e.model[row-1].CacheCluster != nil {
 		if e.model[row-1].CacheCluster.ARN == nil {
 			return
 		}
-		tagsView = NewElasticacheTags(e.repo, *e.model[row-1].CacheCluster.ARN, id, e.app)
+		tagsView = NewElastiCacheTags(e.repo, *e.model[row-1].CacheCluster.ARN, id, e.app)
 	} else if e.model[row-1].ReplicationGroup != nil {
 		if e.model[row-1].ReplicationGroup.ARN == nil {
 			return
 		}
-		tagsView = NewElasticacheTags(e.repo, *e.model[row-1].ReplicationGroup.ARN, id, e.app)
+		tagsView = NewElastiCacheTags(e.repo, *e.model[row-1].ReplicationGroup.ARN, id, e.app)
 	} else {
 		return
 	}
 	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheClusters) GetKeyActions() []KeyAction {
+func (e ElastiCacheClusters) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
@@ -104,7 +104,7 @@ func (e ElasticacheClusters) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e *ElasticacheClusters) Render() {
+func (e *ElastiCacheClusters) Render() {
 	model, err := e.repo.ListClusters()
 	if err != nil {
 		panic(err)

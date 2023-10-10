@@ -10,19 +10,19 @@ import (
 	"time"
 )
 
-type Elasticache struct {
+type ElastiCache struct {
 	ecClient *ec.Client
 	cwClient *cw.Client
 }
 
-func NewElasticache(ecClient *ec.Client, cwClient *cw.Client) *Elasticache {
-	return &Elasticache{
+func NewElastiCache(ecClient *ec.Client, cwClient *cw.Client) *ElastiCache {
+	return &ElastiCache{
 		ecClient: ecClient,
 		cwClient: cwClient,
 	}
 }
 
-func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
+func (e ElastiCache) ListClusters() ([]model.ElastiCacheCluster, error) {
 	// DescribeReplicationGroups doesn't return engine version, so we have to get it from the list of member cluster names
 	clusterToEngineVersion := make(map[string]string)
 
@@ -30,11 +30,11 @@ func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
 		e.ecClient,
 		&ec.DescribeCacheClustersInput{},
 	)
-	var clusters []model.ElasticacheCluster
+	var clusters []model.ElastiCacheCluster
 	for clustersPg.HasMorePages() {
 		out, err := clustersPg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheCluster{}, err
+			return []model.ElastiCacheCluster{}, err
 		}
 		for _, v := range out.CacheClusters {
 			// skip clusters in replication groups as those are retrieved from DescribeReplicationGroups
@@ -42,7 +42,7 @@ func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
 				continue
 			}
 			vCopy := v
-			clusters = append(clusters, model.ElasticacheCluster{CacheCluster: &vCopy})
+			clusters = append(clusters, model.ElastiCacheCluster{CacheCluster: &vCopy})
 			if v.CacheClusterId != nil && v.EngineVersion != nil && v.ReplicationGroupId != nil {
 				clusterToEngineVersion[*v.CacheClusterId] = *v.EngineVersion
 			}
@@ -61,7 +61,7 @@ func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
 		}
 		for _, v := range out.ReplicationGroups {
 			vCopy := v
-			m := model.ElasticacheCluster{ReplicationGroup: &vCopy}
+			m := model.ElastiCacheCluster{ReplicationGroup: &vCopy}
 			if ev, ok := clusterToEngineVersion[v.MemberClusters[0]]; ok {
 				m.ReplicationGroupEngineVersion = ev
 			}
@@ -71,7 +71,7 @@ func (e Elasticache) ListClusters() ([]model.ElasticacheCluster, error) {
 	return clusters, nil
 }
 
-func (e Elasticache) ListEvents() ([]model.ElasticacheEvent, error) {
+func (e ElastiCache) ListEvents() ([]model.ElastiCacheEvent, error) {
 	oneWeekAgo := time.Now().AddDate(0, 0, -13) // TODO get this closer to the max 14 days
 	pg := ec.NewDescribeEventsPaginator(
 		e.ecClient,
@@ -79,170 +79,170 @@ func (e Elasticache) ListEvents() ([]model.ElasticacheEvent, error) {
 			StartTime: aws.Time(oneWeekAgo),
 		},
 	)
-	var events []model.ElasticacheEvent
+	var events []model.ElastiCacheEvent
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheEvent{}, err
+			return []model.ElastiCacheEvent{}, err
 		}
 		for _, v := range out.Events {
-			events = append(events, model.ElasticacheEvent(v))
+			events = append(events, model.ElastiCacheEvent(v))
 		}
 	}
 	return events, nil
 }
 
-func (e Elasticache) ListReservedNodes() ([]model.ElasticacheReservedNode, error) {
+func (e ElastiCache) ListReservedNodes() ([]model.ElastiCacheReservedNode, error) {
 	pg := ec.NewDescribeReservedCacheNodesPaginator(
 		e.ecClient,
 		&ec.DescribeReservedCacheNodesInput{},
 	)
-	var reservations []model.ElasticacheReservedNode
+	var reservations []model.ElastiCacheReservedNode
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheReservedNode{}, err
+			return []model.ElastiCacheReservedNode{}, err
 		}
 		for _, v := range out.ReservedCacheNodes {
-			reservations = append(reservations, model.ElasticacheReservedNode(v))
+			reservations = append(reservations, model.ElastiCacheReservedNode(v))
 		}
 	}
 	return reservations, nil
 }
 
-func (e Elasticache) ListSnapshots() ([]model.ElasticacheSnapshot, error) {
+func (e ElastiCache) ListSnapshots() ([]model.ElastiCacheSnapshot, error) {
 	pg := ec.NewDescribeSnapshotsPaginator(
 		e.ecClient,
 		&ec.DescribeSnapshotsInput{},
 	)
-	var snapshots []model.ElasticacheSnapshot
+	var snapshots []model.ElastiCacheSnapshot
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheSnapshot{}, err
+			return []model.ElastiCacheSnapshot{}, err
 		}
 		for _, v := range out.Snapshots {
-			snapshots = append(snapshots, model.ElasticacheSnapshot(v))
+			snapshots = append(snapshots, model.ElastiCacheSnapshot(v))
 		}
 	}
 	return snapshots, nil
 }
 
-func (e Elasticache) ListSubnetGroups() ([]model.ElasticacheSubnetGroup, error) {
+func (e ElastiCache) ListSubnetGroups() ([]model.ElastiCacheSubnetGroup, error) {
 	pg := ec.NewDescribeCacheSubnetGroupsPaginator(
 		e.ecClient,
 		&ec.DescribeCacheSubnetGroupsInput{},
 	)
-	var subnetGroups []model.ElasticacheSubnetGroup
+	var subnetGroups []model.ElastiCacheSubnetGroup
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheSubnetGroup{}, err
+			return []model.ElastiCacheSubnetGroup{}, err
 		}
 		for _, v := range out.CacheSubnetGroups {
-			subnetGroups = append(subnetGroups, model.ElasticacheSubnetGroup(v))
+			subnetGroups = append(subnetGroups, model.ElastiCacheSubnetGroup(v))
 		}
 	}
 	return subnetGroups, nil
 }
 
-func (e Elasticache) ListParameterGroups() ([]model.ElasticacheParameterGroup, error) {
+func (e ElastiCache) ListParameterGroups() ([]model.ElastiCacheParameterGroup, error) {
 	pg := ec.NewDescribeCacheParameterGroupsPaginator(
 		e.ecClient,
 		&ec.DescribeCacheParameterGroupsInput{},
 	)
-	var parameterGroups []model.ElasticacheParameterGroup
+	var parameterGroups []model.ElastiCacheParameterGroup
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheParameterGroup{}, err
+			return []model.ElastiCacheParameterGroup{}, err
 		}
 		for _, v := range out.CacheParameterGroups {
-			parameterGroups = append(parameterGroups, model.ElasticacheParameterGroup(v))
+			parameterGroups = append(parameterGroups, model.ElastiCacheParameterGroup(v))
 		}
 	}
 	return parameterGroups, nil
 }
 
-func (e Elasticache) ListParameters(parameterGroupName string) ([]model.ElasticacheParameter, error) {
+func (e ElastiCache) ListParameters(parameterGroupName string) ([]model.ElastiCacheParameter, error) {
 	pg := ec.NewDescribeCacheParametersPaginator(
 		e.ecClient,
 		&ec.DescribeCacheParametersInput{
 			CacheParameterGroupName: aws.String(parameterGroupName),
 		},
 	)
-	var parameters []model.ElasticacheParameter
+	var parameters []model.ElastiCacheParameter
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheParameter{}, err
+			return []model.ElastiCacheParameter{}, err
 		}
 		for _, v := range out.Parameters {
-			parameters = append(parameters, model.ElasticacheParameter(v))
+			parameters = append(parameters, model.ElastiCacheParameter(v))
 		}
 	}
 	return parameters, nil
 }
 
-func (e Elasticache) ListUsers() ([]model.ElasticacheUser, error) {
+func (e ElastiCache) ListUsers() ([]model.ElastiCacheUser, error) {
 	pg := ec.NewDescribeUsersPaginator(
 		e.ecClient,
 		&ec.DescribeUsersInput{},
 	)
-	var users []model.ElasticacheUser
+	var users []model.ElastiCacheUser
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheUser{}, err
+			return []model.ElastiCacheUser{}, err
 		}
 		for _, v := range out.Users {
-			users = append(users, model.ElasticacheUser(v))
+			users = append(users, model.ElastiCacheUser(v))
 		}
 	}
 	return users, nil
 }
 
-func (e Elasticache) ListGroups() ([]model.ElasticacheGroup, error) {
+func (e ElastiCache) ListGroups() ([]model.ElastiCacheGroup, error) {
 	pg := ec.NewDescribeUserGroupsPaginator(
 		e.ecClient,
 		&ec.DescribeUserGroupsInput{},
 	)
-	var users []model.ElasticacheGroup
+	var users []model.ElastiCacheGroup
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheGroup{}, err
+			return []model.ElastiCacheGroup{}, err
 		}
 		for _, v := range out.UserGroups {
-			users = append(users, model.ElasticacheGroup(v))
+			users = append(users, model.ElastiCacheGroup(v))
 		}
 	}
 	return users, nil
 }
 
-func (e Elasticache) ListServiceUpdates() ([]model.ElasticacheServiceUpdate, error) {
+func (e ElastiCache) ListServiceUpdates() ([]model.ElastiCacheServiceUpdate, error) {
 	pg := ec.NewDescribeServiceUpdatesPaginator(
 		e.ecClient,
 		&ec.DescribeServiceUpdatesInput{},
 	)
-	var serviceUpdates []model.ElasticacheServiceUpdate
+	var serviceUpdates []model.ElastiCacheServiceUpdate
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheServiceUpdate{}, err
+			return []model.ElastiCacheServiceUpdate{}, err
 		}
 		for _, v := range out.ServiceUpdates {
-			serviceUpdates = append(serviceUpdates, model.ElasticacheServiceUpdate(v))
+			serviceUpdates = append(serviceUpdates, model.ElastiCacheServiceUpdate(v))
 		}
 	}
 	return serviceUpdates, nil
 }
 
-func (e Elasticache) ListUpdateActions(
+func (e ElastiCache) ListUpdateActions(
 	cacheClusterIds []string,
 	replicationGroupIds []string,
 	serviceUpdateName string,
-) ([]model.ElasticacheUpdateAction, error) {
+) ([]model.ElastiCacheUpdateAction, error) {
 	hasCacheClusters, hasReplicationGroups, hasServiceUpdate := 0, 0, 0
 	if len(cacheClusterIds) > 0 {
 		hasCacheClusters = 1
@@ -254,7 +254,7 @@ func (e Elasticache) ListUpdateActions(
 		hasServiceUpdate = 1
 	}
 	if hasCacheClusters+hasReplicationGroups+hasServiceUpdate != 1 {
-		return []model.ElasticacheUpdateAction{}, errors.New("must specify either cacheClusterIds, replicationGroupIds, or serviceUpdateName")
+		return []model.ElastiCacheUpdateAction{}, errors.New("must specify either cacheClusterIds, replicationGroupIds, or serviceUpdateName")
 	}
 
 	var input ec.DescribeUpdateActionsInput
@@ -269,20 +269,20 @@ func (e Elasticache) ListUpdateActions(
 		e.ecClient,
 		&input,
 	)
-	var updateActions []model.ElasticacheUpdateAction
+	var updateActions []model.ElastiCacheUpdateAction
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
 		if err != nil {
-			return []model.ElasticacheUpdateAction{}, err
+			return []model.ElastiCacheUpdateAction{}, err
 		}
 		for _, v := range out.UpdateActions {
-			updateActions = append(updateActions, model.ElasticacheUpdateAction(v))
+			updateActions = append(updateActions, model.ElastiCacheUpdateAction(v))
 		}
 	}
 	return updateActions, nil
 }
 
-func (e Elasticache) ListTags(arn string) (model.Tags, error) {
+func (e ElastiCache) ListTags(arn string) (model.Tags, error) {
 	out, err := e.ecClient.ListTagsForResource(
 		context.TODO(),
 		&ec.ListTagsForResourceInput{

@@ -10,15 +10,15 @@ import (
 	"strings"
 )
 
-type ElasticacheSnapshots struct {
+type ElastiCacheSnapshots struct {
 	*ui.Table
-	repo  *repo.Elasticache
+	repo  *repo.ElastiCache
 	app   *Application
-	model []model.ElasticacheSnapshot
+	model []model.ElastiCacheSnapshot
 }
 
-func NewElasticacheSnapshots(repo *repo.Elasticache, app *Application) *ElasticacheSnapshots {
-	e := &ElasticacheSnapshots{
+func NewElastiCacheSnapshots(repo *repo.ElastiCache, app *Application) *ElastiCacheSnapshots {
+	e := &ElastiCacheSnapshots{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"CLUSTER",
@@ -34,15 +34,15 @@ func NewElasticacheSnapshots(repo *repo.Elasticache, app *Application) *Elastica
 	return e
 }
 
-func (e ElasticacheSnapshots) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheSnapshots) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheSnapshots) GetLabels() []string {
+func (e ElastiCacheSnapshots) GetLabels() []string {
 	return []string{"Snapshots"}
 }
 
-func (e ElasticacheSnapshots) tagsHandler() {
+func (e ElastiCacheSnapshots) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
@@ -54,11 +54,11 @@ func (e ElasticacheSnapshots) tagsHandler() {
 	if e.model[row-1].ARN == nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
+	tagsView := NewElastiCacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheSnapshots) GetKeyActions() []KeyAction {
+func (e ElastiCacheSnapshots) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
@@ -68,7 +68,7 @@ func (e ElasticacheSnapshots) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e *ElasticacheSnapshots) Render() {
+func (e *ElastiCacheSnapshots) Render() {
 	model, err := e.repo.ListSnapshots()
 	if err != nil {
 		panic(err)

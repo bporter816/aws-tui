@@ -9,15 +9,15 @@ import (
 	"strconv"
 )
 
-type ElasticacheReservedCacheNodes struct {
+type ElastiCacheReservedCacheNodes struct {
 	*ui.Table
-	repo  *repo.Elasticache
+	repo  *repo.ElastiCache
 	app   *Application
-	model []model.ElasticacheReservedNode
+	model []model.ElastiCacheReservedNode
 }
 
-func NewElasticacheReservedCacheNodes(repo *repo.Elasticache, app *Application) *ElasticacheReservedCacheNodes {
-	e := &ElasticacheReservedCacheNodes{
+func NewElastiCacheReservedCacheNodes(repo *repo.ElastiCache, app *Application) *ElastiCacheReservedCacheNodes {
+	e := &ElastiCacheReservedCacheNodes{
 		Table: ui.NewTable([]string{
 			"ID",
 			"OFFERING TYPE",
@@ -32,15 +32,15 @@ func NewElasticacheReservedCacheNodes(repo *repo.Elasticache, app *Application) 
 	return e
 }
 
-func (e ElasticacheReservedCacheNodes) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheReservedCacheNodes) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheReservedCacheNodes) GetLabels() []string {
+func (e ElastiCacheReservedCacheNodes) GetLabels() []string {
 	return []string{"Reserved Nodes"}
 }
 
-func (e ElasticacheReservedCacheNodes) tagsHandler() {
+func (e ElastiCacheReservedCacheNodes) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
@@ -52,11 +52,11 @@ func (e ElasticacheReservedCacheNodes) tagsHandler() {
 	if e.model[row-1].ReservationARN == nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ReservationARN, name, e.app)
+	tagsView := NewElastiCacheTags(e.repo, *e.model[row-1].ReservationARN, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheReservedCacheNodes) GetKeyActions() []KeyAction {
+func (e ElastiCacheReservedCacheNodes) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
@@ -66,7 +66,7 @@ func (e ElasticacheReservedCacheNodes) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e *ElasticacheReservedCacheNodes) Render() {
+func (e *ElastiCacheReservedCacheNodes) Render() {
 	model, err := e.repo.ListReservedNodes()
 	if err != nil {
 		panic(err)

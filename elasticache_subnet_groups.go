@@ -9,16 +9,16 @@ import (
 	"strconv"
 )
 
-type ElasticacheSubnetGroups struct {
+type ElastiCacheSubnetGroups struct {
 	*ui.Table
-	repo    *repo.Elasticache
+	repo    *repo.ElastiCache
 	ec2Repo *repo.EC2
 	app     *Application
-	model   []model.ElasticacheSubnetGroup
+	model   []model.ElastiCacheSubnetGroup
 }
 
-func NewElasticacheSubnetGroups(repo *repo.Elasticache, ec2Repo *repo.EC2, app *Application) *ElasticacheSubnetGroups {
-	e := &ElasticacheSubnetGroups{
+func NewElastiCacheSubnetGroups(repo *repo.ElastiCache, ec2Repo *repo.EC2, app *Application) *ElastiCacheSubnetGroups {
+	e := &ElastiCacheSubnetGroups{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"SUBNETS",
@@ -33,15 +33,15 @@ func NewElasticacheSubnetGroups(repo *repo.Elasticache, ec2Repo *repo.EC2, app *
 	return e
 }
 
-func (e ElasticacheSubnetGroups) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheSubnetGroups) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheSubnetGroups) GetLabels() []string {
+func (e ElastiCacheSubnetGroups) GetLabels() []string {
 	return []string{"Subnet Groups"}
 }
 
-func (e ElasticacheSubnetGroups) subnetsHandler() {
+func (e ElastiCacheSubnetGroups) subnetsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
@@ -59,7 +59,7 @@ func (e ElasticacheSubnetGroups) subnetsHandler() {
 	e.app.AddAndSwitch(subnetsView)
 }
 
-func (e ElasticacheSubnetGroups) tagsHandler() {
+func (e ElastiCacheSubnetGroups) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
@@ -67,11 +67,11 @@ func (e ElasticacheSubnetGroups) tagsHandler() {
 	if e.model[row-1].ARN == nil || e.model[row-1].CacheSubnetGroupName == nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ARN, *e.model[row-1].CacheSubnetGroupName, e.app)
+	tagsView := NewElastiCacheTags(e.repo, *e.model[row-1].ARN, *e.model[row-1].CacheSubnetGroupName, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheSubnetGroups) GetKeyActions() []KeyAction {
+func (e ElastiCacheSubnetGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
@@ -86,7 +86,7 @@ func (e ElasticacheSubnetGroups) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e *ElasticacheSubnetGroups) Render() {
+func (e *ElastiCacheSubnetGroups) Render() {
 	model, err := e.repo.ListSubnetGroups()
 	if err != nil {
 		panic(err)

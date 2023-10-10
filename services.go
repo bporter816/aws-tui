@@ -35,7 +35,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"Security Groups",
 			"Key Pairs",
 		},
-		"Elasticache": []string{
+		"ElastiCache": []string{
 			"Clusters",
 			"Users",
 			"Groups",
@@ -155,24 +155,24 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewEC2SecurityGroups(s.repos["EC2"].(*repo.EC2), s.app)
 			case "EC2.Key Pairs":
 				item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
-			case "Elasticache.Clusters":
-				item = NewElasticacheClusters(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Users":
-				item = NewElasticacheUsers(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Groups":
-				item = NewElasticacheGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Parameter Groups":
-				item = NewElasticacheParameterGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Subnet Groups":
-				item = NewElasticacheSubnetGroups(s.repos["Elasticache"].(*repo.Elasticache), s.repos["EC2"].(*repo.EC2), s.app)
-			case "Elasticache.Reserved Nodes":
-				item = NewElasticacheReservedCacheNodes(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Snapshots":
-				item = NewElasticacheSnapshots(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Events":
-				item = NewElasticacheEvents(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Service Updates":
-				item = NewElasticacheServiceUpdates(s.repos["Elasticache"].(*repo.Elasticache), s.app)
+			case "ElastiCache.Clusters":
+				item = NewElastiCacheClusters(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+			case "ElastiCache.Users":
+				item = NewElastiCacheUsers(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+			case "ElastiCache.Groups":
+				item = NewElastiCacheGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+			case "ElastiCache.Parameter Groups":
+				item = NewElastiCacheParameterGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+			case "ElastiCache.Subnet Groups":
+				item = NewElastiCacheSubnetGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.repos["EC2"].(*repo.EC2), s.app)
+			case "ElastiCache.Reserved Nodes":
+				item = NewElastiCacheReservedCacheNodes(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+			case "ElastiCache.Snapshots":
+				item = NewElastiCacheSnapshots(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+			case "ElastiCache.Events":
+				item = NewElastiCacheEvents(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+			case "ElastiCache.Service Updates":
+				item = NewElastiCacheServiceUpdates(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
 			case "ELB.Load Balancers":
 				item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
 			case "ELB.Target Groups":

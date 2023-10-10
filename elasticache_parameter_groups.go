@@ -7,14 +7,14 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type ElasticacheParameterGroups struct {
+type ElastiCacheParameterGroups struct {
 	*ui.Table
-	repo *repo.Elasticache
+	repo *repo.ElastiCache
 	app  *Application
 }
 
-func NewElasticacheParameterGroups(repo *repo.Elasticache, app *Application) *ElasticacheParameterGroups {
-	e := &ElasticacheParameterGroups{
+func NewElastiCacheParameterGroups(repo *repo.ElastiCache, app *Application) *ElastiCacheParameterGroups {
+	e := &ElastiCacheParameterGroups{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"FAMILY",
@@ -27,24 +27,24 @@ func NewElasticacheParameterGroups(repo *repo.Elasticache, app *Application) *El
 	return e
 }
 
-func (e ElasticacheParameterGroups) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheParameterGroups) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheParameterGroups) GetLabels() []string {
+func (e ElastiCacheParameterGroups) GetLabels() []string {
 	return []string{"Parameter Groups"}
 }
 
-func (e ElasticacheParameterGroups) viewParametersHandler() {
+func (e ElastiCacheParameterGroups) viewParametersHandler() {
 	name, err := e.GetColSelection("NAME")
 	if err != nil {
 		return
 	}
-	parametersView := NewElasticacheParameters(e.repo, name, e.app)
+	parametersView := NewElastiCacheParameters(e.repo, name, e.app)
 	e.app.AddAndSwitch(parametersView)
 }
 
-func (e ElasticacheParameterGroups) GetKeyActions() []KeyAction {
+func (e ElastiCacheParameterGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
@@ -54,7 +54,7 @@ func (e ElasticacheParameterGroups) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e ElasticacheParameterGroups) Render() {
+func (e ElastiCacheParameterGroups) Render() {
 	model, err := e.repo.ListParameterGroups()
 	if err != nil {
 		panic(err)

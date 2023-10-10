@@ -6,7 +6,7 @@ A k9s-inspired terminal UI for AWS services. Supports:
 * DynamoDB
 * EC2 (VPCs and Security Groups)
 * ELB
-* Elasticache
+* ElastiCache
 * IAM
 * Key Management Service
 * Route 53

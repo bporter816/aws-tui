@@ -10,15 +10,15 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type ElasticacheUsers struct {
+type ElastiCacheUsers struct {
 	*ui.Table
-	repo  *repo.Elasticache
+	repo  *repo.ElastiCache
 	app   *Application
-	model []model.ElasticacheUser
+	model []model.ElastiCacheUser
 }
 
-func NewElasticacheUsers(repo *repo.Elasticache, app *Application) *ElasticacheUsers {
-	e := &ElasticacheUsers{
+func NewElastiCacheUsers(repo *repo.ElastiCache, app *Application) *ElastiCacheUsers {
+	e := &ElastiCacheUsers{
 		Table: ui.NewTable([]string{
 			"ID",
 			"NAME",
@@ -33,15 +33,15 @@ func NewElasticacheUsers(repo *repo.Elasticache, app *Application) *ElasticacheU
 	return e
 }
 
-func (e ElasticacheUsers) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheUsers) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheUsers) GetLabels() []string {
+func (e ElastiCacheUsers) GetLabels() []string {
 	return []string{"Users"}
 }
 
-func (e ElasticacheUsers) tagsHandler() {
+func (e ElastiCacheUsers) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
@@ -53,11 +53,11 @@ func (e ElasticacheUsers) tagsHandler() {
 	if e.model[row-1].ARN == nil {
 		return
 	}
-	tagsView := NewElasticacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
+	tagsView := NewElastiCacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
-func (e ElasticacheUsers) GetKeyActions() []KeyAction {
+func (e ElastiCacheUsers) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
@@ -67,7 +67,7 @@ func (e ElasticacheUsers) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e *ElasticacheUsers) Render() {
+func (e *ElastiCacheUsers) Render() {
 	model, err := e.repo.ListUsers()
 	if err != nil {
 		panic(err)

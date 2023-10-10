@@ -5,18 +5,18 @@ import (
 	"github.com/bporter816/aws-tui/ui"
 )
 
-type ElasticacheTags struct {
+type ElastiCacheTags struct {
 	*ui.Table
-	repo         *repo.Elasticache
+	repo         *repo.ElastiCache
 	resourceArn  string
 	resourceName string
 	app          *Application
 }
 
-type ElasticacheResourceType string
+type ElastiCacheResourceType string
 
-func NewElasticacheTags(repo *repo.Elasticache, resourceArn string, resourceName string, app *Application) *ElasticacheTags {
-	e := &ElasticacheTags{
+func NewElastiCacheTags(repo *repo.ElastiCache, resourceArn string, resourceName string, app *Application) *ElastiCacheTags {
+	e := &ElastiCacheTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
@@ -29,19 +29,19 @@ func NewElasticacheTags(repo *repo.Elasticache, resourceArn string, resourceName
 	return e
 }
 
-func (e ElasticacheTags) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheTags) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheTags) GetLabels() []string {
+func (e ElastiCacheTags) GetLabels() []string {
 	return []string{e.resourceName, "Tags"}
 }
 
-func (e ElasticacheTags) GetKeyActions() []KeyAction {
+func (e ElastiCacheTags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e ElasticacheTags) Render() {
+func (e ElastiCacheTags) Render() {
 	model, err := e.repo.ListTags(e.resourceArn)
 	if err != nil {
 		panic(err)

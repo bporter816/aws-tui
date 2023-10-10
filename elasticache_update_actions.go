@@ -6,21 +6,21 @@ import (
 	"github.com/bporter816/aws-tui/utils"
 )
 
-type ElasticacheUpdateActions struct {
+type ElastiCacheUpdateActions struct {
 	*ui.Table
-	repo                *repo.Elasticache
+	repo                *repo.ElastiCache
 	app                 *Application
 	cacheClusterIds     []string
 	replicationGroupIds []string
 	serviceUpdateName   string
 }
 
-func NewElasticacheUpdateActions(repo *repo.Elasticache, app *Application, cacheClusterIds []string, replicationGroupIds []string, serviceUpdateName string) *ElasticacheUpdateActions {
+func NewElastiCacheUpdateActions(repo *repo.ElastiCache, app *Application, cacheClusterIds []string, replicationGroupIds []string, serviceUpdateName string) *ElastiCacheUpdateActions {
 	idCol := "UPDATE NAME"
 	if serviceUpdateName != "" {
 		idCol = "CLUSTER"
 	}
-	e := &ElasticacheUpdateActions{
+	e := &ElastiCacheUpdateActions{
 		Table: ui.NewTable([]string{
 			idCol,
 			"STATUS",
@@ -35,11 +35,11 @@ func NewElasticacheUpdateActions(repo *repo.Elasticache, app *Application, cache
 	return e
 }
 
-func (e ElasticacheUpdateActions) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheUpdateActions) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheUpdateActions) GetLabels() []string {
+func (e ElastiCacheUpdateActions) GetLabels() []string {
 	var label string
 	if len(e.cacheClusterIds) > 0 {
 		label = e.cacheClusterIds[0]
@@ -51,11 +51,11 @@ func (e ElasticacheUpdateActions) GetLabels() []string {
 	return []string{label, "Update Status"}
 }
 
-func (e ElasticacheUpdateActions) GetKeyActions() []KeyAction {
+func (e ElastiCacheUpdateActions) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e ElasticacheUpdateActions) Render() {
+func (e ElastiCacheUpdateActions) Render() {
 	model, err := e.repo.ListUpdateActions(e.cacheClusterIds, e.replicationGroupIds, e.serviceUpdateName)
 	if err != nil {
 		panic(err)

@@ -6,15 +6,15 @@ import (
 	"github.com/bporter816/aws-tui/utils"
 )
 
-type ElasticacheParameters struct {
+type ElastiCacheParameters struct {
 	*ui.Table
-	repo               *repo.Elasticache
+	repo               *repo.ElastiCache
 	parameterGroupName string
 	app                *Application
 }
 
-func NewElasticacheParameters(repo *repo.Elasticache, parameterGroupName string, app *Application) *ElasticacheParameters {
-	e := &ElasticacheParameters{
+func NewElastiCacheParameters(repo *repo.ElastiCache, parameterGroupName string, app *Application) *ElastiCacheParameters {
+	e := &ElastiCacheParameters{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"ALLOWED VALUES",
@@ -32,19 +32,19 @@ func NewElasticacheParameters(repo *repo.Elasticache, parameterGroupName string,
 	return e
 }
 
-func (e ElasticacheParameters) GetService() string {
-	return "Elasticache"
+func (e ElastiCacheParameters) GetService() string {
+	return "ElastiCache"
 }
 
-func (e ElasticacheParameters) GetLabels() []string {
+func (e ElastiCacheParameters) GetLabels() []string {
 	return []string{e.parameterGroupName, "Parameters"}
 }
 
-func (e ElasticacheParameters) GetKeyActions() []KeyAction {
+func (e ElastiCacheParameters) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e ElasticacheParameters) Render() {
+func (e ElastiCacheParameters) Render() {
 	model, err := e.repo.ListParameters(e.parameterGroupName)
 	if err != nil {
 		panic(err)

@@ -6,19 +6,19 @@ import (
 
 type (
 	// A cluster is either a cache cluster or a replication group
-	ElasticacheCluster struct {
+	ElastiCacheCluster struct {
 		CacheCluster                  *ecTypes.CacheCluster
 		ReplicationGroup              *ecTypes.ReplicationGroup
 		ReplicationGroupEngineVersion string
 	}
-	ElasticacheEvent          ecTypes.Event
-	ElasticacheReservedNode   ecTypes.ReservedCacheNode
-	ElasticacheSnapshot       ecTypes.Snapshot
-	ElasticacheParameterGroup ecTypes.CacheParameterGroup
-	ElasticacheParameter      ecTypes.Parameter
-	ElasticacheSubnetGroup    ecTypes.CacheSubnetGroup
-	ElasticacheUser           ecTypes.User
-	ElasticacheGroup          ecTypes.UserGroup
-	ElasticacheServiceUpdate  ecTypes.ServiceUpdate
-	ElasticacheUpdateAction   ecTypes.UpdateAction
+	ElastiCacheEvent          ecTypes.Event
+	ElastiCacheReservedNode   ecTypes.ReservedCacheNode
+	ElastiCacheSnapshot       ecTypes.Snapshot
+	ElastiCacheParameterGroup ecTypes.CacheParameterGroup
+	ElastiCacheParameter      ecTypes.Parameter
+	ElastiCacheSubnetGroup    ecTypes.CacheSubnetGroup
+	ElastiCacheUser           ecTypes.User
+	ElastiCacheGroup          ecTypes.UserGroup
+	ElastiCacheServiceUpdate  ecTypes.ServiceUpdate
+	ElastiCacheUpdateAction   ecTypes.UpdateAction
 )
