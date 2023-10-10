@@ -37,13 +37,14 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		},
 		"Elasticache": []string{
 			"Clusters",
-			"Events",
+			"Users",
+			"Groups",
 			"Parameter Groups",
 			"Subnet Groups",
 			"Reserved Nodes",
 			"Snapshots",
-			"Users",
-			"Groups",
+			"Events",
+			"Service Updates",
 		},
 		"ELB": []string{
 			"Load Balancers",
@@ -156,8 +157,10 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
 			case "Elasticache.Clusters":
 				item = NewElasticacheClusters(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Events":
-				item = NewElasticacheEvents(s.repos["Elasticache"].(*repo.Elasticache), s.app)
+			case "Elasticache.Users":
+				item = NewElasticacheUsers(s.repos["Elasticache"].(*repo.Elasticache), s.app)
+			case "Elasticache.Groups":
+				item = NewElasticacheGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Parameter Groups":
 				item = NewElasticacheParameterGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Subnet Groups":
@@ -166,10 +169,10 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 				item = NewElasticacheReservedCacheNodes(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "Elasticache.Snapshots":
 				item = NewElasticacheSnapshots(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Users":
-				item = NewElasticacheUsers(s.repos["Elasticache"].(*repo.Elasticache), s.app)
-			case "Elasticache.Groups":
-				item = NewElasticacheGroups(s.repos["Elasticache"].(*repo.Elasticache), s.app)
+			case "Elasticache.Events":
+				item = NewElasticacheEvents(s.repos["Elasticache"].(*repo.Elasticache), s.app)
+			case "Elasticache.Service Updates":
+				item = NewElasticacheServiceUpdates(s.repos["Elasticache"].(*repo.Elasticache), s.app)
 			case "ELB.Load Balancers":
 				item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
 			case "ELB.Target Groups":

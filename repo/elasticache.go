@@ -215,6 +215,24 @@ func (e Elasticache) ListGroups() ([]model.ElasticacheGroup, error) {
 	return users, nil
 }
 
+func (e Elasticache) ListServiceUpdates() ([]model.ElasticacheServiceUpdate, error) {
+	pg := ec.NewDescribeServiceUpdatesPaginator(
+		e.ecClient,
+		&ec.DescribeServiceUpdatesInput{},
+	)
+	var serviceUpdates []model.ElasticacheServiceUpdate
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ElasticacheServiceUpdate{}, err
+		}
+		for _, v := range out.ServiceUpdates {
+			serviceUpdates = append(serviceUpdates, model.ElasticacheServiceUpdate(v))
+		}
+	}
+	return serviceUpdates, nil
+}
+
 func (e Elasticache) ListTags(arn string) (model.Tags, error) {
 	out, err := e.ecClient.ListTagsForResource(
 		context.TODO(),

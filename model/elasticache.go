@@ -19,4 +19,5 @@ type (
 	ElasticacheSubnetGroup    ecTypes.CacheSubnetGroup
 	ElasticacheUser           ecTypes.User
 	ElasticacheGroup          ecTypes.UserGroup
+	ElasticacheServiceUpdate  ecTypes.ServiceUpdate
 )
