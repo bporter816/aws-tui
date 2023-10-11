@@ -17,6 +17,7 @@ import (
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
+	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
@@ -53,6 +54,7 @@ func NewApplication() *Application {
 	elbClient := elb.NewFromConfig(cfg)
 	iamClient := iam.NewFromConfig(cfg)
 	kmsClient := kms.NewFromConfig(cfg)
+	lambdaClient := lambda.NewFromConfig(cfg)
 	r53Client := r53.NewFromConfig(cfg)
 	s3Client := s3.NewFromConfig(cfg)
 	stsClient := sts.NewFromConfig(cfg)
@@ -70,6 +72,7 @@ func NewApplication() *Application {
 	ecRepo := repo.NewElastiCache(ecClient, cwClient)
 	iamRepo := repo.NewIAM(iamClient)
 	kmsRepo := repo.NewKMS(kmsClient)
+	lambdaRepo := repo.NewLambda(lambdaClient)
 	r53Repo := repo.NewRoute53(r53Client)
 	s3Repo := repo.NewS3(s3Client)
 	sqsRepo := repo.NewSQS(sqsClient)
@@ -86,6 +89,7 @@ func NewApplication() *Application {
 		"ElastiCache":     ecRepo,
 		"IAM":             iamRepo,
 		"KMS":             kmsRepo,
+		"Lambda":          lambdaRepo,
 		"Route 53":        r53Repo,
 		"S3":              s3Repo,
 		"SQS":             sqsRepo,
