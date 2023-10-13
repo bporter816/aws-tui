@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 	"github.com/bporter816/aws-tui/model"
 )
@@ -32,4 +33,21 @@ func (l Lambda) ListFunctions() ([]model.LambdaFunction, error) {
 		}
 	}
 	return functions, nil
+}
+
+func (l Lambda) ListTags(functionArn string) (model.Tags, error) {
+	out, err := l.lambdaClient.ListTags(
+		context.TODO(),
+		&lambda.ListTagsInput{
+			Resource: aws.String(functionArn),
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	var tags model.Tags
+	for k, v := range out.Tags {
+		tags = append(tags, model.Tag{Key: k, Value: v})
+	}
+	return tags, nil
 }
