@@ -50,11 +50,10 @@ func (e ElastiCacheUsers) tagsHandler() {
 	if err != nil {
 		return
 	}
-	if e.model[row-1].ARN == nil {
-		return
+	if arn := e.model[row-1].ARN; arn != nil {
+		tagsView := NewElastiCacheTags(e.repo, *arn, name, e.app)
+		e.app.AddAndSwitch(tagsView)
 	}
-	tagsView := NewElastiCacheTags(e.repo, *e.model[row-1].ARN, name, e.app)
-	e.app.AddAndSwitch(tagsView)
 }
 
 func (e ElastiCacheUsers) GetKeyActions() []KeyAction {

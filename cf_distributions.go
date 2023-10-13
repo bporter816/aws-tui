@@ -80,11 +80,10 @@ func (c CFDistributions) tagsHandler() {
 	if err != nil {
 		return
 	}
-	if c.model[row-1].ARN == nil {
-		return
+	if arn := c.model[row-1].ARN; arn != nil {
+		tagsView := NewCFTags(c.repo, *arn, c.app)
+		c.app.AddAndSwitch(tagsView)
 	}
-	tagsView := NewCFTags(c.repo, *c.model[row-1].ARN, c.app)
-	c.app.AddAndSwitch(tagsView)
 }
 
 func (c CFDistributions) GetKeyActions() []KeyAction {

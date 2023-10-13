@@ -48,11 +48,10 @@ func (e ELBTargetGroups) tagsHandler() {
 	if err != nil {
 		return
 	}
-	if e.model[row-1].TargetGroupArn == nil {
-		return
+	if arn := e.model[row-1].TargetGroupArn; arn != nil {
+		tagsView := NewELBTags(e.repo, ELBResourceTypeTargetGroup, *arn, name, e.app)
+		e.app.AddAndSwitch(tagsView)
 	}
-	tagsView := NewELBTags(e.repo, ELBResourceTypeTargetGroup, *e.model[row-1].TargetGroupArn, name, e.app)
-	e.app.AddAndSwitch(tagsView)
 }
 
 func (e ELBTargetGroups) GetKeyActions() []KeyAction {

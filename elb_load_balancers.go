@@ -46,11 +46,10 @@ func (e ELBLoadBalancers) listenersHandler() {
 	if err != nil {
 		return
 	}
-	if e.model[row-1].LoadBalancerArn == nil {
-		return
+	if arn := e.model[row-1].LoadBalancerArn; arn != nil {
+		listenersView := NewELBListeners(e.repo, *arn, name, e.app)
+		e.app.AddAndSwitch(listenersView)
 	}
-	listenersView := NewELBListeners(e.repo, *e.model[row-1].LoadBalancerArn, name, e.app)
-	e.app.AddAndSwitch(listenersView)
 }
 
 func (e ELBLoadBalancers) tagsHandler() {
@@ -62,11 +61,10 @@ func (e ELBLoadBalancers) tagsHandler() {
 	if err != nil {
 		return
 	}
-	if e.model[row-1].LoadBalancerArn == nil {
-		return
+	if arn := e.model[row-1].LoadBalancerArn; arn != nil {
+		tagsView := NewELBTags(e.repo, ELBResourceTypeLoadBalancer, *arn, name, e.app)
+		e.app.AddAndSwitch(tagsView)
 	}
-	tagsView := NewELBTags(e.repo, ELBResourceTypeLoadBalancer, *e.model[row-1].LoadBalancerArn, name, e.app)
-	e.app.AddAndSwitch(tagsView)
 }
 
 func (e ELBLoadBalancers) GetKeyActions() []KeyAction {

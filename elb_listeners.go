@@ -57,11 +57,10 @@ func (e ELBListeners) tagsHandler() {
 	if err != nil {
 		return
 	}
-	if e.model[row-1].ListenerArn == nil {
-		return
+	if arn := e.model[row-1].ListenerArn; arn != nil {
+		tagsView := NewELBTags(e.repo, ELBResourceTypeListener, *arn, protocol+port, e.app)
+		e.app.AddAndSwitch(tagsView)
 	}
-	tagsView := NewELBTags(e.repo, ELBResourceTypeListener, *e.model[row-1].ListenerArn, protocol+port, e.app)
-	e.app.AddAndSwitch(tagsView)
 }
 
 func (e ELBListeners) GetKeyActions() []KeyAction {

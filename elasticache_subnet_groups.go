@@ -52,11 +52,10 @@ func (e ElastiCacheSubnetGroups) subnetsHandler() {
 			subnetIds = append(subnetIds, *v.SubnetIdentifier)
 		}
 	}
-	if e.model[row-1].CacheSubnetGroupName == nil {
-		return
+	if name := e.model[row-1].CacheSubnetGroupName; name != nil {
+		subnetsView := NewEC2Subnets(e.ec2Repo, subnetIds, *name, e.app)
+		e.app.AddAndSwitch(subnetsView)
 	}
-	subnetsView := NewEC2Subnets(e.ec2Repo, subnetIds, *e.model[row-1].CacheSubnetGroupName, e.app)
-	e.app.AddAndSwitch(subnetsView)
 }
 
 func (e ElastiCacheSubnetGroups) tagsHandler() {
