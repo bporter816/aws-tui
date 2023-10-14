@@ -26,6 +26,9 @@ var (
 		"iam":   "IAM",
 		"ipv4":  "IPv4",
 		"ipv6":  "IPv6",
+		"json":  "JSON",
+		"sms":   "SMS",
+		"sqs":   "SQS",
 	}
 
 	abbreviations = map[string]string{

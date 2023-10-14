@@ -17,11 +17,24 @@ func NewSNS(snsClient *sns.Client) *SNS {
 	}
 }
 
-func (s SNS) getAttributes(topicArn string) (map[string]string, error) {
+func (s SNS) getTopicAttributes(topicArn string) (map[string]string, error) {
 	out, err := s.snsClient.GetTopicAttributes(
 		context.TODO(),
 		&sns.GetTopicAttributesInput{
 			TopicArn: aws.String(topicArn),
+		},
+	)
+	if err != nil {
+		return map[string]string{}, err
+	}
+	return out.Attributes, nil
+}
+
+func (s SNS) getSubscriptionAttributes(subscriptionArn string) (map[string]string, error) {
+	out, err := s.snsClient.GetSubscriptionAttributes(
+		context.TODO(),
+		&sns.GetSubscriptionAttributesInput{
+			SubscriptionArn: aws.String(subscriptionArn),
 		},
 	)
 	if err != nil {
@@ -46,7 +59,7 @@ func (s SNS) ListTopics() ([]model.SNSTopic, error) {
 				continue
 			}
 			topic := model.SNSTopic{Arn: *v.TopicArn}
-			if attrs, err := s.getAttributes(*v.TopicArn); err == nil {
+			if attrs, err := s.getTopicAttributes(*v.TopicArn); err == nil {
 				topic.Attributes = attrs
 			}
 			topics = append(topics, topic)
@@ -56,7 +69,7 @@ func (s SNS) ListTopics() ([]model.SNSTopic, error) {
 }
 
 func (s SNS) GetAccessControlPolicy(topicArn string) (string, error) {
-	attrs, err := s.getAttributes(topicArn)
+	attrs, err := s.getTopicAttributes(topicArn)
 	if err != nil {
 		return "", err
 	}
@@ -67,7 +80,7 @@ func (s SNS) GetAccessControlPolicy(topicArn string) (string, error) {
 }
 
 func (s SNS) GetDeliveryPolicy(topicArn string) (string, error) {
-	attrs, err := s.getAttributes(topicArn)
+	attrs, err := s.getTopicAttributes(topicArn)
 	if err != nil {
 		return "", err
 	}
@@ -92,7 +105,11 @@ func (s SNS) ListSubscriptions(topicArn string) ([]model.SNSSubscription, error)
 			return []model.SNSSubscription{}, err
 		}
 		for _, v := range out.Subscriptions {
-			subscriptions = append(subscriptions, model.SNSSubscription(v))
+			subscription := model.SNSSubscription{Subscription: v}
+			if attrs, err := s.getSubscriptionAttributes(*v.SubscriptionArn); err == nil {
+				subscription.Attributes = attrs
+			}
+			subscriptions = append(subscriptions, subscription)
 		}
 	}
 	return subscriptions, nil

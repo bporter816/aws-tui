@@ -9,5 +9,8 @@ type (
 		Arn        string
 		Attributes map[string]string
 	}
-	SNSSubscription snsTypes.Subscription
+	SNSSubscription struct {
+		snsTypes.Subscription
+		Attributes map[string]string
+	}
 )

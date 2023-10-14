@@ -20,6 +20,7 @@ func NewSNSSubscriptions(repo *repo.SNS, topicArn string, app *Application) *SNS
 			"ID",
 			"PROTOCOL",
 			"ENDPOINT",
+			"STATUS",
 		}, 1, 0),
 		repo:     repo,
 		topicArn: topicArn,
@@ -52,7 +53,7 @@ func (s SNSSubscriptions) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, protocol, endpoint string
+		var id, protocol, endpoint, status string
 		if v.SubscriptionArn != nil {
 			arn, err := arn.Parse(*v.SubscriptionArn)
 			if err != nil {
@@ -61,15 +62,19 @@ func (s SNSSubscriptions) Render() {
 			id = utils.GetResourceNameFromArn(arn)
 		}
 		if v.Protocol != nil {
-			protocol = *v.Protocol
+			protocol = utils.AutoCase(*v.Protocol)
 		}
 		if v.Endpoint != nil {
 			endpoint = *v.Endpoint
+		}
+		if s, ok := v.Attributes["PendingConfirmation"]; ok {
+			status = utils.BoolToString(s == "true", "Pending confirmation", "Confirmed")
 		}
 		data = append(data, []string{
 			id,
 			protocol,
 			endpoint,
+			status,
 		})
 	}
 	s.SetData(data)
