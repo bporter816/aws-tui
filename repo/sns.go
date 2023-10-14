@@ -54,3 +54,20 @@ func (s SNS) ListTopics() ([]model.SNSTopic, error) {
 	}
 	return topics, nil
 }
+
+func (s SNS) ListTags(topicArn string) (model.Tags, error) {
+	out, err := s.snsClient.ListTagsForResource(
+		context.TODO(),
+		&sns.ListTagsForResourceInput{
+			ResourceArn: aws.String(topicArn),
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	var tags model.Tags
+	for _, v := range out.Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
+}

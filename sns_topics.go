@@ -2,15 +2,18 @@ package main
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/gdamore/tcell/v2"
 )
 
 type SNSTopics struct {
 	*ui.Table
-	repo *repo.SNS
-	app  *Application
+	repo  *repo.SNS
+	app   *Application
+	model []model.SNSTopic
 }
 
 func NewSNSTopics(repo *repo.SNS, app *Application) *SNSTopics {
@@ -36,15 +39,31 @@ func (s SNSTopics) GetLabels() []string {
 	return []string{"Topics"}
 }
 
-func (s SNSTopics) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (s SNSTopics) tagsHandler() {
+	row, err := s.GetRowSelection()
+	if err != nil {
+		return
+	}
+	tagsView := NewSNSTags(s.repo, s.model[row-1].Arn, s.app)
+	s.app.AddAndSwitch(tagsView)
 }
 
-func (s SNSTopics) Render() {
+func (s SNSTopics) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      s.tagsHandler,
+		},
+	}
+}
+
+func (s *SNSTopics) Render() {
 	model, err := s.repo.ListTopics()
 	if err != nil {
 		panic(err)
 	}
+	s.model = model
 
 	var data [][]string
 	for _, v := range model {
