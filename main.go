@@ -22,6 +22,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	sm "github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
+	"github.com/aws/aws-sdk-go-v2/service/sns"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/bporter816/aws-tui/repo"
@@ -59,6 +60,7 @@ func NewApplication() *Application {
 	s3Client := s3.NewFromConfig(cfg)
 	stsClient := sts.NewFromConfig(cfg)
 	smClient := sm.NewFromConfig(cfg)
+	snsClient := sns.NewFromConfig(cfg)
 	sqClient := sq.NewFromConfig(cfg)
 	sqsClient := sqs.NewFromConfig(cfg)
 
@@ -75,6 +77,7 @@ func NewApplication() *Application {
 	lambdaRepo := repo.NewLambda(lambdaClient)
 	r53Repo := repo.NewRoute53(r53Client)
 	s3Repo := repo.NewS3(s3Client)
+	snsRepo := repo.NewSNS(snsClient)
 	sqsRepo := repo.NewSQS(sqsClient)
 	stsRepo := repo.NewSTS(stsClient)
 	smRepo := repo.NewSecretsManager(smClient)
@@ -92,6 +95,7 @@ func NewApplication() *Application {
 		"Lambda":          lambdaRepo,
 		"Route 53":        r53Repo,
 		"S3":              s3Repo,
+		"SNS":             snsRepo,
 		"SQS":             sqsRepo,
 		"STS":             stsRepo,
 		"Secrets Manager": smRepo,
