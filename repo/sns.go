@@ -55,6 +55,29 @@ func (s SNS) ListTopics() ([]model.SNSTopic, error) {
 	return topics, nil
 }
 
+func (s SNS) GetAccessControlPolicy(topicArn string) (string, error) {
+	attrs, err := s.getAttributes(topicArn)
+	if err != nil {
+		return "", err
+	}
+	if p, ok := attrs["Policy"]; ok {
+		return p, nil
+	}
+	return "", nil
+}
+
+func (s SNS) GetDeliveryPolicy(topicArn string) (string, error) {
+	attrs, err := s.getAttributes(topicArn)
+	if err != nil {
+		return "", err
+	}
+	// TODO handle DeliveryPolicy?
+	if p, ok := attrs["EffectiveDeliveryPolicy"]; ok {
+		return p, nil
+	}
+	return "", nil
+}
+
 func (s SNS) ListTags(topicArn string) (model.Tags, error) {
 	out, err := s.snsClient.ListTagsForResource(
 		context.TODO(),
