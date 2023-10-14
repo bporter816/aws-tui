@@ -78,6 +78,26 @@ func (s SNS) GetDeliveryPolicy(topicArn string) (string, error) {
 	return "", nil
 }
 
+func (s SNS) ListSubscriptions(topicArn string) ([]model.SNSSubscription, error) {
+	pg := sns.NewListSubscriptionsByTopicPaginator(
+		s.snsClient,
+		&sns.ListSubscriptionsByTopicInput{
+			TopicArn: aws.String(topicArn),
+		},
+	)
+	var subscriptions []model.SNSSubscription
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.SNSSubscription{}, err
+		}
+		for _, v := range out.Subscriptions {
+			subscriptions = append(subscriptions, model.SNSSubscription(v))
+		}
+	}
+	return subscriptions, nil
+}
+
 func (s SNS) ListTags(topicArn string) (model.Tags, error) {
 	out, err := s.snsClient.ListTagsForResource(
 		context.TODO(),

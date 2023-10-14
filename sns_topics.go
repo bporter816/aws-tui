@@ -39,6 +39,15 @@ func (s SNSTopics) GetLabels() []string {
 	return []string{"Topics"}
 }
 
+func (s SNSTopics) subscriptionsHandler() {
+	row, err := s.GetRowSelection()
+	if err != nil {
+		return
+	}
+	subscriptionsView := NewSNSSubscriptions(s.repo, s.model[row-1].Arn, s.app)
+	s.app.AddAndSwitch(subscriptionsView)
+}
+
 func (s SNSTopics) accessControlPolicyHandler() {
 	row, err := s.GetRowSelection()
 	if err != nil {
@@ -68,6 +77,11 @@ func (s SNSTopics) tagsHandler() {
 
 func (s SNSTopics) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
+			Description: "Subscriptions",
+			Action:      s.subscriptionsHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
 			Description: "Access Control Policy",
