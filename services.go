@@ -101,6 +101,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		root.AddChild(n)
 		for _, view := range v {
 			leaf := tview.NewTreeNode(view)
+			leaf.SetReference(fmt.Sprintf("%v.%v", k, view))
 			n.AddChild(leaf)
 		}
 		n.CollapseAll()
@@ -130,95 +131,83 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		return
 	}
 
-	s.Root.Walk(func(node, parent *tview.TreeNode) bool {
-		// Skip non-leaf nodes but continue traversing.
-		// We have to skip the root because it has the same name as Service Quotas "Services".
-		if node.GetLevel() < 2 {
-			return true
-		}
-
-		if node.GetText() == n.GetText() {
-			view := fmt.Sprintf("%v.%v", parent.GetText(), node.GetText())
-			var item Component
-			switch view {
-			case "CloudFront.Distributions":
-				item = NewCFDistributions(s.repos["CloudFront"].(*repo.CloudFront), s.app)
-			case "CloudFront.Functions":
-				item = NewCFFunctions(s.repos["CloudFront"].(*repo.CloudFront), s.app)
-			case "CloudWatch.Log Groups":
-				item = NewCloudWatchLogGroups(s.repos["CloudWatch"].(*repo.CloudWatch), s.app)
-			case "DynamoDB.Tables":
-				item = NewDynamoDBTables(s.repos["DynamoDB"].(*repo.DynamoDB), s.app)
-			case "EC2.Instances":
-				item = NewEC2Instances(s.repos["EC2"].(*repo.EC2), s.app)
-			case "EC2.VPCs":
-				item = NewEC2VPCs(s.repos["EC2"].(*repo.EC2), s.app)
-			case "EC2.Subnets":
-				item = NewEC2Subnets(s.repos["EC2"].(*repo.EC2), []string{}, "", s.app)
-			case "EC2.Availability Zones":
-				item = NewEC2AvailabilityZones(s.repos["EC2"].(*repo.EC2), s.app)
-			case "EC2.Security Groups":
-				item = NewEC2SecurityGroups(s.repos["EC2"].(*repo.EC2), s.app)
-			case "EC2.Key Pairs":
-				item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
-			case "ElastiCache.Clusters":
-				item = NewElastiCacheClusters(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-			case "ElastiCache.Users":
-				item = NewElastiCacheUsers(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-			case "ElastiCache.Groups":
-				item = NewElastiCacheGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-			case "ElastiCache.Parameter Groups":
-				item = NewElastiCacheParameterGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-			case "ElastiCache.Subnet Groups":
-				item = NewElastiCacheSubnetGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.repos["EC2"].(*repo.EC2), s.app)
-			case "ElastiCache.Reserved Nodes":
-				item = NewElastiCacheReservedCacheNodes(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-			case "ElastiCache.Snapshots":
-				item = NewElastiCacheSnapshots(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-			case "ElastiCache.Events":
-				item = NewElastiCacheEvents(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-			case "ElastiCache.Service Updates":
-				item = NewElastiCacheServiceUpdates(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-			case "ELB.Load Balancers":
-				item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
-			case "ELB.Target Groups":
-				item = NewELBTargetGroups(s.repos["ELB"].(*repo.ELB), s.app)
-			case "IAM.Users":
-				item = NewIAMUsers(s.repos["IAM"].(*repo.IAM), nil, s.app)
-			case "IAM.Roles":
-				item = NewIAMRoles(s.repos["IAM"].(*repo.IAM), s.app)
-			case "IAM.Groups":
-				item = NewIAMGroups(s.repos["IAM"].(*repo.IAM), nil, s.app)
-			case "IAM.Managed Policies":
-				item = NewIAMPolicies(s.repos["IAM"].(*repo.IAM), model.IAMIdentityTypeAll, nil, s.app)
-			case "KMS.Keys":
-				item = NewKmsKeys(s.repos["KMS"].(*repo.KMS), s.app)
-			case "KMS.Custom Key Stores":
-				item = NewKmsCustomKeyStores(s.repos["KMS"].(*repo.KMS), s.app)
-			case "Lambda.Functions":
-				item = NewLambdaFunctions(s.repos["Lambda"].(*repo.Lambda), s.app)
-			case "Route 53.Hosted Zones":
-				item = NewRoute53HostedZones(s.repos["Route 53"].(*repo.Route53), s.app)
-			case "Route 53.Health Checks":
-				item = NewRoute53HealthChecks(s.repos["Route 53"].(*repo.Route53), s.app)
-			case "S3.Buckets":
-				item = NewS3Buckets(s.repos["S3"].(*repo.S3), s.app)
-			case "SNS.Topics":
-				item = NewSNSTopics(s.repos["SNS"].(*repo.SNS), s.app)
-			case "SQS.Queues":
-				item = NewSQSQueues(s.repos["SQS"].(*repo.SQS), s.app)
-			case "Secrets Manager.Secrets":
-				item = NewSMSecrets(s.repos["Secrets Manager"].(*repo.SecretsManager), s.app)
-			case "Service Quotas.Services":
-				item = NewServiceQuotasServices(s.repos["Service Quotas"].(*repo.ServiceQuotas), s.app)
-			default:
-				panic("unknown service")
-			}
-			s.app.AddAndSwitch(item)
-			return false
-		}
-		return true
-	})
+	view := n.GetReference().(string)
+	var item Component
+	switch view {
+	case "CloudFront.Distributions":
+		item = NewCFDistributions(s.repos["CloudFront"].(*repo.CloudFront), s.app)
+	case "CloudFront.Functions":
+		item = NewCFFunctions(s.repos["CloudFront"].(*repo.CloudFront), s.app)
+	case "CloudWatch.Log Groups":
+		item = NewCloudWatchLogGroups(s.repos["CloudWatch"].(*repo.CloudWatch), s.app)
+	case "DynamoDB.Tables":
+		item = NewDynamoDBTables(s.repos["DynamoDB"].(*repo.DynamoDB), s.app)
+	case "EC2.Instances":
+		item = NewEC2Instances(s.repos["EC2"].(*repo.EC2), s.app)
+	case "EC2.VPCs":
+		item = NewEC2VPCs(s.repos["EC2"].(*repo.EC2), s.app)
+	case "EC2.Subnets":
+		item = NewEC2Subnets(s.repos["EC2"].(*repo.EC2), []string{}, "", s.app)
+	case "EC2.Availability Zones":
+		item = NewEC2AvailabilityZones(s.repos["EC2"].(*repo.EC2), s.app)
+	case "EC2.Security Groups":
+		item = NewEC2SecurityGroups(s.repos["EC2"].(*repo.EC2), s.app)
+	case "EC2.Key Pairs":
+		item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
+	case "ElastiCache.Clusters":
+		item = NewElastiCacheClusters(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "ElastiCache.Users":
+		item = NewElastiCacheUsers(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "ElastiCache.Groups":
+		item = NewElastiCacheGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "ElastiCache.Parameter Groups":
+		item = NewElastiCacheParameterGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "ElastiCache.Subnet Groups":
+		item = NewElastiCacheSubnetGroups(s.repos["ElastiCache"].(*repo.ElastiCache), s.repos["EC2"].(*repo.EC2), s.app)
+	case "ElastiCache.Reserved Nodes":
+		item = NewElastiCacheReservedCacheNodes(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "ElastiCache.Snapshots":
+		item = NewElastiCacheSnapshots(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "ElastiCache.Events":
+		item = NewElastiCacheEvents(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "ElastiCache.Service Updates":
+		item = NewElastiCacheServiceUpdates(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "ELB.Load Balancers":
+		item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
+	case "ELB.Target Groups":
+		item = NewELBTargetGroups(s.repos["ELB"].(*repo.ELB), s.app)
+	case "IAM.Users":
+		item = NewIAMUsers(s.repos["IAM"].(*repo.IAM), nil, s.app)
+	case "IAM.Roles":
+		item = NewIAMRoles(s.repos["IAM"].(*repo.IAM), s.app)
+	case "IAM.Groups":
+		item = NewIAMGroups(s.repos["IAM"].(*repo.IAM), nil, s.app)
+	case "IAM.Managed Policies":
+		item = NewIAMPolicies(s.repos["IAM"].(*repo.IAM), model.IAMIdentityTypeAll, nil, s.app)
+	case "KMS.Keys":
+		item = NewKmsKeys(s.repos["KMS"].(*repo.KMS), s.app)
+	case "KMS.Custom Key Stores":
+		item = NewKmsCustomKeyStores(s.repos["KMS"].(*repo.KMS), s.app)
+	case "Lambda.Functions":
+		item = NewLambdaFunctions(s.repos["Lambda"].(*repo.Lambda), s.app)
+	case "Route 53.Hosted Zones":
+		item = NewRoute53HostedZones(s.repos["Route 53"].(*repo.Route53), s.app)
+	case "Route 53.Health Checks":
+		item = NewRoute53HealthChecks(s.repos["Route 53"].(*repo.Route53), s.app)
+	case "S3.Buckets":
+		item = NewS3Buckets(s.repos["S3"].(*repo.S3), s.app)
+	case "SNS.Topics":
+		item = NewSNSTopics(s.repos["SNS"].(*repo.SNS), s.app)
+	case "SQS.Queues":
+		item = NewSQSQueues(s.repos["SQS"].(*repo.SQS), s.app)
+	case "Secrets Manager.Secrets":
+		item = NewSMSecrets(s.repos["Secrets Manager"].(*repo.SecretsManager), s.app)
+	case "Service Quotas.Services":
+		item = NewServiceQuotasServices(s.repos["Service Quotas"].(*repo.ServiceQuotas), s.app)
+	default:
+		panic("unknown service")
+	}
+	s.app.AddAndSwitch(item)
 }
 
 func (s Services) GetKeyActions() []KeyAction {
