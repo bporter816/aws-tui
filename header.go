@@ -81,6 +81,7 @@ func (h Header) Render() {
 	accountInfoStr += fmt.Sprintf("[orange::b]Region:[white::-]  %v", string(regionOutput))
 	h.accountInfo.SetText(accountInfoStr)
 
+	h.Box = tview.NewBox() // this is needed because the areas not covered by items are considered transparent and will linger otherwise
 	h.keybindInfo.Clear()
 	actions := h.app.GetActiveKeyActions()
 	row, col := 0, 0
@@ -93,11 +94,5 @@ func (h Header) Render() {
 			row = 0
 			col++
 		}
-	}
-	// cleanup empty rows so they're the same color
-	// TODO see if this can be avoided
-	for row < 4 {
-		h.keybindInfo.AddItem(tview.NewTextView(), row, col, 1, 1, 1, 1, false)
-		row++
 	}
 }
