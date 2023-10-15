@@ -19,12 +19,12 @@ func NewKmsKeys(repo *repo.KMS, app *Application) *KmsKeys {
 		Table: ui.NewTable([]string{
 			"ID",
 			"ALIASES",
-			"DESCRIPTION",
 			"ENABLED",
 			"STATE",
 			"SPEC",
 			"USAGE",
 			"REGIONALITY",
+			"DESCRIPTION",
 		}, 1, 0),
 		repo: repo,
 		app:  app,
@@ -95,25 +95,25 @@ func (k KmsKeys) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var keyId, description, regionality string
+		var keyId, regionality, description string
 		if v.KeyId != nil {
 			keyId = *v.KeyId
-		}
-		if v.Description != nil {
-			description = *v.Description
 		}
 		if v.MultiRegion != nil && *v.MultiRegion && v.MultiRegionConfiguration != nil {
 			regionality = string(v.MultiRegionConfiguration.MultiRegionKeyType)
 		}
+		if v.Description != nil {
+			description = *v.Description
+		}
 		data = append(data, []string{
 			keyId,
 			renderAliases(v.Aliases),
-			description,
 			utils.BoolToString(v.Enabled, "Yes", "No"),
 			string(v.KeyState),
 			string(v.KeySpec),
 			string(v.KeyUsage),
 			regionality,
+			description,
 		})
 	}
 	k.SetData(data)
