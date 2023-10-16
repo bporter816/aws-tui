@@ -35,6 +35,10 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"Security Groups",
 			"Key Pairs",
 		},
+		"ELB": []string{
+			"Load Balancers",
+			"Target Groups",
+		},
 		"ElastiCache": []string{
 			"Clusters",
 			"Users",
@@ -45,10 +49,6 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"Snapshots",
 			"Events",
 			"Service Updates",
-		},
-		"ELB": []string{
-			"Load Balancers",
-			"Target Groups",
 		},
 		"IAM": []string{
 			"Users",
@@ -154,6 +154,10 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewEC2SecurityGroups(s.repos["EC2"].(*repo.EC2), s.app)
 	case "EC2.Key Pairs":
 		item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
+	case "ELB.Load Balancers":
+		item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
+	case "ELB.Target Groups":
+		item = NewELBTargetGroups(s.repos["ELB"].(*repo.ELB), s.app)
 	case "ElastiCache.Clusters":
 		item = NewElastiCacheClusters(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
 	case "ElastiCache.Users":
@@ -172,10 +176,6 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewElastiCacheEvents(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
 	case "ElastiCache.Service Updates":
 		item = NewElastiCacheServiceUpdates(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
-	case "ELB.Load Balancers":
-		item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
-	case "ELB.Target Groups":
-		item = NewELBTargetGroups(s.repos["ELB"].(*repo.ELB), s.app)
 	case "IAM.Users":
 		item = NewIAMUsers(s.repos["IAM"].(*repo.IAM), nil, s.app)
 	case "IAM.Roles":

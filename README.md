@@ -3,14 +3,18 @@
 A k9s-inspired terminal UI for AWS services. Supports:
 
 * CloudFront
+* CloudWatch
 * DynamoDB
-* EC2 (VPCs and Security Groups)
+* EC2
 * ELB
 * ElastiCache
 * IAM
 * Key Management Service
+* Lambda
 * Route 53
 * S3
+* SNS
+* SQS
 * Secrets Manager
 * Service Quotas
 
