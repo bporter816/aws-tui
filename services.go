@@ -17,6 +17,9 @@ type Services struct {
 
 func NewServices(repos map[string]interface{}, app *Application) *Services {
 	m := map[string][]string{
+		"ACM": []string{
+			"Certificates",
+		},
 		"CloudFront": []string{
 			"Distributions",
 			"Functions",
@@ -134,6 +137,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 	view := n.GetReference().(string)
 	var item Component
 	switch view {
+	case "ACM.Certificates":
+		item = NewACMCertificates(s.repos["ACM"].(*repo.ACM), s.app)
 	case "CloudFront.Distributions":
 		item = NewCFDistributions(s.repos["CloudFront"].(*repo.CloudFront), s.app)
 	case "CloudFront.Functions":
