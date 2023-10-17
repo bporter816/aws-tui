@@ -2,15 +2,18 @@ package main
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ACMCertificates struct {
 	*ui.Table
-	repo *repo.ACM
-	app  *Application
+	repo  *repo.ACM
+	app   *Application
+	model []model.ACMCertificate
 }
 
 func NewACMCertificates(repo *repo.ACM, app *Application) *ACMCertificates {
@@ -38,15 +41,33 @@ func (a ACMCertificates) GetLabels() []string {
 	return []string{"Certificates"}
 }
 
-func (a ACMCertificates) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (a ACMCertificates) tagsHandler() {
+	row, err := a.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if arn := a.model[row-1].CertificateArn; arn != nil {
+		tagsView := NewACMTags(a.repo, *arn, a.app)
+		a.app.AddAndSwitch(tagsView)
+	}
 }
 
-func (a ACMCertificates) Render() {
+func (a ACMCertificates) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      a.tagsHandler,
+		},
+	}
+}
+
+func (a *ACMCertificates) Render() {
 	model, err := a.repo.ListCertificates()
 	if err != nil {
 		panic(err)
 	}
+	a.model = model
 
 	var data [][]string
 	for _, v := range model {

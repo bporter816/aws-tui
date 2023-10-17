@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
 	"github.com/bporter816/aws-tui/model"
 )
@@ -32,4 +34,21 @@ func (a ACM) ListCertificates() ([]model.ACMCertificate, error) {
 		}
 	}
 	return certificates, nil
+}
+
+func (a ACM) ListTags(certificateArn arn.ARN) (model.Tags, error) {
+	out, err := a.acmClient.ListTagsForCertificate(
+		context.TODO(),
+		&acm.ListTagsForCertificateInput{
+			CertificateArn: aws.String(certificateArn.String()),
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	var tags model.Tags
+	for _, v := range out.Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
 }
