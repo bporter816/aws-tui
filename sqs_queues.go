@@ -35,6 +35,15 @@ func (s SQSQueues) GetLabels() []string {
 	return []string{"Queues"}
 }
 
+func (s SQSQueues) accessPolicyHandler() {
+	row, err := s.GetRowSelection()
+	if err != nil {
+		return
+	}
+	accessPolicyView := NewSQSAccessPolicy(s.repo, s.model[row-1].QueueUrl, s.app)
+	s.app.AddAndSwitch(accessPolicyView)
+}
+
 func (s SQSQueues) tagsHandler() {
 	row, err := s.GetRowSelection()
 	if err != nil {
@@ -46,6 +55,11 @@ func (s SQSQueues) tagsHandler() {
 
 func (s SQSQueues) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
+			Description: "Access Policy",
+			Action:      s.accessPolicyHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",

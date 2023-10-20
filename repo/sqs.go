@@ -67,7 +67,7 @@ func (s SQS) ListQueues() ([]model.SQSQueue, error) {
 	return queues, nil
 }
 
-func (s SQS) GetPolicy(queueUrl string) (string, error) {
+func (s SQS) GetAccessPolicy(queueUrl string) (string, error) {
 	attrs, err := s.getAttributes(queueUrl, []sqsTypes.QueueAttributeName{sqsTypes.QueueAttributeNamePolicy})
 	if err != nil {
 		return "", err
