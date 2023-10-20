@@ -1,15 +1,18 @@
 package main
 
 import (
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/gdamore/tcell/v2"
 )
 
 type SQSQueues struct {
 	*ui.Table
-	repo *repo.SQS
-	app  *Application
+	repo  *repo.SQS
+	app   *Application
+	model []model.SQSQueue
 }
 
 func NewSQSQueues(repo *repo.SQS, app *Application) *SQSQueues {
@@ -32,15 +35,31 @@ func (s SQSQueues) GetLabels() []string {
 	return []string{"Queues"}
 }
 
-func (s SQSQueues) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (s SQSQueues) tagsHandler() {
+	row, err := s.GetRowSelection()
+	if err != nil {
+		return
+	}
+	tagsView := NewSQSTags(s.repo, s.model[row-1].QueueUrl, s.app)
+	s.app.AddAndSwitch(tagsView)
 }
 
-func (s SQSQueues) Render() {
+func (s SQSQueues) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      s.tagsHandler,
+		},
+	}
+}
+
+func (s *SQSQueues) Render() {
 	model, err := s.repo.ListQueues()
 	if err != nil {
 		panic(err)
 	}
+	s.model = model
 
 	var data [][]string
 	for _, v := range model {

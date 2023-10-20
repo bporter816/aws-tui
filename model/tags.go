@@ -6,7 +6,21 @@ type Tag struct {
 	Value string
 }
 
+func (t Tag) Render() []string {
+	return []string{
+		t.Key,
+		t.Value,
+	}
+}
+
 type Tags []Tag
+
+func (t Tags) Headers() []string {
+	return []string{
+		"KEY",
+		"VALUE",
+	}
+}
 
 func (t Tags) Get(key string) (string, bool) {
 	for _, v := range t {
