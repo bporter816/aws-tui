@@ -79,6 +79,26 @@ func (e EC2) GetPublicKey(keyPairId string) (string, error) {
 	return *out.KeyPairs[0].PublicKey, nil
 }
 
+func (e EC2) ListImages() ([]model.EC2Image, error) {
+	pg := ec2.NewDescribeImagesPaginator(
+		e.ec2Client,
+		&ec2.DescribeImagesInput{
+			Owners: []string{"self"},
+		},
+	)
+	var images []model.EC2Image
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.EC2Image{}, err
+		}
+		for _, v := range out.Images {
+			images = append(images, model.EC2Image(v))
+		}
+	}
+	return images, nil
+}
+
 func (e EC2) ListSecurityGroups() ([]model.EC2SecurityGroup, error) {
 	pg := ec2.NewDescribeSecurityGroupsPaginator(
 		e.ec2Client,

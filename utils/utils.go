@@ -21,8 +21,10 @@ var (
 	re         = regexp.MustCompile("[-_]")
 
 	replacements = map[string]string{
+		"ebs":   "EBS",
 		"http":  "HTTP",
 		"https": "HTTPS",
+		"hvm":   "HVM",
 		"iam":   "IAM",
 		"ipv4":  "IPv4",
 		"ipv6":  "IPv6",
