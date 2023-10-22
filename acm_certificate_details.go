@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/x509"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/template"
 	"github.com/bporter816/aws-tui/ui"
@@ -32,7 +33,11 @@ func (a ACMCertificateDetails) GetService() string {
 }
 
 func (a ACMCertificateDetails) GetLabels() []string {
-	return []string{a.displayName}
+	arn, err := arn.Parse(a.certificateArn)
+	if err != nil {
+		panic(err)
+	}
+	return []string{utils.GetResourceNameFromArn(arn), a.displayName}
 }
 
 func (a ACMCertificateDetails) GetKeyActions() []KeyAction {
