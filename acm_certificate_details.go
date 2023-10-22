@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto/x509"
-	"fmt"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/template"
 	"github.com/bporter816/aws-tui/ui"
@@ -49,7 +48,6 @@ func (a ACMCertificateDetails) Render() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%T\n", certs[0].PublicKey)
 	text, err := template.Render(template.X509Certificate, struct {
 		Metadata *x509.Certificate
 		PEM      string

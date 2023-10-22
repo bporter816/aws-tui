@@ -27,6 +27,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/bporter816/aws-tui/repo"
+	"github.com/bporter816/aws-tui/template"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -250,6 +251,8 @@ func main() {
 		}
 		l.SetOffset(0, 0)
 	*/
+
+	template.Init()
 
 	app := NewApplication()
 	if err := app.Run(); err != nil {

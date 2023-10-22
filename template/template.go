@@ -3,10 +3,8 @@ package template
 import (
 	"bytes"
 	"crypto/x509"
-	"fmt"
 	"github.com/bporter816/aws-tui/utils"
 	"math/big"
-	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -36,10 +34,6 @@ const (
 
 func Init() {
 	tmpl = template.Must(template.New("root").Funcs(funcMap).ParseGlob("template/*.tmpl"))
-	fmt.Println("tmpls: " + strconv.Itoa(len(tmpl.Templates())))
-	for _, v := range tmpl.Templates() {
-		fmt.Println(v.Name())
-	}
 }
 
 func Render(templateName string, data any) (string, error) {
