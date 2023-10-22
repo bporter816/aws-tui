@@ -41,6 +41,17 @@ func (a ACMCertificates) GetLabels() []string {
 	return []string{"Certificates"}
 }
 
+func (a ACMCertificates) certificateHandler() {
+	row, err := a.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if arn := a.model[row-1].CertificateArn; arn != nil {
+		certificateView := NewACMCertificateDetails(a.repo, "Certificate", *arn, a.app)
+		a.app.AddAndSwitch(certificateView)
+	}
+}
+
 func (a ACMCertificates) tagsHandler() {
 	row, err := a.GetRowSelection()
 	if err != nil {
@@ -54,6 +65,11 @@ func (a ACMCertificates) tagsHandler() {
 
 func (a ACMCertificates) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
+			Description: "Certificate",
+			Action:      a.certificateHandler,
+		},
 		KeyAction{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",

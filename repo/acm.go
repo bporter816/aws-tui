@@ -36,6 +36,26 @@ func (a ACM) ListCertificates() ([]model.ACMCertificate, error) {
 	return certificates, nil
 }
 
+func (a ACM) getCertificateDetails(certificateArn string) (*acm.GetCertificateOutput, error) {
+	return a.acmClient.GetCertificate(
+		context.TODO(),
+		&acm.GetCertificateInput{
+			CertificateArn: aws.String(certificateArn),
+		},
+	)
+}
+
+func (a ACM) GetCertificate(certificateArn string) (string, error) {
+	out, err := a.getCertificateDetails(certificateArn)
+	if err != nil {
+		return "", err
+	}
+	if out.Certificate == nil {
+		return "", nil
+	}
+	return *out.Certificate, nil
+}
+
 func (a ACM) ListTags(certificateArn arn.ARN) (model.Tags, error) {
 	out, err := a.acmClient.ListTagsForCertificate(
 		context.TODO(),

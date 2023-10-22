@@ -1,0 +1,26 @@
+{{- with .Metadata -}}
+Version: {{ .Version }}
+Serial Number: {{ formatSerial (bigIntToBytes .SerialNumber) }}
+Issuer: {{ .Issuer }}
+Subject: {{ .Subject }}
+Validity:
+    Not Before: {{ formatTime .NotBefore }}
+    Not After:  {{ formatTime .NotAfter }}
+Public Key:
+    Algorithm: {{ .PublicKeyAlgorithm }}
+    {{- if isRSA .PublicKeyAlgorithm }}
+    Size: {{ mul .PublicKey.Size 8 }} bits
+    Modulus:
+        {{- range chunk (formatSerial (bigIntToBytes .PublicKey.N)) 48 }}
+        {{ . }}
+        {{- end }}
+    Exponent: {{ printf "%v (0x%x)" .PublicKey.E .PublicKey.E }}
+    {{- end }}
+DNS Names: {{ join .DNSNames "," }}
+Signature Algorithm: {{ .SignatureAlgorithm }}
+Signature:
+    {{- range chunk (formatSerial .Signature) 48 }}
+    {{ . }}
+    {{- end }}
+{{- end }}
+{{ .PEM }}
