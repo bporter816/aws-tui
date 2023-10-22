@@ -2,7 +2,6 @@ package utils
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
-	"math/big"
 	"reflect"
 	"testing"
 )
