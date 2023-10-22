@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
+	acmTypes "github.com/aws/aws-sdk-go-v2/service/acm/types"
 	"github.com/bporter816/aws-tui/model"
 )
 
@@ -21,7 +22,11 @@ func NewACM(acmClient *acm.Client) *ACM {
 func (a ACM) ListCertificates() ([]model.ACMCertificate, error) {
 	pg := acm.NewListCertificatesPaginator(
 		a.acmClient,
-		&acm.ListCertificatesInput{},
+		&acm.ListCertificatesInput{
+			Includes: &acmTypes.Filters{
+				KeyTypes: acmTypes.KeyAlgorithmRsa2048.Values(),
+			},
+		},
 	)
 	var certificates []model.ACMCertificate
 	for pg.HasMorePages() {
