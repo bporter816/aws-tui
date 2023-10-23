@@ -18,10 +18,11 @@ const (
 )
 
 var (
-	titleCaser = cases.Title(language.English)
-	upperCaser = cases.Upper(language.English)
-	lowerCaser = cases.Lower(language.English)
-	re         = regexp.MustCompile("[-_]")
+	titleCaser   = cases.Title(language.English)
+	upperCaser   = cases.Upper(language.English)
+	lowerCaser   = cases.Lower(language.English)
+	re           = regexp.MustCompile("[-_]")
+	sizePrefixes = []string{"KiB", "MiB", "GiB", "TiB", "PiB"}
 
 	replacements = map[string]string{
 		"ebs":   "EBS",
@@ -156,4 +157,19 @@ func Chunk(str string, length int) []string {
 		chunks = append(chunks, str[len(str)-len(str)%length:])
 	}
 	return chunks
+}
+
+func FormatSize(size int64, precision int) string {
+	// keep bytes as integers
+	if size < 1024 {
+		return strconv.FormatInt(size, 10) + " B"
+	}
+	num := float64(size) / 1024.0
+	for _, prefix := range sizePrefixes {
+		if num < 1024.0 {
+			return strconv.FormatFloat(num, 'f', precision, 64) + " " + prefix
+		}
+		num /= 1024.0
+	}
+	return "Too big"
 }

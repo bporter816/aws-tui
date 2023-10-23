@@ -191,7 +191,43 @@ func TestChunk(t *testing.T) {
 	for _, tc := range tests {
 		got := Chunk(tc.str, tc.length)
 		if !reflect.DeepEqual(got, tc.expected) {
-			t.Fatalf("expeted: %v, got: %v", tc.expected, got)
+			t.Fatalf("expected: %v, got: %v", tc.expected, got)
+		}
+	}
+}
+
+func TestFormatSize(t *testing.T) {
+	tests := []struct {
+		size      int64
+		precision int
+		expected  string
+	}{
+		{
+			size:      0,
+			precision: 1,
+			expected:  "0 B",
+		},
+		{
+			size:      999,
+			precision: 1,
+			expected:  "999 B",
+		},
+		{
+			size:      1024,
+			precision: 1,
+			expected:  "1.0 KiB",
+		},
+		{
+			size:      1572864,
+			precision: 1,
+			expected:  "1.5 MiB",
+		},
+	}
+
+	for _, tc := range tests {
+		got := FormatSize(tc.size, tc.precision)
+		if got != tc.expected {
+			t.Fatalf("expected %v, got: %v", tc.expected, got)
 		}
 	}
 }

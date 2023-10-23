@@ -97,8 +97,7 @@ func (c *CloudWatchLogGroups) Render() {
 			metricFilters = strconv.Itoa(int(*v.MetricFilterCount))
 		}
 		if v.StoredBytes != nil {
-			// TODO print kb, mb, etc
-			storedData = strconv.FormatInt(*v.StoredBytes, 10) + " B"
+			storedData = utils.FormatSize(*v.StoredBytes, 1)
 		}
 		data = append(data, []string{
 			name,
