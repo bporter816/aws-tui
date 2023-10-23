@@ -143,7 +143,7 @@ func (d *DynamoDBTables) Render() {
 			readCap,
 			writeCap,
 			strconv.FormatInt(itemCount, 10),
-			strconv.FormatInt(tableSize, 10),
+			utils.FormatSize(tableSize, 1),
 		})
 	}
 	d.SetData(data)
