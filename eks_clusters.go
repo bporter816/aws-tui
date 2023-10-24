@@ -1,15 +1,18 @@
 package main
 
 import (
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/gdamore/tcell/v2"
 )
 
 type EKSClusters struct {
 	*ui.Table
-	repo *repo.EKS
-	app  *Application
+	repo  *repo.EKS
+	app   *Application
+	model []model.EKSCluster
 }
 
 func NewEKSClusters(repo *repo.EKS, app *Application) *EKSClusters {
@@ -34,15 +37,33 @@ func (e EKSClusters) GetLabels() []string {
 	return []string{"Clusters"}
 }
 
-func (e EKSClusters) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (e EKSClusters) tagsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if arn := e.model[row-1].Arn; arn != nil {
+		tagsView := NewEKSTags(e.repo, *arn, e.app)
+		e.app.AddAndSwitch(tagsView)
+	}
 }
 
-func (e EKSClusters) Render() {
+func (e EKSClusters) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		KeyAction{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
+}
+
+func (e *EKSClusters) Render() {
 	model, err := e.repo.ListClusters()
 	if err != nil {
 		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
 	for _, v := range model {

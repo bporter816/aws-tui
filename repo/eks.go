@@ -53,3 +53,20 @@ func (e EKS) ListClusters() ([]model.EKSCluster, error) {
 	}
 	return clusters, nil
 }
+
+func (e EKS) ListTags(arn string) (model.Tags, error) {
+	out, err := e.eksClient.ListTagsForResource(
+		context.TODO(),
+		&eks.ListTagsForResourceInput{
+			ResourceArn: aws.String(arn),
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	var tags model.Tags
+	for k, v := range out.Tags {
+		tags = append(tags, model.Tag{Key: k, Value: v})
+	}
+	return tags, nil
+}
