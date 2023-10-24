@@ -39,6 +39,9 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"AMIs",
 			"Key Pairs",
 		},
+		"EKS": []string{
+			"Clusters",
+		},
 		"ELB": []string{
 			"Load Balancers",
 			"Target Groups",
@@ -162,6 +165,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewEC2Images(s.repos["EC2"].(*repo.EC2), s.app)
 	case "EC2.Key Pairs":
 		item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
+	case "EKS.Clusters":
+		item = NewEKSClusters(s.repos["EKS"].(*repo.EKS), s.app)
 	case "ELB.Load Balancers":
 		item = NewELBLoadBalancers(s.repos["ELB"].(*repo.ELB), s.app)
 	case "ELB.Target Groups":

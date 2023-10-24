@@ -14,6 +14,7 @@ import (
 	cwLogs "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	ddb "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
@@ -55,6 +56,7 @@ func NewApplication() *Application {
 	ddbClient := ddb.NewFromConfig(cfg)
 	ecClient := ec.NewFromConfig(cfg)
 	ec2Client := ec2.NewFromConfig(cfg)
+	eksClient := eks.NewFromConfig(cfg)
 	elbClient := elb.NewFromConfig(cfg)
 	iamClient := iam.NewFromConfig(cfg)
 	kmsClient := kms.NewFromConfig(cfg)
@@ -74,6 +76,7 @@ func NewApplication() *Application {
 	cwRepo := repo.NewCloudWatch(cwLogsClient)
 	ddbRepo := repo.NewDynamoDB(ddbClient)
 	ec2Repo := repo.NewEC2(ec2Client)
+	eksRepo := repo.NewEKS(eksClient)
 	elbRepo := repo.NewELB(elbClient)
 	ecRepo := repo.NewElastiCache(ecClient, cwClient)
 	iamRepo := repo.NewIAM(iamClient)
@@ -93,6 +96,7 @@ func NewApplication() *Application {
 		"CloudWatch":      cwRepo,
 		"DynamoDB":        ddbRepo,
 		"EC2":             ec2Repo,
+		"EKS":             eksRepo,
 		"ELB":             elbRepo,
 		"ElastiCache":     ecRepo,
 		"IAM":             iamRepo,
