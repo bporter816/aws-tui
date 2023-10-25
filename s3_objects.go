@@ -16,7 +16,7 @@ type S3Objects struct {
 }
 
 func NewS3Objects(repo *repo.S3, bucket string, app *Application) *S3Objects {
-	root := tview.NewTreeNode("/")
+	root := tview.NewTreeNode(bucket + "/")
 	root.SetReference("")
 	s := &S3Objects{
 		Tree:   ui.NewTree(root),
