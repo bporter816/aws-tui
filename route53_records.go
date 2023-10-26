@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"strconv"
 	"strings"
 )
@@ -131,13 +131,13 @@ func (r Route53Records) Render() {
 }
 
 func fmtResourceRecords(items []r53Types.ResourceRecord) string {
-	if len(items) == 0 {
-		return ""
-	} else if len(items) == 1 {
-		return *items[0].Value
-	} else {
-		return fmt.Sprintf("%v + %v more", *items[0].Value, len(items)-1)
+	values := make([]string, len(items))
+	for i, v := range items {
+		if v.Value != nil {
+			values[i] = string(*v.Value)
+		}
 	}
+	return utils.TruncateStrings(values, 1)
 }
 
 func joinRoute53ResourceRecords(items []r53Types.ResourceRecord, sep string) string {

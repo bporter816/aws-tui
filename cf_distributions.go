@@ -4,8 +4,8 @@ import (
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
-	"strings"
 )
 
 type CFDistributions struct {
@@ -19,11 +19,11 @@ func NewCFDistributions(repo *repo.CloudFront, app *Application) *CFDistribution
 	c := &CFDistributions{
 		Table: ui.NewTable([]string{
 			"ID",
-			"DESCRIPTION",
 			"TYPE",
 			"STATUS",
 			"DOMAIN",
 			"ALTERNATE DOMAINS",
+			"DESCRIPTION",
 		}, 1, 0),
 		repo: repo,
 		app:  app,
@@ -125,12 +125,9 @@ func (c *CFDistributions) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, comment, distributionType, status, domainName, alternateDomainNames string
+		var id, distributionType, status, domainName, alternateDomainNames, description string
 		if v.Id != nil {
 			id = *v.Id
-		}
-		if v.Comment != nil {
-			comment = *v.Comment
 		}
 		if v.Staging != nil {
 			if *v.Staging {
@@ -146,15 +143,18 @@ func (c *CFDistributions) Render() {
 			domainName = *v.DomainName
 		}
 		if v.Aliases != nil && len(v.Aliases.Items) > 0 {
-			alternateDomainNames = strings.Join(v.Aliases.Items, ", ")
+			alternateDomainNames = utils.TruncateStrings(v.Aliases.Items, 1)
+		}
+		if v.Comment != nil {
+			description = *v.Comment
 		}
 		data = append(data, []string{
 			id,
-			comment,
 			distributionType,
 			status,
 			domainName,
 			alternateDomainNames,
+			description,
 		})
 	}
 	c.SetData(data)

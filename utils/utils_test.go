@@ -231,3 +231,39 @@ func TestFormatSize(t *testing.T) {
 		}
 	}
 }
+
+func TestTruncateStrings(t *testing.T) {
+	tests := []struct {
+		items    []string
+		count    int
+		expected string
+	}{
+		{
+			items:    []string{"a", "b"},
+			count:    3,
+			expected: "a, b",
+		},
+		{
+			items:    []string{"a", "b"},
+			count:    2,
+			expected: "a, b",
+		},
+		{
+			items:    []string{"a", "b"},
+			count:    1,
+			expected: "a + 1 more",
+		},
+		{
+			items:    []string{"a", "b", "c", "d", "e"},
+			count:    3,
+			expected: "a, b, c + 2 more",
+		},
+	}
+
+	for _, tc := range tests {
+		got := TruncateStrings(tc.items, tc.count)
+		if got != tc.expected {
+			t.Fatalf("expected: %v, got: %v", tc.expected, got)
+		}
+	}
+}

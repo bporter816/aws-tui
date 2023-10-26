@@ -173,3 +173,11 @@ func FormatSize(size int64, precision int) string {
 	}
 	return "Too big"
 }
+
+func TruncateStrings(items []string, count int) string {
+	diff := len(items) - count
+	if diff <= 0 {
+		return strings.Join(items, ", ")
+	}
+	return strings.Join(items[:count], ", ") + " + " + strconv.Itoa(diff) + " more"
+}
