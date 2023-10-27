@@ -71,6 +71,23 @@ func (s S3) GetBucketPolicy(bucketName string) (string, error) {
 	return *out.Policy, nil
 }
 
+func (s S3) GetCORSRules(bucketName string) ([]model.S3CORSRule, error) {
+	out, err := s.s3Client.GetBucketCors(
+		context.TODO(),
+		&s3.GetBucketCorsInput{
+			Bucket: aws.String(bucketName),
+		},
+	)
+	if err != nil {
+		return []model.S3CORSRule{}, err
+	}
+	var corsRules []model.S3CORSRule
+	for _, v := range out.CORSRules {
+		corsRules = append(corsRules, model.S3CORSRule(v))
+	}
+	return corsRules, nil
+}
+
 func (s S3) ListBucketTags(bucketName string) (model.Tags, error) {
 	out, err := s.s3Client.GetBucketTagging(
 		context.TODO(),

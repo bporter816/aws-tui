@@ -5,5 +5,6 @@ import (
 )
 
 type (
-	S3Bucket s3Types.Bucket
+	S3Bucket   s3Types.Bucket
+	S3CORSRule s3Types.CORSRule
 )
