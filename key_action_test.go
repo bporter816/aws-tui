@@ -1,35 +1,46 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/gdamore/tcell/v2"
 )
 
-func TestKeyActionNotRune(t *testing.T) {
-	k := KeyAction{
-		Key:         tcell.NewEventKey(tcell.KeyEnter, 0, tcell.ModNone),
-		Description: "test",
-		Action:      func() {},
+func TestKeyActionString(t *testing.T) {
+	tests := []struct {
+		key      KeyAction
+		expected string
+	}{
+		{
+			key: KeyAction{
+				Key:         tcell.NewEventKey(tcell.KeyEnter, 0, tcell.ModNone),
+				Description: "test",
+				Action:      func() {},
+			},
+			expected: tcell.KeyNames[tcell.KeyEnter],
+		},
+		{
+			key: KeyAction{
+				Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
+				Description: "test",
+				Action:      func() {},
+			},
+			expected: "a",
+		},
+		{
+			key: KeyAction{
+				Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModCtrl),
+				Description: "test",
+				Action:      func() {},
+			},
+			expected: "Ctrl+a",
+		},
 	}
-	assert.Equal(t, tcell.KeyNames[tcell.KeyEnter], k.String())
-}
 
-func TestKeyActionRuneWithNoModifiers(t *testing.T) {
-	k := KeyAction{
-		Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
-		Description: "test",
-		Action:      func() {},
+	for _, tc := range tests {
+		got := tc.key.String()
+		if got != tc.expected {
+			t.Fatalf("expected: %v, got: %v", tc.expected, got)
+		}
 	}
-	assert.Equal(t, "a", k.String())
-}
-
-func TestKeyActionRuneWithCtrl(t *testing.T) {
-	k := KeyAction{
-		Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModCtrl),
-		Description: "test",
-		Action:      func() {},
-	}
-	assert.Equal(t, "Ctrl+a", k.String())
 }
