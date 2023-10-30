@@ -77,22 +77,22 @@ func (i IAMRoles) tagsHandler() {
 
 func (i IAMRoles) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Policies",
 			Action:      i.policiesHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
 			Description: "Assume Role Policy",
 			Action:      i.assumeRolePolicyHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'b', tcell.ModNone),
 			Description: "Permissions Boundary",
 			Action:      i.permissionsBoundaryHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      i.tagsHandler,

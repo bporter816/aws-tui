@@ -90,27 +90,27 @@ func (i IAMUsers) tagsHandler() {
 
 func (i IAMUsers) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
 			Description: "Access Keys",
 			Action:      i.accessKeysHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Policies",
 			Action:      i.policiesHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'b', tcell.ModNone),
 			Description: "Permissions Boundary",
 			Action:      i.permissionsBoundaryHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'r', tcell.ModNone),
 			Description: "Groups",
 			Action:      i.groupsHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      i.tagsHandler,

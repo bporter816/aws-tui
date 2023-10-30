@@ -47,7 +47,7 @@ func (c CFDistributionInvalidations) pathsHandler() {
 
 func (c CFDistributionInvalidations) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Paths",
 			Action:      c.pathsHandler,

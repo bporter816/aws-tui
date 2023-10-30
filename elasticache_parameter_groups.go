@@ -46,7 +46,7 @@ func (e ElastiCacheParameterGroups) viewParametersHandler() {
 
 func (e ElastiCacheParameterGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "View Parameters",
 			Action:      e.viewParametersHandler,

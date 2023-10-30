@@ -56,12 +56,12 @@ func (e EC2KeyPairs) tagsHandler() {
 
 func (e EC2KeyPairs) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Public Key",
 			Action:      e.pubKeyHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

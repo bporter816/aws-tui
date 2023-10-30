@@ -50,7 +50,7 @@ func (e ElastiCacheServiceUpdates) statusHandler() {
 
 func (e ElastiCacheServiceUpdates) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
 			Description: "Status",
 			Action:      e.statusHandler,

@@ -164,7 +164,7 @@ func (a Application) GetActiveKeyActions() []KeyAction {
 	// TODO avoid type coercion
 	localActions := primitive.(Component).GetKeyActions()
 	globalActions := []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'r', tcell.ModCtrl),
 			Description: "Refresh",
 			Action:      a.refreshHandler,

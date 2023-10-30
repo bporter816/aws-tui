@@ -58,7 +58,7 @@ func (e ElastiCacheUsers) tagsHandler() {
 
 func (e ElastiCacheUsers) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

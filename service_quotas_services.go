@@ -47,7 +47,7 @@ func (s ServiceQuotasServices) viewQuotasHandler() {
 
 func (s ServiceQuotasServices) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'q', tcell.ModNone),
 			Description: "View Quotas",
 			Action:      s.viewQuotasHandler,

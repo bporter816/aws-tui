@@ -75,17 +75,17 @@ func (s S3Objects) tagsHandler() {
 
 func (s S3Objects) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'v', tcell.ModNone),
 			Description: "View Object",
 			Action:      s.objectHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'm', tcell.ModNone),
 			Description: "Metadata",
 			Action:      s.metadataHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      s.tagsHandler,

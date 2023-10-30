@@ -57,12 +57,12 @@ func (e EC2SecurityGroups) tagsHandler() {
 
 func (e EC2SecurityGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'u', tcell.ModNone),
 			Description: "Rules",
 			Action:      e.rulesHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

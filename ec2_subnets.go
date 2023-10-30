@@ -57,7 +57,7 @@ func (e EC2Subnets) tagsHandler() {
 
 func (e EC2Subnets) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

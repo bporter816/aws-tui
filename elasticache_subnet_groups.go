@@ -72,12 +72,12 @@ func (e ElastiCacheSubnetGroups) tagsHandler() {
 
 func (e ElastiCacheSubnetGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
 			Description: "Subnets",
 			Action:      e.subnetsHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

@@ -46,7 +46,7 @@ func (r Route53HealthChecks) tagsHandler() {
 
 func (r Route53HealthChecks) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      r.tagsHandler,

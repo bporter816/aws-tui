@@ -49,7 +49,7 @@ func (e EC2Instances) tagsHandler() {
 
 func (e EC2Instances) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

@@ -77,22 +77,22 @@ func (s SNSTopics) tagsHandler() {
 
 func (s SNSTopics) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
 			Description: "Subscriptions",
 			Action:      s.subscriptionsHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
 			Description: "Access Control Policy",
 			Action:      s.accessControlPolicyHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'd', tcell.ModNone),
 			Description: "Delivery Policy",
 			Action:      s.deliveryPolicyHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      s.tagsHandler,

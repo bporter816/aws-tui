@@ -55,7 +55,7 @@ func (l LambdaFunctions) tagsHandler() {
 
 func (l LambdaFunctions) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      l.tagsHandler,

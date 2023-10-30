@@ -62,12 +62,12 @@ func (i IAMGroups) usersHandler() {
 
 func (i IAMGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Policies",
 			Action:      i.policiesHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'u', tcell.ModNone),
 			Description: "Users",
 			Action:      i.usersHandler,

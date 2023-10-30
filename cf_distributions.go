@@ -88,27 +88,27 @@ func (c CFDistributions) tagsHandler() {
 
 func (c CFDistributions) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'o', tcell.ModNone),
 			Description: "Origins",
 			Action:      c.originsHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
 			Description: "Cache Behaviors",
 			Action:      c.cacheBehaviorsHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'e', tcell.ModNone),
 			Description: "Custom Error Responses",
 			Action:      c.customErrorResponsesHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'i', tcell.ModNone),
 			Description: "Invalidations",
 			Action:      c.invalidationsHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      c.tagsHandler,

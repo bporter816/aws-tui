@@ -91,12 +91,12 @@ func (e ElastiCacheClusters) tagsHandler() {
 
 func (e ElastiCacheClusters) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 's', tcell.ModNone),
 			Description: "Service Update Status",
 			Action:      e.serviceUpdateStatusHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

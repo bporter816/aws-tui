@@ -65,12 +65,12 @@ func (a ACMCertificates) tagsHandler() {
 
 func (a ACMCertificates) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
 			Description: "Certificate",
 			Action:      a.certificateHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      a.tagsHandler,

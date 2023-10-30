@@ -66,7 +66,7 @@ func (i IAMPolicies) policyDocumentHandler() {
 
 func (i IAMPolicies) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'd', tcell.ModNone),
 			Description: "Policy Document",
 			Action:      i.policyDocumentHandler,

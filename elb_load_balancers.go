@@ -70,12 +70,12 @@ func (e ELBLoadBalancers) tagsHandler() {
 func (e ELBLoadBalancers) GetKeyActions() []KeyAction {
 	// TODO add security groups hotkey
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'l', tcell.ModNone),
 			Description: "Listeners",
 			Action:      e.listenersHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

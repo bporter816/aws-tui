@@ -55,12 +55,12 @@ func (s SQSQueues) tagsHandler() {
 
 func (s SQSQueues) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
 			Description: "Access Policy",
 			Action:      s.accessPolicyHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      s.tagsHandler,

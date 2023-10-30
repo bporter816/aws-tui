@@ -57,7 +57,7 @@ func (e ElastiCacheReservedCacheNodes) tagsHandler() {
 
 func (e ElastiCacheReservedCacheNodes) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

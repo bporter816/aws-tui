@@ -62,7 +62,7 @@ func (c CloudWatchLogGroups) tagsHandler() {
 
 func (c CloudWatchLogGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      c.tagsHandler,

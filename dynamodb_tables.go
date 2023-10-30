@@ -75,12 +75,12 @@ func (d DynamoDBTables) tagsHandler() {
 
 func (d DynamoDBTables) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'i', tcell.ModNone),
 			Description: "Indexes",
 			Action:      d.indexesHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      d.tagsHandler,

@@ -72,17 +72,17 @@ func (s S3Buckets) tagsHandler() {
 
 func (s S3Buckets) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Bucket Policy",
 			Action:      s.bucketPolicyHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
 			Description: "CORS Rules",
 			Action:      s.corsRulesHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      s.tagsHandler,

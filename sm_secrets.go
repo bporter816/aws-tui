@@ -55,12 +55,12 @@ func (s SMSecrets) tagsHandler() {
 
 func (s SMSecrets) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Resource Policy",
 			Action:      s.resourcePolicyHandler,
 		},
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      s.tagsHandler,

@@ -46,7 +46,7 @@ func (e EC2VPCs) tagsHandler() {
 
 func (e EC2VPCs) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,

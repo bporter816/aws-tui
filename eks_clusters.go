@@ -50,7 +50,7 @@ func (e EKSClusters) tagsHandler() {
 
 func (e EKSClusters) GetKeyActions() []KeyAction {
 	return []KeyAction{
-		KeyAction{
+		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,
