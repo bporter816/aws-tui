@@ -17,20 +17,20 @@ type Services struct {
 
 func NewServices(repos map[string]interface{}, app *Application) *Services {
 	m := map[string][]string{
-		"ACM": []string{
+		"ACM": {
 			"Certificates",
 		},
-		"CloudFront": []string{
+		"CloudFront": {
 			"Distributions",
 			"Functions",
 		},
-		"CloudWatch": []string{
+		"CloudWatch": {
 			"Log Groups",
 		},
-		"DynamoDB": []string{
+		"DynamoDB": {
 			"Tables",
 		},
-		"EC2": []string{
+		"EC2": {
 			"Instances",
 			"VPCs",
 			"Subnets",
@@ -39,14 +39,14 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"AMIs",
 			"Key Pairs",
 		},
-		"EKS": []string{
+		"EKS": {
 			"Clusters",
 		},
-		"ELB": []string{
+		"ELB": {
 			"Load Balancers",
 			"Target Groups",
 		},
-		"ElastiCache": []string{
+		"ElastiCache": {
 			"Clusters",
 			"Users",
 			"Groups",
@@ -57,36 +57,36 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"Events",
 			"Service Updates",
 		},
-		"IAM": []string{
+		"IAM": {
 			"Users",
 			"Roles",
 			"Groups",
 			"Managed Policies",
 		},
-		"KMS": []string{
+		"KMS": {
 			"Keys",
 			"Custom Key Stores",
 		},
-		"Lambda": []string{
+		"Lambda": {
 			"Functions",
 		},
-		"Route 53": []string{
+		"Route 53": {
 			"Hosted Zones",
 			"Health Checks",
 		},
-		"S3": []string{
+		"S3": {
 			"Buckets",
 		},
-		"SNS": []string{
+		"SNS": {
 			"Topics",
 		},
-		"SQS": []string{
+		"SQS": {
 			"Queues",
 		},
-		"Secrets Manager": []string{
+		"Secrets Manager": {
 			"Secrets",
 		},
-		"Service Quotas": []string{
+		"Service Quotas": {
 			"Services",
 		},
 	}
@@ -98,7 +98,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 	}
 	// sort the keys
 	var keys []string
-	for k, _ := range m {
+	for k := range m {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
