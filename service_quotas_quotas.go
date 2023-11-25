@@ -19,7 +19,7 @@ func NewServiceQuotasQuotas(repo *repo.ServiceQuotas, serviceName string, servic
 	s := &ServiceQuotasQuotas{
 		Table: ui.NewTable([]string{
 			"NAME",
-			"APPLED VALUE",
+			"APPLIED VALUE",
 			"DEFAULT VALUE",
 			"ADJUSTABLE",
 		}, 1, 0),
