@@ -8,28 +8,18 @@ import (
 type ELBTags struct {
 	*ui.Table
 	repo         *repo.ELB
-	resourceType ELBResourceType
 	resourceArn  string
 	resourceName string
 	app          *Application
 }
 
-type ELBResourceType string
-
-const (
-	ELBResourceTypeLoadBalancer ELBResourceType = "Load Balancers"
-	ELBResourceTypeTargetGroup  ELBResourceType = "Target Groups"
-	ELBResourceTypeListener     ELBResourceType = "Listeners"
-)
-
-func NewELBTags(repo *repo.ELB, resourceType ELBResourceType, resourceArn string, resourceName string, app *Application) *ELBTags {
+func NewELBTags(repo *repo.ELB, resourceArn string, resourceName string, app *Application) *ELBTags {
 	e := &ELBTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
 		repo:         repo,
-		resourceType: resourceType,
 		resourceArn:  resourceArn,
 		resourceName: resourceName,
 		app:          app,

@@ -62,7 +62,7 @@ func (e ELBLoadBalancers) tagsHandler() {
 		return
 	}
 	if arn := e.model[row-1].LoadBalancerArn; arn != nil {
-		tagsView := NewELBTags(e.repo, ELBResourceTypeLoadBalancer, *arn, name, e.app)
+		tagsView := NewELBTags(e.repo, *arn, name, e.app)
 		e.app.AddAndSwitch(tagsView)
 	}
 }

@@ -49,7 +49,7 @@ func (e ELBTargetGroups) tagsHandler() {
 		return
 	}
 	if arn := e.model[row-1].TargetGroupArn; arn != nil {
-		tagsView := NewELBTags(e.repo, ELBResourceTypeTargetGroup, *arn, name, e.app)
+		tagsView := NewELBTags(e.repo, *arn, name, e.app)
 		e.app.AddAndSwitch(tagsView)
 	}
 }
