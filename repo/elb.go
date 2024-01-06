@@ -124,3 +124,21 @@ func (e ELB) ListTags(resourceArn string) (model.Tags, error) {
 	}
 	return tags, nil
 }
+
+func (e ELB) ListTrustStores() ([]model.ELBTrustStore, error) {
+	pg := elb.NewDescribeTrustStoresPaginator(
+		e.elbClient,
+		&elb.DescribeTrustStoresInput{},
+	)
+	var trustStores []model.ELBTrustStore
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ELBTrustStore{}, err
+		}
+		for _, v := range out.TrustStores {
+			trustStores = append(trustStores, model.ELBTrustStore(v))
+		}
+	}
+	return trustStores, nil
+}

@@ -12,4 +12,5 @@ type (
 	}
 	ELBListenerRule elbTypes.Rule
 	ELBTargetGroup  elbTypes.TargetGroup
+	ELBTrustStore   elbTypes.TrustStore
 )
