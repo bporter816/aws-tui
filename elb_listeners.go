@@ -1,11 +1,13 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 // TODO support load balancer lists by lb arns
@@ -27,6 +29,7 @@ func NewELBListeners(repo *repo.ELB, lbArn string, lbName string, app *Applicati
 			"RULES",
 			"SSL POLICY",
 			"DEFAULT CERTIFICATE",
+			"MTLS MODE",
 		}, 1, 0),
 		repo:   repo,
 		lbArn:  lbArn,
@@ -82,7 +85,7 @@ func (e *ELBListeners) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var protocol, port, rules, sslPolicy, defaultCertificate string
+		var protocol, port, rules, sslPolicy, defaultCertificate, mtlsMode string
 		protocol = string(v.Protocol)
 		if v.Port != nil {
 			port = strconv.Itoa(int(*v.Port))
@@ -100,12 +103,16 @@ func (e *ELBListeners) Render() {
 		if len(v.Certificates) == 1 && v.Certificates[0].CertificateArn != nil {
 			defaultCertificate = *v.Certificates[0].CertificateArn
 		}
+		if v.MutualAuthentication != nil && v.MutualAuthentication.Mode != nil {
+			mtlsMode = utils.AutoCase(*v.MutualAuthentication.Mode)
+		}
 		data = append(data, []string{
 			protocol,
 			port,
 			rules,
 			sslPolicy,
 			defaultCertificate,
+			mtlsMode,
 		})
 	}
 	e.SetData(data)
