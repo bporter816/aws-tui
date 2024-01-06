@@ -79,7 +79,7 @@ func (e *ElastiCacheReservedCacheNodes) Render() {
 			*v.OfferingType,
 			utils.TitleCase(*v.ProductDescription),
 			*v.CacheNodeType,
-			strconv.Itoa(int(v.CacheNodeCount)),
+			strconv.Itoa(int(*v.CacheNodeCount)),
 			utils.TitleCase(*v.State),
 		})
 	}

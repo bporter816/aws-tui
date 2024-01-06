@@ -59,7 +59,7 @@ func (s S3CORSRules) Render() {
 		allowedOrigins = strings.Join(v.AllowedOrigins, ", ")
 		allowedHeaders = strings.Join(v.AllowedHeaders, ", ")
 		exposeHeaders = strings.Join(v.ExposeHeaders, ", ")
-		maxAge = strconv.Itoa(int(v.MaxAgeSeconds)) + " sec"
+		maxAge = strconv.Itoa(int(*v.MaxAgeSeconds)) + " sec"
 		data = append(data, []string{
 			id,
 			allowedMethods,

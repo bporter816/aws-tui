@@ -59,7 +59,9 @@ func (e ElastiCacheParameters) Render() {
 		if v.AllowedValues != nil {
 			allowedValues = *v.AllowedValues
 		}
-		isModifiable = utils.BoolToString(v.IsModifiable, "Yes", "No")
+		if v.IsModifiable != nil {
+			isModifiable = utils.BoolToString(*v.IsModifiable, "Yes", "No")
+		}
 		if v.ParameterValue != nil {
 			value = *v.ParameterValue
 		}

@@ -2,10 +2,12 @@ package repo
 
 import (
 	"context"
+	"errors"
+	"io"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/bporter816/aws-tui/model"
-	"io"
 )
 
 type S3 struct {
@@ -117,7 +119,10 @@ func (s S3) GetObject(bucketName string, key string) ([]byte, error) {
 		return []byte{}, err
 	}
 	defer out.Body.Close()
-	b := make([]byte, out.ContentLength)
+	if out.ContentLength == nil {
+		return []byte{}, errors.New("missing content length")
+	}
+	b := make([]byte, *out.ContentLength)
 	n, err := out.Body.Read(b)
 	if err != nil && err != io.EOF {
 		return []byte{}, err

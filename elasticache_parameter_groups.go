@@ -72,7 +72,9 @@ func (e ElastiCacheParameterGroups) Render() {
 		if v.Description != nil {
 			description = *v.Description
 		}
-		isGlobal = utils.BoolToString(v.IsGlobal, "Yes", "No")
+		if v.IsGlobal != nil {
+			isGlobal = utils.BoolToString(*v.IsGlobal, "Yes", "No")
+		}
 		data = append(data, []string{
 			name,
 			family,
