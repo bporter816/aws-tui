@@ -4,5 +4,5 @@ type CloudFront struct {
 }
 
 func (c CloudFront) GetService() string {
-	return "Cloudfront"
+	return "CloudFront"
 }
