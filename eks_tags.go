@@ -5,10 +5,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type EKSTags struct {
 	*ui.Table
+	view.EKS
 	repo *repo.EKS
 	arn  string
 	app  *Application
@@ -25,10 +27,6 @@ func NewEKSTags(repo *repo.EKS, arn string, app *Application) *EKSTags {
 		app:  app,
 	}
 	return e
-}
-
-func (e EKSTags) GetService() string {
-	return "EKS"
 }
 
 func (e EKSTags) GetLabels() []string {

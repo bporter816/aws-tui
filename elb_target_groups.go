@@ -1,16 +1,19 @@
 package main
 
 import (
+	"strconv"
+
 	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type ELBTargetGroups struct {
 	*ui.Table
+	view.ELB
 	repo  *repo.ELB
 	app   *Application
 	model []model.ELBTargetGroup
@@ -29,10 +32,6 @@ func NewELBTargetGroups(repo *repo.ELB, app *Application) *ELBTargetGroups {
 		app:  app,
 	}
 	return e
-}
-
-func (e ELBTargetGroups) GetService() string {
-	return "ELB"
 }
 
 func (e ELBTargetGroups) GetLabels() []string {

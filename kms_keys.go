@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type KmsKeys struct {
 	*ui.Table
+	view.KMS
 	repo *repo.KMS
 	app  *Application
 }
@@ -30,10 +33,6 @@ func NewKmsKeys(repo *repo.KMS, app *Application) *KmsKeys {
 		app:  app,
 	}
 	return k
-}
-
-func (k KmsKeys) GetService() string {
-	return "KMS"
 }
 
 func (k KmsKeys) GetLabels() []string {

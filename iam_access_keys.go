@@ -4,10 +4,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type IAMAccessKeys struct {
 	*ui.Table
+	view.IAM
 	repo     *repo.IAM
 	userName string
 	app      *Application
@@ -28,10 +30,6 @@ func NewIAMAccessKeys(repo *repo.IAM, userName string, app *Application) *IAMAcc
 		app:      app,
 	}
 	return i
-}
-
-func (i IAMAccessKeys) GetService() string {
-	return "IAM"
 }
 
 func (i IAMAccessKeys) GetLabels() []string {

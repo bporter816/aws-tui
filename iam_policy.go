@@ -4,10 +4,12 @@ import (
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type IAMPolicy struct {
 	*ui.Text
+	view.IAM
 	repo         *repo.IAM
 	identityType model.IAMIdentityType
 	policyType   model.IAMPolicyType
@@ -37,10 +39,6 @@ func NewIAMPolicy(
 		app:          app,
 	}
 	return i
-}
-
-func (i IAMPolicy) GetService() string {
-	return "IAM"
 }
 
 func (i IAMPolicy) GetLabels() []string {

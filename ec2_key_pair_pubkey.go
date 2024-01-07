@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type EC2KeyPairPubKey struct {
 	*ui.Text
+	view.EC2
 	repo      *repo.EC2
 	keyPairId string
 	app       *Application
@@ -20,10 +22,6 @@ func NewEC2KeyPairPubKey(repo *repo.EC2, keyPairId string, app *Application) *EC
 		app:       app,
 	}
 	return e
-}
-
-func (e EC2KeyPairPubKey) GetService() string {
-	return "EC2"
 }
 
 func (e EC2KeyPairPubKey) GetLabels() []string {

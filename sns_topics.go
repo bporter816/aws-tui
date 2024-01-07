@@ -6,11 +6,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type SNSTopics struct {
 	*ui.Table
+	view.SNS
 	repo  *repo.SNS
 	app   *Application
 	model []model.SNSTopic
@@ -29,10 +31,6 @@ func NewSNSTopics(repo *repo.SNS, app *Application) *SNSTopics {
 		app:  app,
 	}
 	return s
-}
-
-func (s SNSTopics) GetService() string {
-	return "SNS"
 }
 
 func (s SNSTopics) GetLabels() []string {

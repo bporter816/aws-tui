@@ -4,11 +4,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type S3Buckets struct {
 	*ui.Table
+	view.S3
 	repo *repo.S3
 	app  *Application
 }
@@ -24,10 +26,6 @@ func NewS3Buckets(repo *repo.S3, app *Application) *S3Buckets {
 	}
 	s.SetSelectedFunc(s.selectHandler)
 	return s
-}
-
-func (s S3Buckets) GetService() string {
-	return "S3"
 }
 
 func (s S3Buckets) GetLabels() []string {

@@ -1,17 +1,20 @@
 package main
 
 import (
+	"strconv"
+	"strings"
+
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
-	"strings"
 )
 
 type CloudWatchLogGroups struct {
 	*ui.Table
+	view.CloudWatch
 	repo  *repo.CloudWatch
 	app   *Application
 	model []model.CloudWatchLogGroup
@@ -30,10 +33,6 @@ func NewCloudWatchLogGroups(repo *repo.CloudWatch, app *Application) *CloudWatch
 		app:  app,
 	}
 	return c
-}
-
-func (c CloudWatchLogGroups) GetService() string {
-	return "CloudWatch"
 }
 
 func (c CloudWatchLogGroups) GetLabels() []string {

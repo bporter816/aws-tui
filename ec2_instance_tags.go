@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type EC2InstanceTags struct {
 	*ui.Table
+	view.EC2
 	repo       *repo.EC2
 	instanceId string
 	app        *Application
@@ -23,10 +25,6 @@ func NewEC2InstanceTags(repo *repo.EC2, instanceId string, app *Application) *EC
 		app:        app,
 	}
 	return e
-}
-
-func (e EC2InstanceTags) GetService() string {
-	return "EC2"
 }
 
 func (e EC2InstanceTags) GetLabels() []string {

@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type CFDistributionInvalidationPaths struct {
 	*ui.Table
+	view.CloudFront
 	repo           *repo.CloudFront
 	distributionId string
 	invalidationId string
@@ -24,10 +26,6 @@ func NewCFDistributionInvalidationPaths(repo *repo.CloudFront, distributionId st
 		app:            app,
 	}
 	return c
-}
-
-func (c CFDistributionInvalidationPaths) GetService() string {
-	return "CloudFront"
 }
 
 func (c CFDistributionInvalidationPaths) GetLabels() []string {

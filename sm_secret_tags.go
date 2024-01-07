@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type SMSecretTags struct {
 	*ui.Table
+	view.SecretsManager
 	repo       *repo.SecretsManager
 	secretName string
 	app        *Application
@@ -23,10 +25,6 @@ func NewSMSecretTags(repo *repo.SecretsManager, secretName string, app *Applicat
 		app:        app,
 	}
 	return s
-}
-
-func (s SMSecretTags) GetService() string {
-	return "Secrets Manager"
 }
 
 func (s SMSecretTags) GetLabels() []string {

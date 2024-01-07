@@ -1,13 +1,16 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
-	"strings"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type SQSAccessPolicy struct {
 	*ui.Text
+	view.SQS
 	repo     *repo.SQS
 	queueUrl string
 	app      *Application
@@ -21,10 +24,6 @@ func NewSQSAccessPolicy(repo *repo.SQS, queueUrl string, app *Application) *SQSA
 		app:      app,
 	}
 	return s
-}
-
-func (s SQSAccessPolicy) GetService() string {
-	return "SQS"
 }
 
 func (s SQSAccessPolicy) GetLabels() []string {

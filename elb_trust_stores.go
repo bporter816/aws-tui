@@ -6,10 +6,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ELBTrustStores struct {
 	*ui.Table
+	view.ELB
 	repo *repo.ELB
 	app  *Application
 }
@@ -26,10 +28,6 @@ func NewELBTrustStores(repo *repo.ELB, app *Application) *ELBTrustStores {
 		app:  app,
 	}
 	return e
-}
-
-func (e ELBTrustStores) GetService() string {
-	return "ELB"
 }
 
 func (e ELBTrustStores) GetLabels() []string {

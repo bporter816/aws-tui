@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ElastiCacheTags struct {
 	*ui.Table
+	view.ElastiCache
 	repo         *repo.ElastiCache
 	resourceArn  string
 	resourceName string
@@ -27,10 +29,6 @@ func NewElastiCacheTags(repo *repo.ElastiCache, resourceArn string, resourceName
 		app:          app,
 	}
 	return e
-}
-
-func (e ElastiCacheTags) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheTags) GetLabels() []string {

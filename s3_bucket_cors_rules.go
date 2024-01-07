@@ -1,14 +1,17 @@
 package main
 
 import (
-	"github.com/bporter816/aws-tui/repo"
-	"github.com/bporter816/aws-tui/ui"
 	"strconv"
 	"strings"
+
+	"github.com/bporter816/aws-tui/repo"
+	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type S3CORSRules struct {
 	*ui.Table
+	view.S3
 	repo   *repo.S3
 	bucket string
 	app    *Application
@@ -29,10 +32,6 @@ func NewS3CORSRules(repo *repo.S3, bucket string, app *Application) *S3CORSRules
 		app:    app,
 	}
 	return s
-}
-
-func (s S3CORSRules) GetService() string {
-	return "S3"
 }
 
 func (s S3CORSRules) GetLabels() []string {

@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type S3ObjectTags struct {
 	*ui.Table
+	view.S3
 	repo   *repo.S3
 	bucket string
 	key    string
@@ -25,10 +27,6 @@ func NewS3ObjectTags(repo *repo.S3, bucket string, key string, app *Application)
 		app:    app,
 	}
 	return s
-}
-
-func (s S3ObjectTags) GetService() string {
-	return "S3"
 }
 
 func (s S3ObjectTags) GetLabels() []string {

@@ -4,10 +4,12 @@ import (
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type Route53Tags struct {
 	*ui.Table
+	view.Route53
 	repo         *repo.Route53
 	resourceType r53Types.TagResourceType
 	resourceName string
@@ -26,10 +28,6 @@ func NewRoute53Tags(repo *repo.Route53, resourceType r53Types.TagResourceType, r
 		app:          app,
 	}
 	return r
-}
-
-func (r Route53Tags) GetService() string {
-	return "Route 53"
 }
 
 func (r Route53Tags) GetLabels() []string {

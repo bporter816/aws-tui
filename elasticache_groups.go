@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type ElastiCacheGroups struct {
 	*ui.Table
+	view.ElastiCache
 	repo  *repo.ElastiCache
 	app   *Application
 	model []model.ElastiCacheGroup
@@ -28,10 +31,6 @@ func NewElastiCacheGroups(repo *repo.ElastiCache, app *Application) *ElastiCache
 		app:  app,
 	}
 	return e
-}
-
-func (e ElastiCacheGroups) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheGroups) GetLabels() []string {

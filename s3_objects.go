@@ -1,15 +1,18 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"strings"
 )
 
 type S3Objects struct {
 	*ui.Tree
+	view.S3
 	repo   *repo.S3
 	bucket string
 	app    *Application
@@ -26,10 +29,6 @@ func NewS3Objects(repo *repo.S3, bucket string, app *Application) *S3Objects {
 	}
 	s.SetSelectedFunc(s.selectHandler)
 	return s
-}
-
-func (s S3Objects) GetService() string {
-	return "S3"
 }
 
 func (s S3Objects) GetLabels() []string {

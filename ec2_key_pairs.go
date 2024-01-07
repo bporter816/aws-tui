@@ -4,11 +4,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type EC2KeyPairs struct {
 	*ui.Table
+	view.EC2
 	repo *repo.EC2
 	app  *Application
 }
@@ -26,10 +28,6 @@ func NewEC2KeyPairs(repo *repo.EC2, app *Application) *EC2KeyPairs {
 		app:  app,
 	}
 	return e
-}
-
-func (e EC2KeyPairs) GetService() string {
-	return "EC2"
 }
 
 func (e EC2KeyPairs) GetLabels() []string {

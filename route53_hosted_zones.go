@@ -1,16 +1,19 @@
 package main
 
 import (
+	"strconv"
+	"strings"
+
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
-	"strings"
 )
 
 type Route53HostedZones struct {
 	*ui.Table
+	view.Route53
 	repo *repo.Route53
 	app  *Application
 }
@@ -29,10 +32,6 @@ func NewRoute53HostedZones(repo *repo.Route53, app *Application) *Route53HostedZ
 	}
 	r.SetSelectedFunc(r.selectHandler)
 	return r
-}
-
-func (r Route53HostedZones) GetService() string {
-	return "Route 53"
 }
 
 func (r Route53HostedZones) GetLabels() []string {

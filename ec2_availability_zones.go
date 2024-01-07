@@ -4,10 +4,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type EC2AvailabilityZones struct {
 	*ui.Table
+	view.EC2
 	repo *repo.EC2
 	app  *Application
 }
@@ -24,10 +26,6 @@ func NewEC2AvailabilityZones(repo *repo.EC2, app *Application) *EC2AvailabilityZ
 		app:  app,
 	}
 	return e
-}
-
-func (e EC2AvailabilityZones) GetService() string {
-	return "EC2"
 }
 
 func (e EC2AvailabilityZones) GetLabels() []string {

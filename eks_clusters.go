@@ -5,11 +5,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type EKSClusters struct {
 	*ui.Table
+	view.EKS
 	repo  *repo.EKS
 	app   *Application
 	model []model.EKSCluster
@@ -27,10 +29,6 @@ func NewEKSClusters(repo *repo.EKS, app *Application) *EKSClusters {
 		app:  app,
 	}
 	return e
-}
-
-func (e EKSClusters) GetService() string {
-	return "EKS"
 }
 
 func (e EKSClusters) GetLabels() []string {

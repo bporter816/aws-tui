@@ -1,16 +1,19 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type IAMRoles struct {
 	*ui.Table
+	view.IAM
 	repo *repo.IAM
 	app  *Application
 }
@@ -29,10 +32,6 @@ func NewIAMRoles(repo *repo.IAM, app *Application) *IAMRoles {
 		app:  app,
 	}
 	return i
-}
-
-func (i IAMRoles) GetService() string {
-	return "IAM"
 }
 
 func (i IAMRoles) GetLabels() []string {

@@ -1,16 +1,19 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type ElastiCacheSubnetGroups struct {
 	*ui.Table
+	view.ElastiCache
 	repo    *repo.ElastiCache
 	ec2Repo *repo.EC2
 	app     *Application
@@ -31,10 +34,6 @@ func NewElastiCacheSubnetGroups(repo *repo.ElastiCache, ec2Repo *repo.EC2, app *
 		app:     app,
 	}
 	return e
-}
-
-func (e ElastiCacheSubnetGroups) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheSubnetGroups) GetLabels() []string {

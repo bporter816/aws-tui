@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ServiceQuotasQuotas struct {
 	*ui.Table
+	view.ServiceQuotas
 	repo        *repo.ServiceQuotas
 	serviceName string
 	serviceCode string
@@ -29,10 +32,6 @@ func NewServiceQuotasQuotas(repo *repo.ServiceQuotas, serviceName string, servic
 		app:         app,
 	}
 	return s
-}
-
-func (s ServiceQuotasQuotas) GetService() string {
-	return "Service Quotas"
 }
 
 func (s ServiceQuotasQuotas) GetLabels() []string {

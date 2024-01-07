@@ -4,10 +4,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type CFFunctions struct {
 	*ui.Table
+	view.CloudFront
 	repo *repo.CloudFront
 	app  *Application
 }
@@ -26,10 +28,6 @@ func NewCFFunctions(repo *repo.CloudFront, app *Application) *CFFunctions {
 		app:  app,
 	}
 	return c
-}
-
-func (c CFFunctions) GetService() string {
-	return "CloudFront"
 }
 
 func (c CFFunctions) GetLabels() []string {

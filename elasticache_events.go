@@ -4,10 +4,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ElastiCacheEvents struct {
 	*ui.Table
+	view.ElastiCache
 	repo *repo.ElastiCache
 	app  *Application
 }
@@ -24,10 +26,6 @@ func NewElastiCacheEvents(repo *repo.ElastiCache, app *Application) *ElastiCache
 		app:  app,
 	}
 	return e
-}
-
-func (e ElastiCacheEvents) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheEvents) GetLabels() []string {

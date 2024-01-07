@@ -4,11 +4,13 @@ import (
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type IAMPolicies struct {
 	*ui.Table
+	view.IAM
 	repo         *repo.IAM
 	identityType model.IAMIdentityType
 	id           *string
@@ -28,10 +30,6 @@ func NewIAMPolicies(repo *repo.IAM, identityType model.IAMIdentityType, id *stri
 		app:          app,
 	}
 	return i
-}
-
-func (i IAMPolicies) GetService() string {
-	return "IAM"
 }
 
 func (i IAMPolicies) GetLabels() []string {

@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type EC2SubnetTags struct {
 	*ui.Table
+	view.EC2
 	repo     *repo.EC2
 	subnetId string
 	app      *Application
@@ -23,10 +25,6 @@ func NewEC2SubnetTags(repo *repo.EC2, subnetId string, app *Application) *EC2Sub
 		app:      app,
 	}
 	return e
-}
-
-func (e EC2SubnetTags) GetService() string {
-	return "EC2"
 }
 
 func (e EC2SubnetTags) GetLabels() []string {

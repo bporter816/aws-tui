@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type EC2VPCTags struct {
 	*ui.Table
+	view.EC2
 	repo  *repo.EC2
 	vpcId string
 	app   *Application
@@ -23,10 +25,6 @@ func NewEC2VPCTags(repo *repo.EC2, vpcId string, app *Application) *EC2VPCTags {
 		app:   app,
 	}
 	return e
-}
-
-func (e EC2VPCTags) GetService() string {
-	return "EC2"
 }
 
 func (e EC2VPCTags) GetLabels() []string {

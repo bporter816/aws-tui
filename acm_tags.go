@@ -5,10 +5,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ACMTags struct {
 	*ui.Table
+	view.ACM
 	repo           *repo.ACM
 	certificateArn arn.ARN
 	app            *Application
@@ -29,10 +31,6 @@ func NewACMTags(repo *repo.ACM, certificateArn string, app *Application) *ACMTag
 		app:            app,
 	}
 	return a
-}
-
-func (a ACMTags) GetService() string {
-	return "ACM"
 }
 
 func (a ACMTags) GetLabels() []string {

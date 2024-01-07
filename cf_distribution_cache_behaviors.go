@@ -4,10 +4,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type CFDistributionCacheBehaviors struct {
 	*ui.Table
+	view.CloudFront
 	repo           *repo.CloudFront
 	distributionId string
 	app            *Application
@@ -28,10 +30,6 @@ func NewCFDistributionCacheBehaviors(repo *repo.CloudFront, distributionId strin
 		app:            app,
 	}
 	return c
-}
-
-func (c CFDistributionCacheBehaviors) GetService() string {
-	return "CloudFront"
 }
 
 func (c CFDistributionCacheBehaviors) GetLabels() []string {

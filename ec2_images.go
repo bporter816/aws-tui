@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
-	"strconv"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type EC2Images struct {
 	*ui.Table
+	view.EC2
 	repo *repo.EC2
 	app  *Application
 }
@@ -31,10 +34,6 @@ func NewEC2Images(repo *repo.EC2, app *Application) *EC2Images {
 		app:  app,
 	}
 	return e
-}
-
-func (e EC2Images) GetService() string {
-	return "EC2"
 }
 
 func (e EC2Images) GetLabels() []string {

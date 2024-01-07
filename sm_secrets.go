@@ -4,11 +4,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type SMSecrets struct {
 	*ui.Table
+	view.SecretsManager
 	repo *repo.SecretsManager
 	app  *Application
 }
@@ -25,10 +27,6 @@ func NewSMSecrets(repo *repo.SecretsManager, app *Application) *SMSecrets {
 		app:  app,
 	}
 	return s
-}
-
-func (s SMSecrets) GetService() string {
-	return "Secrets Manager"
 }
 
 func (s SMSecrets) GetLabels() []string {

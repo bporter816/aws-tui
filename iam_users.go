@@ -5,11 +5,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type IAMUsers struct {
 	*ui.Table
+	view.IAM
 	repo      *repo.IAM
 	groupName *string
 	app       *Application
@@ -29,10 +31,6 @@ func NewIAMUsers(repo *repo.IAM, groupName *string, app *Application) *IAMUsers 
 		app:       app,
 	}
 	return i
-}
-
-func (i IAMUsers) GetService() string {
-	return "IAM"
 }
 
 func (i IAMUsers) GetLabels() []string {

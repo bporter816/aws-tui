@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type IAMUserTags struct {
 	*ui.Table
+	view.IAM
 	repo     *repo.IAM
 	userName string
 	app      *Application
@@ -23,10 +25,6 @@ func NewIAMUserTags(repo *repo.IAM, userName string, app *Application) *IAMUserT
 		app:      app,
 	}
 	return i
-}
-
-func (i IAMUserTags) GetService() string {
-	return "IAM"
 }
 
 func (i IAMUserTags) GetLabels() []string {

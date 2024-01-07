@@ -6,11 +6,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type ACMCertificates struct {
 	*ui.Table
+	view.ACM
 	repo  *repo.ACM
 	app   *Application
 	model []model.ACMCertificate
@@ -31,10 +33,6 @@ func NewACMCertificates(repo *repo.ACM, app *Application) *ACMCertificates {
 		app:  app,
 	}
 	return a
-}
-
-func (a ACMCertificates) GetService() string {
-	return "ACM"
 }
 
 func (a ACMCertificates) GetLabels() []string {

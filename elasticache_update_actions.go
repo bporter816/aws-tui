@@ -4,10 +4,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ElastiCacheUpdateActions struct {
 	*ui.Table
+	view.ElastiCache
 	repo                *repo.ElastiCache
 	app                 *Application
 	cacheClusterIds     []string
@@ -33,10 +35,6 @@ func NewElastiCacheUpdateActions(repo *repo.ElastiCache, app *Application, cache
 		serviceUpdateName:   serviceUpdateName,
 	}
 	return e
-}
-
-func (e ElastiCacheUpdateActions) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheUpdateActions) GetLabels() []string {

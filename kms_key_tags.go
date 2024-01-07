@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type KmsKeyTags struct {
 	*ui.Table
+	view.KMS
 	repo  *repo.KMS
 	keyId string
 	app   *Application
@@ -23,10 +25,6 @@ func NewKmsKeyTags(repo *repo.KMS, keyId string, app *Application) *KmsKeyTags {
 		keyId: keyId,
 	}
 	return k
-}
-
-func (k KmsKeyTags) GetService() string {
-	return "KMS"
 }
 
 func (k KmsKeyTags) GetLabels() []string {

@@ -4,11 +4,13 @@ import (
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type Route53HealthChecks struct {
 	*ui.Table
+	view.Route53
 	repo *repo.Route53
 	app  *Application
 }
@@ -25,10 +27,6 @@ func NewRoute53HealthChecks(repo *repo.Route53, app *Application) *Route53Health
 		app:  app,
 	}
 	return r
-}
-
-func (r Route53HealthChecks) GetService() string {
-	return "Route 53"
 }
 
 func (r Route53HealthChecks) GetLabels() []string {

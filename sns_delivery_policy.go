@@ -5,10 +5,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type SNSDeliveryPolicy struct {
 	*ui.Text
+	view.SNS
 	repo     *repo.SNS
 	topicArn string
 	app      *Application
@@ -22,10 +24,6 @@ func NewSNSDeliveryPolicy(repo *repo.SNS, topicArn string, app *Application) *SN
 		app:      app,
 	}
 	return s
-}
-
-func (s SNSDeliveryPolicy) GetService() string {
-	return "SNS"
 }
 
 func (s SNSDeliveryPolicy) GetLabels() []string {

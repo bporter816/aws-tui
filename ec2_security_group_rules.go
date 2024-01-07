@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type EC2SecurityGroupRules struct {
 	*ui.Table
+	view.EC2
 	repo *repo.EC2
 	sgId string
 	app  *Application
@@ -31,10 +34,6 @@ func NewEC2SecurityGroupRules(repo *repo.EC2, sgId string, app *Application) *EC
 		app:  app,
 	}
 	return e
-}
-
-func (e EC2SecurityGroupRules) GetService() string {
-	return "EC2"
 }
 
 func (e EC2SecurityGroupRules) GetLabels() []string {

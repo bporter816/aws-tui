@@ -5,10 +5,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type DynamoDBTags struct {
 	*ui.Table
+	view.DynamoDB
 	repo *repo.DynamoDB
 	id   string
 	app  *Application
@@ -25,10 +27,6 @@ func NewDynamoDBTags(repo *repo.DynamoDB, id string, app *Application) *DynamoDB
 		app:  app,
 	}
 	return d
-}
-
-func (d DynamoDBTags) GetService() string {
-	return "DynamoDB"
 }
 
 func (d DynamoDBTags) GetLabels() []string {

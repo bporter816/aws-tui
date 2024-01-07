@@ -5,11 +5,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type SQSQueues struct {
 	*ui.Table
+	view.SQS
 	repo  *repo.SQS
 	app   *Application
 	model []model.SQSQueue
@@ -25,10 +27,6 @@ func NewSQSQueues(repo *repo.SQS, app *Application) *SQSQueues {
 		app:  app,
 	}
 	return s
-}
-
-func (s SQSQueues) GetService() string {
-	return "SQS"
 }
 
 func (s SQSQueues) GetLabels() []string {

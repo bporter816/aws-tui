@@ -1,13 +1,16 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
-	"strconv"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type CFDistributionCustomErrorResponses struct {
 	*ui.Table
+	view.CloudFront
 	repo           *repo.CloudFront
 	distributionId string
 	app            *Application
@@ -26,10 +29,6 @@ func NewCFDistributionCustomErrorResponses(repo *repo.CloudFront, distributionId
 		app:            app,
 	}
 	return c
-}
-
-func (c CFDistributionCustomErrorResponses) GetService() string {
-	return "CloudFront"
 }
 
 func (c CFDistributionCustomErrorResponses) GetLabels() []string {

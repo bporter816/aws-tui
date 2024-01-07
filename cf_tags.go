@@ -5,10 +5,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type CFTags struct {
 	*ui.Table
+	view.CloudFront
 	repo *repo.CloudFront
 	id   string
 	app  *Application
@@ -27,9 +29,6 @@ func NewCFTags(repo *repo.CloudFront, id string, app *Application) *CFTags {
 	return c
 }
 
-func (c CFTags) GetService() string {
-	return "CloudFront"
-}
 func (c CFTags) GetLabels() []string {
 	// TODO generalize for other resources
 	// extract id from arn

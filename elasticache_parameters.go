@@ -4,10 +4,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ElastiCacheParameters struct {
 	*ui.Table
+	view.ElastiCache
 	repo               *repo.ElastiCache
 	parameterGroupName string
 	app                *Application
@@ -30,10 +32,6 @@ func NewElastiCacheParameters(repo *repo.ElastiCache, parameterGroupName string,
 		app:                app,
 	}
 	return e
-}
-
-func (e ElastiCacheParameters) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheParameters) GetLabels() []string {

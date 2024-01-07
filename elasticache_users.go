@@ -2,16 +2,19 @@ package main
 
 import (
 	"fmt"
+
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type ElastiCacheUsers struct {
 	*ui.Table
+	view.ElastiCache
 	repo  *repo.ElastiCache
 	app   *Application
 	model []model.ElastiCacheUser
@@ -31,10 +34,6 @@ func NewElastiCacheUsers(repo *repo.ElastiCache, app *Application) *ElastiCacheU
 		app:  app,
 	}
 	return e
-}
-
-func (e ElastiCacheUsers) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheUsers) GetLabels() []string {

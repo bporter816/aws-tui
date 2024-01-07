@@ -1,13 +1,16 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
-	"strings"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type S3Object struct {
 	*ui.Text
+	view.S3
 	repo   *repo.S3
 	bucket string
 	key    string
@@ -23,10 +26,6 @@ func NewS3Object(repo *repo.S3, bucket string, key string, app *Application) *S3
 		app:    app,
 	}
 	return s
-}
-
-func (s S3Object) GetService() string {
-	return "S3"
 }
 
 func (s S3Object) GetLabels() []string {

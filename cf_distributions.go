@@ -5,11 +5,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type CFDistributions struct {
 	*ui.Table
+	view.CloudFront
 	repo  *repo.CloudFront
 	app   *Application
 	model []model.CloudFrontDistribution
@@ -29,10 +31,6 @@ func NewCFDistributions(repo *repo.CloudFront, app *Application) *CFDistribution
 		app:  app,
 	}
 	return c
-}
-
-func (c CFDistributions) GetService() string {
-	return "CloudFront"
 }
 
 func (c CFDistributions) GetLabels() []string {

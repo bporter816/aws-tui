@@ -1,14 +1,17 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type EC2SecurityGroups struct {
 	*ui.Table
+	view.EC2
 	repo *repo.EC2
 	app  *Application
 }
@@ -27,10 +30,6 @@ func NewEC2SecurityGroups(repo *repo.EC2, app *Application) *EC2SecurityGroups {
 		app:  app,
 	}
 	return e
-}
-
-func (e EC2SecurityGroups) GetService() string {
-	return "EC2"
 }
 
 func (e EC2SecurityGroups) GetLabels() []string {

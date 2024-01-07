@@ -4,11 +4,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type CFDistributionInvalidations struct {
 	*ui.Table
+	view.CloudFront
 	repo           *repo.CloudFront
 	distributionId string
 	app            *Application
@@ -26,10 +28,6 @@ func NewCFDistributionInvalidations(repo *repo.CloudFront, distributionId string
 		app:            app,
 	}
 	return c
-}
-
-func (c CFDistributionInvalidations) GetService() string {
-	return "CloudFront"
 }
 
 func (c CFDistributionInvalidations) GetLabels() []string {

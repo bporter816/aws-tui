@@ -1,17 +1,20 @@
 package main
 
 import (
+	"strconv"
+
 	ecTypes "github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type ElastiCacheClusters struct {
 	*ui.Table
+	view.ElastiCache
 	repo  *repo.ElastiCache
 	app   *Application
 	model []model.ElastiCacheCluster
@@ -33,10 +36,6 @@ func NewElastiCacheClusters(repo *repo.ElastiCache, app *Application) *ElastiCac
 		app:  app,
 	}
 	return e
-}
-
-func (e ElastiCacheClusters) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheClusters) GetLabels() []string {

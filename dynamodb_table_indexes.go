@@ -2,15 +2,18 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
-	"strconv"
-	"strings"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type DynamoDBTableIndexes struct {
 	*ui.Table
+	view.DynamoDB
 	repo       *repo.DynamoDB
 	tableName  string
 	attributes []ddbTypes.AttributeDefinition
@@ -35,10 +38,6 @@ func NewDynamoDBTableIndexes(repo *repo.DynamoDB, tableName string, attributes [
 		app:        app,
 	}
 	return d
-}
-
-func (d DynamoDBTableIndexes) GetService() string {
-	return "DynamoDB"
 }
 
 func (d DynamoDBTableIndexes) GetLabels() []string {

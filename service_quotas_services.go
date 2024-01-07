@@ -3,11 +3,13 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type ServiceQuotasServices struct {
 	*ui.Table
+	view.ServiceQuotas
 	repo *repo.ServiceQuotas
 	app  *Application
 }
@@ -22,10 +24,6 @@ func NewServiceQuotasServices(repo *repo.ServiceQuotas, app *Application) *Servi
 		app:  app,
 	}
 	return s
-}
-
-func (s ServiceQuotasServices) GetService() string {
-	return "Service Quotas"
 }
 
 func (s ServiceQuotasServices) GetLabels() []string {

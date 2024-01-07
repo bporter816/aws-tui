@@ -1,13 +1,16 @@
 package main
 
 import (
+	"strings"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
-	"strings"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type SQSTags struct {
 	*ui.Table
+	view.SQS
 	repo     *repo.SQS
 	queueUrl string
 	app      *Application
@@ -24,10 +27,6 @@ func NewSQSTags(repo *repo.SQS, queueUrl string, app *Application) *SQSTags {
 		app:      app,
 	}
 	return s
-}
-
-func (s SQSTags) GetService() string {
-	return "SQS"
 }
 
 func (s SQSTags) GetLabels() []string {

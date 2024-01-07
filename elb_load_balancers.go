@@ -5,11 +5,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type ELBLoadBalancers struct {
 	*ui.Table
+	view.ELB
 	repo  *repo.ELB
 	app   *Application
 	model []model.ELBLoadBalancer
@@ -27,10 +29,6 @@ func NewELBLoadBalancers(repo *repo.ELB, app *Application) *ELBLoadBalancers {
 		app:  app,
 	}
 	return e
-}
-
-func (e ELBLoadBalancers) GetService() string {
-	return "ELB"
 }
 
 func (e ELBLoadBalancers) GetLabels() []string {

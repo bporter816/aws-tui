@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type CloudWatchTags struct {
 	*ui.Table
+	view.CloudWatch
 	repo *repo.CloudWatch
 	arn  string
 	name string
@@ -25,10 +27,6 @@ func NewCloudWatchTags(repo *repo.CloudWatch, arn string, name string, app *Appl
 		app:  app,
 	}
 	return c
-}
-
-func (c CloudWatchTags) GetService() string {
-	return "CloudWatch"
 }
 
 func (c CloudWatchTags) GetLabels() []string {

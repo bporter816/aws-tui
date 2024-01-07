@@ -4,11 +4,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type ElastiCacheParameterGroups struct {
 	*ui.Table
+	view.ElastiCache
 	repo *repo.ElastiCache
 	app  *Application
 }
@@ -25,10 +27,6 @@ func NewElastiCacheParameterGroups(repo *repo.ElastiCache, app *Application) *El
 		app:  app,
 	}
 	return e
-}
-
-func (e ElastiCacheParameterGroups) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheParameterGroups) GetLabels() []string {

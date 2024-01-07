@@ -1,16 +1,19 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type LambdaFunctions struct {
 	*ui.Table
+	view.Lambda
 	repo  *repo.Lambda
 	app   *Application
 	model []model.LambdaFunction
@@ -32,10 +35,6 @@ func NewLambdaFunctions(repo *repo.Lambda, app *Application) *LambdaFunctions {
 		app:  app,
 	}
 	return l
-}
-
-func (l LambdaFunctions) GetService() string {
-	return "Lambda"
 }
 
 func (l LambdaFunctions) GetLabels() []string {

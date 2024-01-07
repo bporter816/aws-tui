@@ -2,15 +2,18 @@ package main
 
 import (
 	"crypto/x509"
+
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/template"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ACMCertificateDetails struct {
 	*ui.Text
+	view.ACM
 	repo           *repo.ACM
 	displayName    string
 	certificateArn string
@@ -26,10 +29,6 @@ func NewACMCertificateDetails(repo *repo.ACM, displayName string, certificateArn
 		app:            app,
 	}
 	return a
-}
-
-func (a ACMCertificateDetails) GetService() string {
-	return "ACM"
 }
 
 func (a ACMCertificateDetails) GetLabels() []string {

@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type ELBTags struct {
 	*ui.Table
+	view.ELB
 	repo         *repo.ELB
 	resourceArn  string
 	resourceName string
@@ -25,10 +27,6 @@ func NewELBTags(repo *repo.ELB, resourceArn string, resourceName string, app *Ap
 		app:          app,
 	}
 	return e
-}
-
-func (e ELBTags) GetService() string {
-	return "ELB"
 }
 
 func (e ELBTags) GetLabels() []string {

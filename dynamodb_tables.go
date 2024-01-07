@@ -2,18 +2,21 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
-	"strings"
 )
 
 type DynamoDBTables struct {
 	*ui.Table
+	view.DynamoDB
 	repo  *repo.DynamoDB
 	app   *Application
 	model []model.DynamoDBTable
@@ -37,10 +40,6 @@ func NewDynamoDBTables(repo *repo.DynamoDB, app *Application) *DynamoDBTables {
 		app:  app,
 	}
 	return d
-}
-
-func (d DynamoDBTables) GetService() string {
-	return "DynamoDB"
 }
 
 func (d DynamoDBTables) GetLabels() []string {

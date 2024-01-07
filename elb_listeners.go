@@ -7,6 +7,7 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -14,6 +15,7 @@ import (
 // TODO better manage name/arn
 type ELBListeners struct {
 	*ui.Table
+	view.ELB
 	repo   *repo.ELB
 	lbArn  string
 	lbName string
@@ -37,10 +39,6 @@ func NewELBListeners(repo *repo.ELB, lbArn string, lbName string, app *Applicati
 		app:    app,
 	}
 	return e
-}
-
-func (e ELBListeners) GetService() string {
-	return "ELB"
 }
 
 func (e ELBListeners) GetLabels() []string {

@@ -5,10 +5,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type LambdaTags struct {
 	*ui.Table
+	view.Lambda
 	repo *repo.Lambda
 	id   string
 	app  *Application
@@ -25,10 +27,6 @@ func NewLambdaTags(repo *repo.Lambda, id string, app *Application) *LambdaTags {
 		app:  app,
 	}
 	return l
-}
-
-func (l LambdaTags) GetService() string {
-	return "Lambda"
 }
 
 func (l LambdaTags) GetLabels() []string {

@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type EC2Subnets struct {
 	*ui.Table
+	view.EC2
 	repo      *repo.EC2
 	subnetIds []string
 	label     string
@@ -32,10 +35,6 @@ func NewEC2Subnets(repo *repo.EC2, subnetIds []string, label string, app *Applic
 		app:       app,
 	}
 	return e
-}
-
-func (e EC2Subnets) GetService() string {
-	return "EC2"
 }
 
 func (e EC2Subnets) GetLabels() []string {

@@ -1,16 +1,19 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
-	"strconv"
 )
 
 type ElastiCacheReservedCacheNodes struct {
 	*ui.Table
+	view.ElastiCache
 	repo  *repo.ElastiCache
 	app   *Application
 	model []model.ElastiCacheReservedNode
@@ -30,10 +33,6 @@ func NewElastiCacheReservedCacheNodes(repo *repo.ElastiCache, app *Application) 
 		app:  app,
 	}
 	return e
-}
-
-func (e ElastiCacheReservedCacheNodes) GetService() string {
-	return "ElastiCache"
 }
 
 func (e ElastiCacheReservedCacheNodes) GetLabels() []string {

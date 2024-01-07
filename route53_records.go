@@ -1,16 +1,19 @@
 package main
 
 import (
+	"strconv"
+	"strings"
+
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
-	"strconv"
-	"strings"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type Route53Records struct {
 	*ui.Table
+	view.Route53
 	repo         *repo.Route53
 	hostedZoneId string
 	app          *Application
@@ -35,10 +38,6 @@ func NewRoute53Records(repo *repo.Route53, zoneId string, app *Application) *Rou
 		app:          app,
 	}
 	return r
-}
-
-func (r Route53Records) GetService() string {
-	return "Route 53"
 }
 
 func (r Route53Records) GetLabels() []string {

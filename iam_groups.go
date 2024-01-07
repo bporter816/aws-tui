@@ -5,11 +5,13 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
 
 type IAMGroups struct {
 	*ui.Table
+	view.IAM
 	repo     *repo.IAM
 	userName *string
 	app      *Application
@@ -28,10 +30,6 @@ func NewIAMGroups(repo *repo.IAM, userName *string, app *Application) *IAMGroups
 		app:      app,
 	}
 	return i
-}
-
-func (i IAMGroups) GetService() string {
-	return "IAM"
 }
 
 func (i IAMGroups) GetLabels() []string {

@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type EC2SecurityGroupTags struct {
 	*ui.Table
+	view.EC2
 	repo *repo.EC2
 	sgId string
 	app  *Application
@@ -23,10 +25,6 @@ func NewEC2SecurityGroupTags(repo *repo.EC2, sgId string, app *Application) *EC2
 		app:  app,
 	}
 	return e
-}
-
-func (e EC2SecurityGroupTags) GetService() string {
-	return "EC2"
 }
 
 func (e EC2SecurityGroupTags) GetLabels() []string {

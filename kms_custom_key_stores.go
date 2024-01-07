@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+
 	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type KmsCustomKeyStores struct {
 	*ui.Table
+	view.KMS
 	repo *repo.KMS
 	app  *Application
 }
@@ -26,10 +29,6 @@ func NewKmsCustomKeyStores(repo *repo.KMS, app *Application) *KmsCustomKeyStores
 		app:  app,
 	}
 	return k
-}
-
-func (k KmsCustomKeyStores) GetService() string {
-	return "KMS"
 }
 
 func (k KmsCustomKeyStores) GetLabels() []string {

@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type CFDistributionOrigins struct {
 	*ui.Table
+	view.CloudFront
 	repo           *repo.CloudFront
 	distributionId string
 	app            *Application
@@ -25,10 +27,6 @@ func NewCFDistributionOrigins(repo *repo.CloudFront, distributionId string, app 
 		app:            app,
 	}
 	return c
-}
-
-func (c CFDistributionOrigins) GetService() string {
-	return "CloudFront"
 }
 
 func (c CFDistributionOrigins) GetLabels() []string {

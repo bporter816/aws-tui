@@ -5,10 +5,12 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type SNSAccessControlPolicy struct {
 	*ui.Text
+	view.SNS
 	repo     *repo.SNS
 	topicArn string
 	app      *Application
@@ -22,10 +24,6 @@ func NewSNSAccessControlPolicy(repo *repo.SNS, topicArn string, app *Application
 		app:      app,
 	}
 	return s
-}
-
-func (s SNSAccessControlPolicy) GetService() string {
-	return "SNS"
 }
 
 func (s SNSAccessControlPolicy) GetLabels() []string {

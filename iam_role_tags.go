@@ -3,10 +3,12 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/view"
 )
 
 type IAMRoleTags struct {
 	*ui.Table
+	view.IAM
 	repo     *repo.IAM
 	roleName string
 	app      *Application
@@ -23,10 +25,6 @@ func NewIAMRoleTags(repo *repo.IAM, roleName string, app *Application) *IAMRoleT
 		app:      app,
 	}
 	return i
-}
-
-func (i IAMRoleTags) GetService() string {
-	return "IAM"
 }
 
 func (i IAMRoleTags) GetLabels() []string {
