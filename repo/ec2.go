@@ -60,7 +60,7 @@ func (e EC2) GetPublicKey(keyPairId string) (string, error) {
 		&ec2.DescribeKeyPairsInput{
 			IncludePublicKey: aws.Bool(true),
 			Filters: []ec2Types.Filter{
-				ec2Types.Filter{
+				{
 					Name:   aws.String("key-pair-id"),
 					Values: []string{keyPairId},
 				},
@@ -122,7 +122,7 @@ func (e EC2) ListSecurityGroupRules(securityGroupId string) ([]model.EC2Security
 		e.ec2Client,
 		&ec2.DescribeSecurityGroupRulesInput{
 			Filters: []ec2Types.Filter{
-				ec2Types.Filter{
+				{
 					Name:   aws.String("group-id"),
 					Values: []string{securityGroupId},
 				},
@@ -249,7 +249,7 @@ func (e EC2) ListKeyPairTags(keyPairId string) (model.Tags, error) {
 		&ec2.DescribeKeyPairsInput{
 			IncludePublicKey: aws.Bool(true),
 			Filters: []ec2Types.Filter{
-				ec2Types.Filter{
+				{
 					Name:   aws.String("key-pair-id"),
 					Values: []string{keyPairId},
 				},
