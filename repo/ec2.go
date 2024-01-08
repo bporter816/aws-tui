@@ -226,6 +226,23 @@ func (e EC2) ListInstanceTags(instanceId string) (model.Tags, error) {
 	return tags, nil
 }
 
+func (e EC2) ListReservedInstances(filters []ec2Types.Filter) ([]model.EC2ReservedInstance, error) {
+	out, err := e.ec2Client.DescribeReservedInstances(
+		context.TODO(),
+		&ec2.DescribeReservedInstancesInput{
+			Filters: filters,
+		},
+	)
+	if err != nil {
+		return []model.EC2ReservedInstance{}, err
+	}
+	var reservedInstances []model.EC2ReservedInstance
+	for _, v := range out.ReservedInstances {
+		reservedInstances = append(reservedInstances, model.EC2ReservedInstance(v))
+	}
+	return reservedInstances, nil
+}
+
 func (e EC2) ListKeyPairTags(keyPairId string) (model.Tags, error) {
 	out, err := e.ec2Client.DescribeKeyPairs(
 		context.TODO(),

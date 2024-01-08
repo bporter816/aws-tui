@@ -7,6 +7,7 @@ import (
 type (
 	EC2Instance          ec2Types.Instance
 	EC2KeyPair           ec2Types.KeyPairInfo
+	EC2ReservedInstance  ec2Types.ReservedInstances
 	EC2SecurityGroup     ec2Types.SecurityGroup
 	EC2SecurityGroupRule ec2Types.SecurityGroupRule
 	EC2Image             ec2Types.Image
