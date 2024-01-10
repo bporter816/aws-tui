@@ -367,6 +367,26 @@ func (e EC2) ListInternetGateways() ([]model.EC2InternetGateway, error) {
 	return internetGateways, nil
 }
 
+func (e EC2) ListInternetGatewayAttachments(internetGatewayId string) ([]model.EC2InternetGatewayAttachment, error) {
+	out, err := e.ec2Client.DescribeInternetGateways(
+		context.TODO(),
+		&ec2.DescribeInternetGatewaysInput{
+			InternetGatewayIds: []string{internetGatewayId},
+		},
+	)
+	if err != nil {
+		return []model.EC2InternetGatewayAttachment{}, err
+	}
+	if len(out.InternetGateways) != 1 {
+		return []model.EC2InternetGatewayAttachment{}, errors.New("should get exactly 1 internet gateway")
+	}
+	var attachments []model.EC2InternetGatewayAttachment
+	for _, v := range out.InternetGateways[0].Attachments {
+		attachments = append(attachments, model.EC2InternetGatewayAttachment(v))
+	}
+	return attachments, nil
+}
+
 func (e EC2) ListInternetGatewayTags(internetGatewayId string) (model.Tags, error) {
 	out, err := e.ec2Client.DescribeInternetGateways(
 		context.TODO(),

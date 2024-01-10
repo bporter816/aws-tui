@@ -34,6 +34,15 @@ func (e EC2InternetGateways) GetLabels() []string {
 	return []string{"Internet Gateways"}
 }
 
+func (e EC2InternetGateways) attachmentsHandler() {
+	internetGatewayId, err := e.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	attachmentsView := NewEC2InternetGatewayAttachments(e.repo, internetGatewayId, e.app)
+	e.app.AddAndSwitch(attachmentsView)
+}
+
 func (e EC2InternetGateways) tagsHandler() {
 	internetGatewayId, err := e.GetColSelection("ID")
 	if err != nil {
@@ -45,6 +54,11 @@ func (e EC2InternetGateways) tagsHandler() {
 
 func (e EC2InternetGateways) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
+			Description: "Attachments",
+			Action:      e.attachmentsHandler,
+		},
 		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
 			Description: "Tags",
