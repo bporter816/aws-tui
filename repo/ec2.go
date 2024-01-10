@@ -348,3 +348,21 @@ func (e EC2) ListSubnetTags(subnetId string) (model.Tags, error) {
 	}
 	return tags, nil
 }
+
+func (e EC2) ListInternetGateways() ([]model.EC2InternetGateway, error) {
+	pg := ec2.NewDescribeInternetGatewaysPaginator(
+		e.ec2Client,
+		&ec2.DescribeInternetGatewaysInput{},
+	)
+	var internetGateways []model.EC2InternetGateway
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.EC2InternetGateway{}, err
+		}
+		for _, v := range out.InternetGateways {
+			internetGateways = append(internetGateways, model.EC2InternetGateway(v))
+		}
+	}
+	return internetGateways, nil
+}

@@ -14,4 +14,5 @@ type (
 	EC2VPC               ec2Types.Vpc
 	EC2Subnet            ec2Types.Subnet
 	EC2AvailabilityZone  ec2Types.AvailabilityZone
+	EC2InternetGateway   ec2Types.InternetGateway
 )
