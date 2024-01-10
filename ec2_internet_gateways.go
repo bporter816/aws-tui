@@ -6,6 +6,7 @@ import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 )
 
 type EC2InternetGateways struct {
@@ -33,8 +34,23 @@ func (e EC2InternetGateways) GetLabels() []string {
 	return []string{"Internet Gateways"}
 }
 
+func (e EC2InternetGateways) tagsHandler() {
+	internetGatewayId, err := e.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	tagsView := NewEC2InternetGatewayTags(e.repo, internetGatewayId, e.app)
+	e.app.AddAndSwitch(tagsView)
+}
+
 func (e EC2InternetGateways) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
 }
 
 func (e EC2InternetGateways) Render() {
