@@ -38,7 +38,7 @@ func (e EC2ReservedInstances) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2ReservedInstanceTags(id, e.repo, e.app)
+	tagsView := NewEC2Tags(e.repo, id, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

@@ -203,29 +203,6 @@ func (e EC2) ListAvailabilityZones() ([]model.EC2AvailabilityZone, error) {
 	return availabilityZones, nil
 }
 
-func (e EC2) ListInstanceTags(instanceId string) (model.Tags, error) {
-	out, err := e.ec2Client.DescribeInstances(
-		context.TODO(),
-		&ec2.DescribeInstancesInput{
-			InstanceIds: []string{instanceId},
-		},
-	)
-	if err != nil {
-		return model.Tags{}, err
-	}
-	if len(out.Reservations) != 1 {
-		return model.Tags{}, errors.New("should get exactly 1 reservation")
-	}
-	if len(out.Reservations[0].Instances) != 1 {
-		return model.Tags{}, errors.New("should get exactly 1 instance")
-	}
-	var tags model.Tags
-	for _, v := range out.Reservations[0].Instances[0].Tags {
-		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
-	}
-	return tags, nil
-}
-
 func (e EC2) ListReservedInstances(filters []ec2Types.Filter) ([]model.EC2ReservedInstance, error) {
 	out, err := e.ec2Client.DescribeReservedInstances(
 		context.TODO(),
@@ -241,72 +218,6 @@ func (e EC2) ListReservedInstances(filters []ec2Types.Filter) ([]model.EC2Reserv
 		reservedInstances = append(reservedInstances, model.EC2ReservedInstance(v))
 	}
 	return reservedInstances, nil
-}
-
-func (e EC2) ListKeyPairTags(keyPairId string) (model.Tags, error) {
-	out, err := e.ec2Client.DescribeKeyPairs(
-		context.TODO(),
-		&ec2.DescribeKeyPairsInput{
-			IncludePublicKey: aws.Bool(true),
-			Filters: []ec2Types.Filter{
-				{
-					Name:   aws.String("key-pair-id"),
-					Values: []string{keyPairId},
-				},
-			},
-		},
-	)
-	if err != nil {
-		return model.Tags{}, err
-	}
-	if len(out.KeyPairs) != 1 {
-		return model.Tags{}, errors.New("should get exactly 1 key pair")
-	}
-	var tags model.Tags
-	for _, v := range out.KeyPairs[0].Tags {
-		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
-	}
-	return tags, nil
-}
-
-func (e EC2) ListSecurityGroupTags(securityGroupId string) (model.Tags, error) {
-	out, err := e.ec2Client.DescribeSecurityGroups(
-		context.TODO(),
-		&ec2.DescribeSecurityGroupsInput{
-			GroupIds: []string{securityGroupId},
-		},
-	)
-	if err != nil {
-		return model.Tags{}, err
-	}
-	if len(out.SecurityGroups) != 1 {
-		return model.Tags{}, errors.New("should get exactly 1 security group")
-	}
-	var tags model.Tags
-	for _, v := range out.SecurityGroups[0].Tags {
-		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
-	}
-	return tags, nil
-}
-
-func (e EC2) ListSecurityGroupRuleTags(ruleId string) (model.Tags, error) {
-	out, err := e.ec2Client.DescribeSecurityGroupRules(
-		context.TODO(),
-		&ec2.DescribeSecurityGroupRulesInput{
-			SecurityGroupRuleIds: []string{ruleId},
-		},
-	)
-	if err != nil {
-		return model.Tags{}, err
-	}
-	if len(out.SecurityGroupRules) != 1 {
-		return model.Tags{}, errors.New("should get exactly 1 rule")
-	}
-	var tags model.Tags
-	for _, v := range out.SecurityGroupRules[0].Tags {
-		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
-	}
-	return tags, nil
 }
 
 func (e EC2) ListVPCTags(vpcId string) (model.Tags, error) {
@@ -407,10 +318,12 @@ func (e EC2) ListInternetGatewayTags(internetGatewayId string) (model.Tags, erro
 	return tags, nil
 }
 
-func (e EC2) ListVolumes() ([]model.EC2Volume, error) {
+func (e EC2) ListVolumes(filters []ec2Types.Filter) ([]model.EC2Volume, error) {
 	pg := ec2.NewDescribeVolumesPaginator(
 		e.ec2Client,
-		&ec2.DescribeVolumesInput{},
+		&ec2.DescribeVolumesInput{
+			Filters: filters,
+		},
 	)
 	var volumes []model.EC2Volume
 	for pg.HasMorePages() {
@@ -423,4 +336,29 @@ func (e EC2) ListVolumes() ([]model.EC2Volume, error) {
 		}
 	}
 	return volumes, nil
+}
+
+func (e EC2) ListTags(resourceId string) (model.Tags, error) {
+	pg := ec2.NewDescribeTagsPaginator(
+		e.ec2Client,
+		&ec2.DescribeTagsInput{
+			Filters: []ec2Types.Filter{
+				{
+					Name:   aws.String("resource-id"),
+					Values: []string{resourceId},
+				},
+			},
+		},
+	)
+	var tags model.Tags
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return model.Tags{}, err
+		}
+		for _, v := range out.Tags {
+			tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+		}
+	}
+	return tags, nil
 }

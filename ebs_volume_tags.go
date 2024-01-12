@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go-v2/aws"
-	ec2Types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/view"
@@ -38,26 +36,16 @@ func (e EBSVolumeTags) GetKeyActions() []KeyAction {
 }
 
 func (e EBSVolumeTags) Render() {
-	model, err := e.repo.ListVolumes(
-		[]ec2Types.Filter{
-			{
-				Name:   aws.String("volume-id"),
-				Values: []string{e.volumeId},
-			},
-		},
-	)
+	model, err := e.repo.ListTags(e.volumeId)
 	if err != nil {
 		panic(err)
 	}
-	if len(model) != 1 {
-		panic("expected exactly one volume spec")
-	}
 
 	var data [][]string
-	for _, v := range model[0].Tags {
+	for _, v := range model {
 		data = append(data, []string{
-			*v.Key,
-			*v.Value,
+			v.Key,
+			v.Value,
 		})
 	}
 	e.SetData(data)

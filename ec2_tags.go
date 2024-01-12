@@ -6,37 +6,37 @@ import (
 	"github.com/bporter816/aws-tui/view"
 )
 
-type EC2InstanceTags struct {
+type EC2Tags struct {
 	*ui.Table
 	view.EC2
 	repo       *repo.EC2
-	instanceId string
+	resourceId string
 	app        *Application
 }
 
-func NewEC2InstanceTags(repo *repo.EC2, instanceId string, app *Application) *EC2InstanceTags {
-	e := &EC2InstanceTags{
+func NewEC2Tags(repo *repo.EC2, resourceId string, app *Application) *EC2Tags {
+	e := &EC2Tags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
 		}, 1, 0),
 		repo:       repo,
-		instanceId: instanceId,
+		resourceId: resourceId,
 		app:        app,
 	}
 	return e
 }
 
-func (e EC2InstanceTags) GetLabels() []string {
-	return []string{e.instanceId, "Tags"}
+func (e EC2Tags) GetLabels() []string {
+	return []string{e.resourceId, "Tags"}
 }
 
-func (e EC2InstanceTags) GetKeyActions() []KeyAction {
+func (e EC2Tags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2InstanceTags) Render() {
-	model, err := e.repo.ListInstanceTags(e.instanceId)
+func (e EC2Tags) Render() {
+	model, err := e.repo.ListTags(e.resourceId)
 	if err != nil {
 		panic(err)
 	}

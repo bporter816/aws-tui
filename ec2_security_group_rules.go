@@ -45,7 +45,7 @@ func (e EC2SecurityGroupRules) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2SecurityGroupRuleTags(e.repo, ruleId, e.app)
+	tagsView := NewEC2Tags(e.repo, ruleId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
