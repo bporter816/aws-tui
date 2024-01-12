@@ -7,6 +7,7 @@ import (
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 )
 
 type EBSVolumes struct {
@@ -38,12 +39,27 @@ func (e EBSVolumes) GetLabels() []string {
 	return []string{"Volumes"}
 }
 
+func (e EBSVolumes) tagsHandler() {
+	id, err := e.GetColSelection("ID")
+	if err != nil {
+		return
+	}
+	tagsView := NewEBSVolumeTags(id, e.repo, e.app)
+	e.app.AddAndSwitch(tagsView)
+}
+
 func (e EBSVolumes) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
 }
 
 func (e EBSVolumes) Render() {
-	model, err := e.repo.ListVolumes()
+	model, err := e.repo.ListVolumes(nil)
 	if err != nil {
 		panic(err)
 	}
