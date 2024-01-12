@@ -7,16 +7,16 @@ import (
 	"github.com/bporter816/aws-tui/view"
 )
 
-type EC2InternetGatewayAttachments struct {
+type VPCInternetGatewayAttachments struct {
 	*ui.Table
-	view.EC2
+	view.VPC
 	repo              *repo.EC2
 	internetGatewayId string
 	app               *Application
 }
 
-func NewEC2InternetGatewayAttachments(repo *repo.EC2, internetGatewayId string, app *Application) *EC2InternetGatewayAttachments {
-	e := &EC2InternetGatewayAttachments{
+func NewVPCInternetGatewayAttachments(repo *repo.EC2, internetGatewayId string, app *Application) *VPCInternetGatewayAttachments {
+	e := &VPCInternetGatewayAttachments{
 		Table: ui.NewTable([]string{
 			"VPC ID",
 			"STATE",
@@ -28,15 +28,15 @@ func NewEC2InternetGatewayAttachments(repo *repo.EC2, internetGatewayId string, 
 	return e
 }
 
-func (e EC2InternetGatewayAttachments) GetLabels() []string {
+func (e VPCInternetGatewayAttachments) GetLabels() []string {
 	return []string{e.internetGatewayId, "Attachments"}
 }
 
-func (e EC2InternetGatewayAttachments) GetKeyActions() []KeyAction {
+func (e VPCInternetGatewayAttachments) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2InternetGatewayAttachments) Render() {
+func (e VPCInternetGatewayAttachments) Render() {
 	model, err := e.repo.ListInternetGatewayAttachments(e.internetGatewayId)
 	if err != nil {
 		panic(err)

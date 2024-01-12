@@ -10,17 +10,17 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type EC2Subnets struct {
+type VPCSubnets struct {
 	*ui.Table
-	view.EC2
+	view.VPC
 	repo      *repo.EC2
 	subnetIds []string
 	label     string
 	app       *Application
 }
 
-func NewEC2Subnets(repo *repo.EC2, subnetIds []string, label string, app *Application) *EC2Subnets {
-	e := &EC2Subnets{
+func NewVPCSubnets(repo *repo.EC2, subnetIds []string, label string, app *Application) *VPCSubnets {
+	e := &VPCSubnets{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"SUBNET ID",
@@ -37,7 +37,7 @@ func NewEC2Subnets(repo *repo.EC2, subnetIds []string, label string, app *Applic
 	return e
 }
 
-func (e EC2Subnets) GetLabels() []string {
+func (e VPCSubnets) GetLabels() []string {
 	if len(e.subnetIds) > 0 {
 		return []string{e.label, "Subnets"}
 	} else {
@@ -45,16 +45,16 @@ func (e EC2Subnets) GetLabels() []string {
 	}
 }
 
-func (e EC2Subnets) tagsHandler() {
+func (e VPCSubnets) tagsHandler() {
 	subnetId, err := e.GetColSelection("SUBNET ID")
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2SubnetTags(e.repo, subnetId, e.app)
+	tagsView := NewVPCSubnetTags(e.repo, subnetId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
-func (e EC2Subnets) GetKeyActions() []KeyAction {
+func (e VPCSubnets) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
@@ -64,7 +64,7 @@ func (e EC2Subnets) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e EC2Subnets) Render() {
+func (e VPCSubnets) Render() {
 	model, err := e.repo.ListSubnets(e.subnetIds)
 	if err != nil {
 		panic(err)

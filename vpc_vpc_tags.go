@@ -6,16 +6,16 @@ import (
 	"github.com/bporter816/aws-tui/view"
 )
 
-type EC2VPCTags struct {
+type VPCVPCTags struct {
 	*ui.Table
-	view.EC2
+	view.VPC
 	repo  *repo.EC2
 	vpcId string
 	app   *Application
 }
 
-func NewEC2VPCTags(repo *repo.EC2, vpcId string, app *Application) *EC2VPCTags {
-	e := &EC2VPCTags{
+func NewVPCVPCTags(repo *repo.EC2, vpcId string, app *Application) *VPCVPCTags {
+	e := &VPCVPCTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
@@ -27,15 +27,15 @@ func NewEC2VPCTags(repo *repo.EC2, vpcId string, app *Application) *EC2VPCTags {
 	return e
 }
 
-func (e EC2VPCTags) GetLabels() []string {
+func (e VPCVPCTags) GetLabels() []string {
 	return []string{e.vpcId, "Tags"}
 }
 
-func (e EC2VPCTags) GetKeyActions() []KeyAction {
+func (e VPCVPCTags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2VPCTags) Render() {
+func (e VPCVPCTags) Render() {
 	model, err := e.repo.ListVPCTags(e.vpcId)
 	if err != nil {
 		panic(err)

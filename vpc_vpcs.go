@@ -8,15 +8,15 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type EC2VPCs struct {
+type VPCVPCs struct {
 	*ui.Table
-	view.EC2
+	view.VPC
 	repo *repo.EC2
 	app  *Application
 }
 
-func NewEC2VPCs(repo *repo.EC2, app *Application) *EC2VPCs {
-	e := &EC2VPCs{
+func NewVPCVPCs(repo *repo.EC2, app *Application) *VPCVPCs {
+	e := &VPCVPCs{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"ID",
@@ -29,20 +29,20 @@ func NewEC2VPCs(repo *repo.EC2, app *Application) *EC2VPCs {
 	return e
 }
 
-func (e EC2VPCs) GetLabels() []string {
+func (e VPCVPCs) GetLabels() []string {
 	return []string{"VPCs"}
 }
 
-func (e EC2VPCs) tagsHandler() {
+func (e VPCVPCs) tagsHandler() {
 	vpcId, err := e.GetColSelection("ID")
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2VPCTags(e.repo, vpcId, e.app)
+	tagsView := NewVPCVPCTags(e.repo, vpcId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 
-func (e EC2VPCs) GetKeyActions() []KeyAction {
+func (e VPCVPCs) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
@@ -52,7 +52,7 @@ func (e EC2VPCs) GetKeyActions() []KeyAction {
 	}
 }
 
-func (e EC2VPCs) Render() {
+func (e VPCVPCs) Render() {
 	model, err := e.repo.ListVPCs()
 	if err != nil {
 		panic(err)

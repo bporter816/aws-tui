@@ -52,7 +52,7 @@ func (e ElastiCacheSubnetGroups) subnetsHandler() {
 		}
 	}
 	if name := e.model[row-1].CacheSubnetGroupName; name != nil {
-		subnetsView := NewEC2Subnets(e.ec2Repo, subnetIds, *name, e.app)
+		subnetsView := NewVPCSubnets(e.ec2Repo, subnetIds, *name, e.app)
 		e.app.AddAndSwitch(subnetsView)
 	}
 }

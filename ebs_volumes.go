@@ -9,15 +9,15 @@ import (
 	"github.com/bporter816/aws-tui/view"
 )
 
-type EC2Volumes struct {
+type EBSVolumes struct {
 	*ui.Table
-	view.EC2
+	view.EBS
 	repo *repo.EC2
 	app  *Application
 }
 
-func NewEC2Volumes(repo *repo.EC2, app *Application) *EC2Volumes {
-	e := &EC2Volumes{
+func NewEBSVolumes(repo *repo.EC2, app *Application) *EBSVolumes {
+	e := &EBSVolumes{
 		Table: ui.NewTable([]string{
 			"NAME",
 			"ID",
@@ -34,15 +34,15 @@ func NewEC2Volumes(repo *repo.EC2, app *Application) *EC2Volumes {
 	return e
 }
 
-func (e EC2Volumes) GetLabels() []string {
+func (e EBSVolumes) GetLabels() []string {
 	return []string{"Volumes"}
 }
 
-func (e EC2Volumes) GetKeyActions() []KeyAction {
+func (e EBSVolumes) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2Volumes) Render() {
+func (e EBSVolumes) Render() {
 	model, err := e.repo.ListVolumes()
 	if err != nil {
 		panic(err)

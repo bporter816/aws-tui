@@ -6,16 +6,16 @@ import (
 	"github.com/bporter816/aws-tui/view"
 )
 
-type EC2SubnetTags struct {
+type VPCSubnetTags struct {
 	*ui.Table
-	view.EC2
+	view.VPC
 	repo     *repo.EC2
 	subnetId string
 	app      *Application
 }
 
-func NewEC2SubnetTags(repo *repo.EC2, subnetId string, app *Application) *EC2SubnetTags {
-	e := &EC2SubnetTags{
+func NewVPCSubnetTags(repo *repo.EC2, subnetId string, app *Application) *VPCSubnetTags {
+	e := &VPCSubnetTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
@@ -27,15 +27,15 @@ func NewEC2SubnetTags(repo *repo.EC2, subnetId string, app *Application) *EC2Sub
 	return e
 }
 
-func (e EC2SubnetTags) GetLabels() []string {
+func (e VPCSubnetTags) GetLabels() []string {
 	return []string{e.subnetId, "Tags"}
 }
 
-func (e EC2SubnetTags) GetKeyActions() []KeyAction {
+func (e VPCSubnetTags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2SubnetTags) Render() {
+func (e VPCSubnetTags) Render() {
 	model, err := e.repo.ListSubnetTags(e.subnetId)
 	if err != nil {
 		panic(err)

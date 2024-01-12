@@ -6,16 +6,16 @@ import (
 	"github.com/bporter816/aws-tui/view"
 )
 
-type EC2InternetGatewayTags struct {
+type VPCInternetGatewayTags struct {
 	*ui.Table
-	view.EC2
+	view.VPC
 	repo              *repo.EC2
 	internetGatewayId string
 	app               *Application
 }
 
-func NewEC2InternetGatewayTags(repo *repo.EC2, internetGatewayId string, app *Application) *EC2InternetGatewayTags {
-	e := &EC2InternetGatewayTags{
+func NewVPCInternetGatewayTags(repo *repo.EC2, internetGatewayId string, app *Application) *VPCInternetGatewayTags {
+	e := &VPCInternetGatewayTags{
 		Table: ui.NewTable([]string{
 			"KEY",
 			"VALUE",
@@ -27,15 +27,15 @@ func NewEC2InternetGatewayTags(repo *repo.EC2, internetGatewayId string, app *Ap
 	return e
 }
 
-func (e EC2InternetGatewayTags) GetLabels() []string {
+func (e VPCInternetGatewayTags) GetLabels() []string {
 	return []string{e.internetGatewayId, "Tags"}
 }
 
-func (e EC2InternetGatewayTags) GetKeyActions() []KeyAction {
+func (e VPCInternetGatewayTags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2InternetGatewayTags) Render() {
+func (e VPCInternetGatewayTags) Render() {
 	model, err := e.repo.ListInternetGatewayTags(e.internetGatewayId)
 	if err != nil {
 		panic(err)

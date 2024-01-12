@@ -30,17 +30,16 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		"DynamoDB": {
 			"Tables",
 		},
+		"EBS": {
+			"Volumes",
+		},
 		"EC2": {
 			"Instances",
-			"VPCs",
-			"Subnets",
 			"Availability Zones",
-			"Internet Gateways",
 			"Security Groups",
 			"AMIs",
 			"Key Pairs",
 			"Reserved Instances",
-			"Volumes",
 		},
 		"EKS": {
 			"Clusters",
@@ -92,6 +91,11 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		},
 		"Service Quotas": {
 			"Services",
+		},
+		"VPC": {
+			"VPCs",
+			"Subnets",
+			"Internet Gateways",
 		},
 	}
 	root := tview.NewTreeNode("Services")
@@ -155,16 +159,12 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewCloudWatchLogGroups(s.repos["CloudWatch"].(*repo.CloudWatch), s.app)
 	case "DynamoDB.Tables":
 		item = NewDynamoDBTables(s.repos["DynamoDB"].(*repo.DynamoDB), s.app)
+	case "EBS.Volumes":
+		item = NewEBSVolumes(s.repos["EC2"].(*repo.EC2), s.app)
 	case "EC2.Instances":
 		item = NewEC2Instances(s.repos["EC2"].(*repo.EC2), s.app)
-	case "EC2.VPCs":
-		item = NewEC2VPCs(s.repos["EC2"].(*repo.EC2), s.app)
-	case "EC2.Subnets":
-		item = NewEC2Subnets(s.repos["EC2"].(*repo.EC2), []string{}, "", s.app)
 	case "EC2.Availability Zones":
 		item = NewEC2AvailabilityZones(s.repos["EC2"].(*repo.EC2), s.app)
-	case "EC2.Internet Gateways":
-		item = NewEC2InternetGateways(s.repos["EC2"].(*repo.EC2), s.app)
 	case "EC2.Security Groups":
 		item = NewEC2SecurityGroups(s.repos["EC2"].(*repo.EC2), s.app)
 	case "EC2.AMIs":
@@ -173,8 +173,6 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewEC2KeyPairs(s.repos["EC2"].(*repo.EC2), s.app)
 	case "EC2.Reserved Instances":
 		item = NewEC2ReservedInstances(s.repos["EC2"].(*repo.EC2), s.app)
-	case "EC2.Volumes":
-		item = NewEC2Volumes(s.repos["EC2"].(*repo.EC2), s.app)
 	case "EKS.Clusters":
 		item = NewEKSClusters(s.repos["EKS"].(*repo.EKS), s.app)
 	case "ELB.Load Balancers":
@@ -229,6 +227,12 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewSMSecrets(s.repos["Secrets Manager"].(*repo.SecretsManager), s.app)
 	case "Service Quotas.Services":
 		item = NewServiceQuotasServices(s.repos["Service Quotas"].(*repo.ServiceQuotas), s.app)
+	case "VPC.VPCs":
+		item = NewVPCVPCs(s.repos["EC2"].(*repo.EC2), s.app)
+	case "VPC.Subnets":
+		item = NewVPCSubnets(s.repos["EC2"].(*repo.EC2), []string{}, "", s.app)
+	case "VPC.Internet Gateways":
+		item = NewVPCInternetGateways(s.repos["EC2"].(*repo.EC2), s.app)
 	default:
 		panic("unknown service")
 	}
