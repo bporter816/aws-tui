@@ -16,4 +16,5 @@ type (
 	EC2AvailabilityZone          ec2Types.AvailabilityZone
 	EC2InternetGateway           ec2Types.InternetGateway
 	EC2InternetGatewayAttachment ec2Types.InternetGatewayAttachment
+	EC2Volume                    ec2Types.Volume
 )

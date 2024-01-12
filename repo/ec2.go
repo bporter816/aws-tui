@@ -406,3 +406,21 @@ func (e EC2) ListInternetGatewayTags(internetGatewayId string) (model.Tags, erro
 	}
 	return tags, nil
 }
+
+func (e EC2) ListVolumes() ([]model.EC2Volume, error) {
+	pg := ec2.NewDescribeVolumesPaginator(
+		e.ec2Client,
+		&ec2.DescribeVolumesInput{},
+	)
+	var volumes []model.EC2Volume
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.EC2Volume{}, err
+		}
+		for _, v := range out.Volumes {
+			volumes = append(volumes, model.EC2Volume(v))
+		}
+	}
+	return volumes, nil
+}
