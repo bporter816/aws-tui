@@ -220,46 +220,6 @@ func (e EC2) ListReservedInstances(filters []ec2Types.Filter) ([]model.EC2Reserv
 	return reservedInstances, nil
 }
 
-func (e EC2) ListVPCTags(vpcId string) (model.Tags, error) {
-	out, err := e.ec2Client.DescribeVpcs(
-		context.TODO(),
-		&ec2.DescribeVpcsInput{
-			VpcIds: []string{vpcId},
-		},
-	)
-	if err != nil {
-		return model.Tags{}, err
-	}
-	if len(out.Vpcs) != 1 {
-		return model.Tags{}, errors.New("should get exactly 1 vpc")
-	}
-	var tags model.Tags
-	for _, v := range out.Vpcs[0].Tags {
-		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
-	}
-	return tags, nil
-}
-
-func (e EC2) ListSubnetTags(subnetId string) (model.Tags, error) {
-	out, err := e.ec2Client.DescribeSubnets(
-		context.TODO(),
-		&ec2.DescribeSubnetsInput{
-			SubnetIds: []string{subnetId},
-		},
-	)
-	if err != nil {
-		return model.Tags{}, err
-	}
-	if len(out.Subnets) != 1 {
-		return model.Tags{}, errors.New("should get exactly 1 subnet")
-	}
-	var tags model.Tags
-	for _, v := range out.Subnets[0].Tags {
-		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
-	}
-	return tags, nil
-}
-
 func (e EC2) ListInternetGateways() ([]model.EC2InternetGateway, error) {
 	pg := ec2.NewDescribeInternetGatewaysPaginator(
 		e.ec2Client,
@@ -296,26 +256,6 @@ func (e EC2) ListInternetGatewayAttachments(internetGatewayId string) ([]model.E
 		attachments = append(attachments, model.EC2InternetGatewayAttachment(v))
 	}
 	return attachments, nil
-}
-
-func (e EC2) ListInternetGatewayTags(internetGatewayId string) (model.Tags, error) {
-	out, err := e.ec2Client.DescribeInternetGateways(
-		context.TODO(),
-		&ec2.DescribeInternetGatewaysInput{
-			InternetGatewayIds: []string{internetGatewayId},
-		},
-	)
-	if err != nil {
-		return model.Tags{}, err
-	}
-	if len(out.InternetGateways) != 1 {
-		return model.Tags{}, errors.New("should get exactly 1 internet gateway")
-	}
-	var tags model.Tags
-	for _, v := range out.InternetGateways[0].Tags {
-		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
-	}
-	return tags, nil
 }
 
 func (e EC2) ListVolumes(filters []ec2Types.Filter) ([]model.EC2Volume, error) {
