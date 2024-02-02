@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	// "os/exec"
 	// "sort"
 	"strings"
@@ -26,6 +27,7 @@ import (
 	sq "github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/template"
@@ -63,11 +65,12 @@ func NewApplication() *Application {
 	lambdaClient := lambda.NewFromConfig(cfg)
 	r53Client := r53.NewFromConfig(cfg)
 	s3Client := s3.NewFromConfig(cfg)
-	stsClient := sts.NewFromConfig(cfg)
-	smClient := sm.NewFromConfig(cfg)
 	snsClient := sns.NewFromConfig(cfg)
+	smClient := sm.NewFromConfig(cfg)
 	sqClient := sq.NewFromConfig(cfg)
 	sqsClient := sqs.NewFromConfig(cfg)
+	ssmClient := ssm.NewFromConfig(cfg)
+	stsClient := sts.NewFromConfig(cfg)
 
 	a := &Application{}
 
@@ -85,10 +88,11 @@ func NewApplication() *Application {
 	r53Repo := repo.NewRoute53(r53Client)
 	s3Repo := repo.NewS3(s3Client)
 	snsRepo := repo.NewSNS(snsClient)
-	sqsRepo := repo.NewSQS(sqsClient)
-	stsRepo := repo.NewSTS(stsClient)
 	smRepo := repo.NewSecretsManager(smClient)
 	sqRepo := repo.NewServiceQuotas(sqClient)
+	sqsRepo := repo.NewSQS(sqsClient)
+	ssmRepo := repo.NewSSM(ssmClient)
+	stsRepo := repo.NewSTS(stsClient)
 
 	repos := map[string]interface{}{
 		"ACM":             acmRepo,
@@ -108,6 +112,7 @@ func NewApplication() *Application {
 		"SQS":             sqsRepo,
 		"STS":             stsRepo,
 		"Secrets Manager": smRepo,
+		"SSM":             ssmRepo,
 		"Service Quotas":  sqRepo,
 	}
 

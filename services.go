@@ -92,6 +92,9 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		"Service Quotas": {
 			"Services",
 		},
+		"Systems Manager": {
+			"Parameters",
+		},
 		"VPC": {
 			"VPCs",
 			"Subnets",
@@ -227,6 +230,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewSMSecrets(s.repos["Secrets Manager"].(*repo.SecretsManager), s.app)
 	case "Service Quotas.Services":
 		item = NewServiceQuotasServices(s.repos["Service Quotas"].(*repo.ServiceQuotas), s.app)
+	case "Systems Manager.Parameters":
+		item = NewSSMParameters(s.repos["SSM"].(*repo.SSM), s.app)
 	case "VPC.VPCs":
 		item = NewVPCVPCs(s.repos["EC2"].(*repo.EC2), s.app)
 	case "VPC.Subnets":
