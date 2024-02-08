@@ -3,7 +3,9 @@ package repo
 import (
 	"context"
 	"errors"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/bporter816/aws-tui/model"
 )
@@ -141,4 +143,24 @@ func (e ELB) ListTrustStores() ([]model.ELBTrustStore, error) {
 		}
 	}
 	return trustStores, nil
+}
+
+func (e ELB) ListTrustStoreAssociations(a arn.ARN) ([]model.ELBTrustStoreAssociation, error) {
+	pg := elb.NewDescribeTrustStoreAssociationsPaginator(
+		e.elbClient,
+		&elb.DescribeTrustStoreAssociationsInput{
+			TrustStoreArn: aws.String(a.String()),
+		},
+	)
+	var associations []model.ELBTrustStoreAssociation
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.ELBTrustStoreAssociation{}, err
+		}
+		for _, v := range out.TrustStoreAssociations {
+			associations = append(associations, model.ELBTrustStoreAssociation(v))
+		}
+	}
+	return associations, nil
 }

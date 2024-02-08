@@ -10,7 +10,8 @@ type (
 		elbTypes.Listener
 		Rules int
 	}
-	ELBListenerRule elbTypes.Rule
-	ELBTargetGroup  elbTypes.TargetGroup
-	ELBTrustStore   elbTypes.TrustStore
+	ELBListenerRule          elbTypes.Rule
+	ELBTargetGroup           elbTypes.TargetGroup
+	ELBTrustStore            elbTypes.TrustStore
+	ELBTrustStoreAssociation elbTypes.TrustStoreAssociation
 )

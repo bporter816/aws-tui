@@ -3,17 +3,21 @@ package main
 import (
 	"strconv"
 
+	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ELBTrustStores struct {
 	*ui.Table
 	view.ELB
-	repo *repo.ELB
-	app  *Application
+	repo  *repo.ELB
+	app   *Application
+	model []model.ELBTrustStore
 }
 
 func NewELBTrustStores(repo *repo.ELB, app *Application) *ELBTrustStores {
@@ -34,12 +38,32 @@ func (e ELBTrustStores) GetLabels() []string {
 	return []string{"Trust Stores"}
 }
 
-func (e ELBTrustStores) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (e ELBTrustStores) associationsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	a, err := arn.Parse(*e.model[row-1].TrustStoreArn)
+	if err != nil {
+		return
+	}
+	associationsView := NewELBTrustStoreAssociations(e.repo, a, e.app)
+	e.app.AddAndSwitch(associationsView)
 }
 
-func (e ELBTrustStores) Render() {
+func (e ELBTrustStores) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
+			Description: "Associations",
+			Action:      e.associationsHandler,
+		},
+	}
+}
+
+func (e *ELBTrustStores) Render() {
 	model, err := e.repo.ListTrustStores()
+	e.model = model
 	if err != nil {
 		panic(err)
 	}
