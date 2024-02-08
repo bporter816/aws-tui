@@ -51,12 +51,32 @@ func (e ELBTrustStores) associationsHandler() {
 	e.app.AddAndSwitch(associationsView)
 }
 
+func (e ELBTrustStores) tagsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+
+	name, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+
+	tagsView := NewELBTags(e.repo, *e.model[row-1].TrustStoreArn, name, e.app)
+	e.app.AddAndSwitch(tagsView)
+}
+
 func (e ELBTrustStores) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
 			Description: "Associations",
 			Action:      e.associationsHandler,
+		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
 		},
 	}
 }
