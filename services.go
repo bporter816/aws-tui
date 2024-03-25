@@ -73,6 +73,9 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		"Lambda": {
 			"Functions",
 		},
+		"RDS": {
+			"Clusters",
+		},
 		"Route 53": {
 			"Hosted Zones",
 			"Health Checks",
@@ -216,6 +219,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewKmsCustomKeyStores(s.repos["KMS"].(*repo.KMS), s.app)
 	case "Lambda.Functions":
 		item = NewLambdaFunctions(s.repos["Lambda"].(*repo.Lambda), s.app)
+	case "RDS.Clusters":
+		item = NewRDSClusters(s.repos["RDS"].(*repo.RDS), s.app)
 	case "Route 53.Hosted Zones":
 		item = NewRoute53HostedZones(s.repos["Route 53"].(*repo.Route53), s.app)
 	case "Route 53.Health Checks":
