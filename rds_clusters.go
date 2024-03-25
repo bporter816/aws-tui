@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	rdsTypes "github.com/aws/aws-sdk-go-v2/service/rds/types"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/view"
@@ -13,8 +14,9 @@ import (
 type RDSClusters struct {
 	*ui.Table
 	view.RDS
-	repo *repo.RDS
-	app  *Application
+	repo  *repo.RDS
+	app   *Application
+	model []model.RDSCluster
 }
 
 func NewRDSClusters(repo *repo.RDS, app *Application) *RDSClusters {
@@ -46,6 +48,15 @@ func (r RDSClusters) endpointsHandler() {
 	r.app.AddAndSwitch(endpointsView)
 }
 
+func (r RDSClusters) tagsHandler() {
+	row, err := r.GetRowSelection()
+	if err != nil || r.model[row-1].DBClusterArn == nil {
+		return
+	}
+	endpointsView := NewRDSTags(r.repo, *r.model[row-1].DBClusterArn, r.app)
+	r.app.AddAndSwitch(endpointsView)
+}
+
 func (r RDSClusters) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
@@ -53,14 +64,20 @@ func (r RDSClusters) GetKeyActions() []KeyAction {
 			Description: "Endpoints",
 			Action:      r.endpointsHandler,
 		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      r.tagsHandler,
+		},
 	}
 }
 
-func (r RDSClusters) Render() {
+func (r *RDSClusters) Render() {
 	model, err := r.repo.ListClusters([]rdsTypes.Filter{})
 	if err != nil {
 		panic(err)
 	}
+	r.model = model
 
 	var data [][]string
 	for _, v := range model {
