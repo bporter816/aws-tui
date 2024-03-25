@@ -22,7 +22,9 @@ func NewRDS(rdsClient *rds.Client) *RDS {
 func (r RDS) ListClusters(filters []rdsTypes.Filter) ([]model.RDSCluster, error) {
 	pg := rds.NewDescribeDBClustersPaginator(
 		r.rdsClient,
-		&rds.DescribeDBClustersInput{},
+		&rds.DescribeDBClustersInput{
+			Filters: filters,
+		},
 	)
 	var clusters []model.RDSCluster
 	for pg.HasMorePages() {
@@ -35,6 +37,26 @@ func (r RDS) ListClusters(filters []rdsTypes.Filter) ([]model.RDSCluster, error)
 		}
 	}
 	return clusters, nil
+}
+
+func (r RDS) ListInstances(filters []rdsTypes.Filter) ([]model.RDSInstance, error) {
+	pg := rds.NewDescribeDBInstancesPaginator(
+		r.rdsClient,
+		&rds.DescribeDBInstancesInput{
+			Filters: filters,
+		},
+	)
+	var instances []model.RDSInstance
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.RDSInstance{}, err
+		}
+		for _, v := range out.DBInstances {
+			instances = append(instances, model.RDSInstance(v))
+		}
+	}
+	return instances, nil
 }
 
 func (r RDS) ListTags(resourceId string) (model.Tags, error) {

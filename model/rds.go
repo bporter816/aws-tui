@@ -5,5 +5,6 @@ import (
 )
 
 type (
-	RDSCluster rdsTypes.DBCluster
+	RDSCluster  rdsTypes.DBCluster
+	RDSInstance rdsTypes.DBInstance
 )

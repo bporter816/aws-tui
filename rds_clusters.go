@@ -39,6 +39,15 @@ func (r RDSClusters) GetLabels() []string {
 	return []string{"Clusters"}
 }
 
+func (r RDSClusters) instancesHandler() {
+	clusterId, err := r.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	instancesView := NewRDSInstances(r.repo, r.app, clusterId)
+	r.app.AddAndSwitch(instancesView)
+}
+
 func (r RDSClusters) endpointsHandler() {
 	clusterId, err := r.GetColSelection("NAME")
 	if err != nil {
@@ -59,6 +68,11 @@ func (r RDSClusters) tagsHandler() {
 
 func (r RDSClusters) GetKeyActions() []KeyAction {
 	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'i', tcell.ModNone),
+			Description: "Instances",
+			Action:      r.instancesHandler,
+		},
 		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'e', tcell.ModNone),
 			Description: "Endpoints",
