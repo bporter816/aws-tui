@@ -39,6 +39,24 @@ func (r RDS) ListClusters(filters []rdsTypes.Filter) ([]model.RDSCluster, error)
 	return clusters, nil
 }
 
+func (r RDS) ListGlobalClusters() ([]model.RDSGlobalCluster, error) {
+	pg := rds.NewDescribeGlobalClustersPaginator(
+		r.rdsClient,
+		&rds.DescribeGlobalClustersInput{},
+	)
+	var globalClusters []model.RDSGlobalCluster
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.RDSGlobalCluster{}, err
+		}
+		for _, v := range out.GlobalClusters {
+			globalClusters = append(globalClusters, model.RDSGlobalCluster(v))
+		}
+	}
+	return globalClusters, nil
+}
+
 func (r RDS) ListInstances(filters []rdsTypes.Filter) ([]model.RDSInstance, error) {
 	pg := rds.NewDescribeDBInstancesPaginator(
 		r.rdsClient,
