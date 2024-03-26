@@ -57,12 +57,7 @@ func (e ELBTrustStores) tagsHandler() {
 		return
 	}
 
-	name, err := e.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
-
-	tagsView := NewELBTags(e.repo, *e.model[row-1].TrustStoreArn, name, e.app)
+	tagsView := NewTags(e.repo, e.GetService(), *e.model[row-1].TrustStoreArn, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

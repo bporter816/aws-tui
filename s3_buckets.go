@@ -64,7 +64,7 @@ func (s S3Buckets) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewS3BucketTags(s.repo, bucket, s.app)
+	tagsView := NewTags(s.repo, s.GetService(), "bucket:"+bucket, s.app)
 	s.app.AddAndSwitch(tagsView)
 }
 

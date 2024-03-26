@@ -70,7 +70,7 @@ func (i IAMRoles) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewIAMRoleTags(i.repo, roleName, i.app)
+	tagsView := NewTags(i.repo, i.GetService(), "role:"+roleName, i.app)
 	i.app.AddAndSwitch(tagsView)
 }
 

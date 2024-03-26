@@ -48,7 +48,7 @@ func (e VPCInternetGateways) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewVPCTags(e.repo, internetGatewayId, e.app)
+	tagsView := NewTags(e.repo, e.GetService(), internetGatewayId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

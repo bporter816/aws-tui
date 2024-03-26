@@ -3,7 +3,6 @@ package repo
 import (
 	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
 	acmTypes "github.com/aws/aws-sdk-go-v2/service/acm/types"
 	"github.com/bporter816/aws-tui/model"
@@ -61,11 +60,11 @@ func (a ACM) GetCertificate(certificateArn string) (string, error) {
 	return *out.Certificate, nil
 }
 
-func (a ACM) ListTags(certificateArn arn.ARN) (model.Tags, error) {
+func (a ACM) ListTags(resourceId string) (model.Tags, error) {
 	out, err := a.acmClient.ListTagsForCertificate(
 		context.TODO(),
 		&acm.ListTagsForCertificateInput{
-			CertificateArn: aws.String(certificateArn.String()),
+			CertificateArn: aws.String(resourceId),
 		},
 	)
 	if err != nil {

@@ -2,10 +2,12 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/model"
+	"strings"
 )
 
 type Route53 struct {
@@ -87,11 +89,22 @@ func (r Route53) ListRecords(hostedZoneId string) ([]model.Route53Record, error)
 	return resourceRecordSets, nil
 }
 
-func (r Route53) ListTags(resourceName string, resourceType r53Types.TagResourceType) (model.Tags, error) {
+func (r Route53) ListTags(typeAndName string) (model.Tags, error) {
+	parts := strings.Split(typeAndName, ":")
+	if len(parts) != 2 {
+		return model.Tags{}, errors.New("must specify resource type and id for route53 tags")
+	}
+	var resourceType r53Types.TagResourceType
+	switch parts[0] {
+	case string(r53Types.TagResourceTypeHostedzone):
+		resourceType = r53Types.TagResourceTypeHostedzone
+	case string(r53Types.TagResourceTypeHealthcheck):
+		resourceType = r53Types.TagResourceTypeHealthcheck
+	}
 	out, err := r.r53Client.ListTagsForResource(
 		context.TODO(),
 		&r53.ListTagsForResourceInput{
-			ResourceId:   aws.String(resourceName),
+			ResourceId:   aws.String(parts[1]),
 			ResourceType: resourceType,
 		},
 	)

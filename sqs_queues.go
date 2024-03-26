@@ -47,7 +47,7 @@ func (s SQSQueues) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewSQSTags(s.repo, s.model[row-1].QueueUrl, s.app)
+	tagsView := NewTags(s.repo, s.GetService(), s.model[row-1].QueueUrl, s.app)
 	s.app.AddAndSwitch(tagsView)
 }
 

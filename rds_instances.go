@@ -44,7 +44,7 @@ func (r RDSInstances) tagsHandler() {
 	if err != nil || r.model[row-1].DBInstanceArn == nil {
 		return
 	}
-	tagsView := NewRDSTags(r.repo, *r.model[row-1].DBInstanceArn, r.app)
+	tagsView := NewTags(r.repo, r.GetService(), *r.model[row-1].DBInstanceArn, r.app)
 	r.app.AddAndSwitch(tagsView)
 }
 

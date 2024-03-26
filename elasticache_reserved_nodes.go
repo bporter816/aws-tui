@@ -44,12 +44,8 @@ func (e ElastiCacheReservedCacheNodes) tagsHandler() {
 	if err != nil {
 		return
 	}
-	name, err := e.GetColSelection("ID")
-	if err != nil {
-		return
-	}
 	if arn := e.model[row-1].ReservationARN; arn != nil {
-		tagsView := NewElastiCacheTags(e.repo, *arn, name, e.app)
+		tagsView := NewTags(e.repo, e.GetService(), *arn, e.app)
 		e.app.AddAndSwitch(tagsView)
 	}
 }

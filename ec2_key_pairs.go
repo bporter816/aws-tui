@@ -48,7 +48,7 @@ func (e EC2KeyPairs) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEC2Tags(e.repo, keyId, e.app)
+	tagsView := NewTags(e.repo, e.GetService(), keyId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

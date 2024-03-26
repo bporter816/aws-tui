@@ -41,7 +41,7 @@ func (e EKSClusters) tagsHandler() {
 		return
 	}
 	if arn := e.model[row-1].Arn; arn != nil {
-		tagsView := NewEKSTags(e.repo, *arn, e.app)
+		tagsView := NewTags(e.repo, e.GetService(), *arn, e.app)
 		e.app.AddAndSwitch(tagsView)
 	}
 }

@@ -67,7 +67,7 @@ func (s S3Objects) tagsHandler() {
 		if strings.HasSuffix(key, "/") {
 			return
 		}
-		tagsView := NewS3ObjectTags(s.repo, s.bucket, key, s.app)
+		tagsView := NewTags(s.repo, s.GetService(), "object:"+s.bucket+":"+key, s.app)
 		s.app.AddAndSwitch(tagsView)
 	}
 }

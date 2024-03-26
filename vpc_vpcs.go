@@ -38,7 +38,7 @@ func (e VPCVPCs) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewVPCTags(e.repo, vpcId, e.app)
+	tagsView := NewTags(e.repo, e.GetService(), vpcId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

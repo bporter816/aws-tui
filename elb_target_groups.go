@@ -43,12 +43,8 @@ func (e ELBTargetGroups) tagsHandler() {
 	if err != nil {
 		return
 	}
-	name, err := e.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
 	if arn := e.model[row-1].TargetGroupArn; arn != nil {
-		tagsView := NewELBTags(e.repo, *arn, name, e.app)
+		tagsView := NewTags(e.repo, e.GetService(), *arn, e.app)
 		e.app.AddAndSwitch(tagsView)
 	}
 }

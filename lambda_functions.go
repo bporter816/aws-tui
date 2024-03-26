@@ -47,7 +47,7 @@ func (l LambdaFunctions) tagsHandler() {
 		return
 	}
 	if arn := l.model[row-1].FunctionArn; arn != nil {
-		tagsView := NewLambdaTags(l.repo, *arn, l.app)
+		tagsView := NewTags(l.repo, l.GetService(), *arn, l.app)
 		l.app.AddAndSwitch(tagsView)
 	}
 }

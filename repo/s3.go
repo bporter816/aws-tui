@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -90,7 +91,8 @@ func (s S3) GetCORSRules(bucketName string) ([]model.S3CORSRule, error) {
 	return corsRules, nil
 }
 
-func (s S3) ListBucketTags(bucketName string) (model.Tags, error) {
+func (s S3) listBucketTags(bucketName string) (model.Tags, error) {
+	// TODO find where the panic occurs when there are no tags
 	out, err := s.s3Client.GetBucketTagging(
 		context.TODO(),
 		&s3.GetBucketTaggingInput{
@@ -151,7 +153,7 @@ func (s S3) GetObjectMetadata(bucketName string, key string) (model.Tags, error)
 	return tags, nil
 }
 
-func (s S3) ListObjectTags(bucketName string, key string) (model.Tags, error) {
+func (s S3) listObjectTags(bucketName string, key string) (model.Tags, error) {
 	out, err := s.s3Client.GetObjectTagging(
 		context.TODO(),
 		&s3.GetObjectTaggingInput{
@@ -167,4 +169,19 @@ func (s S3) ListObjectTags(bucketName string, key string) (model.Tags, error) {
 		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
 	}
 	return tags, nil
+}
+
+func (s S3) ListTags(typeAndName string) (model.Tags, error) {
+	parts := strings.Split(typeAndName, ":")
+	if len(parts) != 2 && len(parts) != 3 {
+		return model.Tags{}, errors.New("must give type and name for s3 tags")
+	}
+	switch parts[0] {
+	case "bucket":
+		return s.listBucketTags(parts[1])
+	case "object":
+		return s.listObjectTags(parts[1], parts[2])
+	default:
+		return model.Tags{}, errors.New("must use bucket or object for s3 tags")
+	}
 }

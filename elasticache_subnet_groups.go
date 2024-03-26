@@ -62,11 +62,10 @@ func (e ElastiCacheSubnetGroups) tagsHandler() {
 	if err != nil {
 		return
 	}
-	if e.model[row-1].ARN == nil || e.model[row-1].CacheSubnetGroupName == nil {
-		return
+	if arn := e.model[row-1].ARN; arn != nil {
+		tagsView := NewTags(e.repo, e.GetService(), *e.model[row-1].ARN, e.app)
+		e.app.AddAndSwitch(tagsView)
 	}
-	tagsView := NewElastiCacheTags(e.repo, *e.model[row-1].ARN, *e.model[row-1].CacheSubnetGroupName, e.app)
-	e.app.AddAndSwitch(tagsView)
 }
 
 func (e ElastiCacheSubnetGroups) GetKeyActions() []KeyAction {

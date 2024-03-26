@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	kmsTypes "github.com/aws/aws-sdk-go-v2/service/kms/types"
@@ -118,11 +119,11 @@ func (k KMS) GetKeyPolicy(keyId string) (string, error) {
 	return *out.Policy, nil
 }
 
-func (k KMS) ListTags(keyId string) (model.Tags, error) {
+func (k KMS) ListTags(resourceId string) (model.Tags, error) {
 	pg := kms.NewListResourceTagsPaginator(
 		k.kmsClient,
 		&kms.ListResourceTagsInput{
-			KeyId: aws.String(keyId),
+			KeyId: aws.String(resourceId),
 		},
 	)
 	var tags model.Tags

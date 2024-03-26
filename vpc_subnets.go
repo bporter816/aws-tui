@@ -50,7 +50,7 @@ func (e VPCSubnets) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewVPCTags(e.repo, subnetId, e.app)
+	tagsView := NewTags(e.repo, e.GetService(), subnetId, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

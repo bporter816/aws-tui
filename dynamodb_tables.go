@@ -68,7 +68,7 @@ func (d DynamoDBTables) tagsHandler() {
 	if d.model[row-1].TableArn == nil {
 		return
 	}
-	tagsView := NewDynamoDBTags(d.repo, *d.model[row-1].TableArn, d.app)
+	tagsView := NewTags(d.repo, d.GetService(), *d.model[row-1].TableArn, d.app)
 	d.app.AddAndSwitch(tagsView)
 }
 

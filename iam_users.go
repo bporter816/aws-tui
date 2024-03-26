@@ -82,7 +82,7 @@ func (i IAMUsers) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewIAMUserTags(i.repo, userName, i.app)
+	tagsView := NewTags(i.repo, i.GetService(), "user:"+userName, i.app)
 	i.app.AddAndSwitch(tagsView)
 }
 

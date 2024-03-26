@@ -47,7 +47,7 @@ func (s SMSecrets) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewSMSecretTags(s.repo, secretName, s.app)
+	tagsView := NewTags(s.repo, s.GetService(), secretName, s.app)
 	s.app.AddAndSwitch(tagsView)
 }
 

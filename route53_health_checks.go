@@ -38,7 +38,7 @@ func (r Route53HealthChecks) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewRoute53Tags(r.repo, r53Types.TagResourceTypeHealthcheck, healthCheckId, r.app)
+	tagsView := NewTags(r.repo, r.GetService(), string(r53Types.TagResourceTypeHealthcheck)+":"+healthCheckId, r.app)
 	r.app.AddAndSwitch(tagsView)
 }
 
@@ -65,7 +65,7 @@ func (r Route53HealthChecks) Render() {
 			id = *v.Id
 
 			// name comes from the Name tag
-			tags, err := r.repo.ListTags(*v.Id, r53Types.TagResourceTypeHealthcheck)
+			tags, err := r.repo.ListTags(string(r53Types.TagResourceTypeHealthcheck) + ":" + *v.Id)
 			if err != nil {
 				panic(err)
 			}

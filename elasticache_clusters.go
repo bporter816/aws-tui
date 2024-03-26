@@ -67,21 +67,17 @@ func (e ElastiCacheClusters) tagsHandler() {
 	if err != nil {
 		return
 	}
-	id, err := e.GetColSelection("ID")
-	if err != nil {
-		return
-	}
-	var tagsView *ElastiCacheTags
+	var tagsView *Tags
 	if e.model[row-1].CacheCluster != nil {
 		if e.model[row-1].CacheCluster.ARN == nil {
 			return
 		}
-		tagsView = NewElastiCacheTags(e.repo, *e.model[row-1].CacheCluster.ARN, id, e.app)
+		tagsView = NewTags(e.repo, e.GetService(), *e.model[row-1].CacheCluster.ARN, e.app)
 	} else if e.model[row-1].ReplicationGroup != nil {
 		if e.model[row-1].ReplicationGroup.ARN == nil {
 			return
 		}
-		tagsView = NewElastiCacheTags(e.repo, *e.model[row-1].ReplicationGroup.ARN, id, e.app)
+		tagsView = NewTags(e.repo, e.GetService(), *e.model[row-1].ReplicationGroup.ARN, e.app)
 	} else {
 		return
 	}

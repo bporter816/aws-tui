@@ -56,7 +56,7 @@ func (a ACMCertificates) tagsHandler() {
 		return
 	}
 	if arn := a.model[row-1].CertificateArn; arn != nil {
-		tagsView := NewACMTags(a.repo, *arn, a.app)
+		tagsView := NewTags(a.repo, a.GetService(), *arn, a.app)
 		a.app.AddAndSwitch(tagsView)
 	}
 }

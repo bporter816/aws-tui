@@ -44,7 +44,7 @@ func (e EBSVolumes) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewEBSTags(id, e.repo, e.app)
+	tagsView := NewTags(e.repo, e.GetService(), id, e.app)
 	e.app.AddAndSwitch(tagsView)
 }
 

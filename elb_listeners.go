@@ -50,16 +50,19 @@ func (e ELBListeners) tagsHandler() {
 	if err != nil {
 		return
 	}
-	protocol, err := e.GetColSelection("PROTOCOL")
-	if err != nil {
-		return
-	}
-	port, err := e.GetColSelection("PORT")
-	if err != nil {
-		return
-	}
+	/*
+		protocol, err := e.GetColSelection("PROTOCOL")
+		if err != nil {
+			return
+		}
+		port, err := e.GetColSelection("PORT")
+		if err != nil {
+			return
+		}
+	*/
 	if arn := e.model[row-1].ListenerArn; arn != nil {
-		tagsView := NewELBTags(e.repo, *arn, protocol+":"+port, e.app)
+		// TODO display protocol and port
+		tagsView := NewTags(e.repo, e.GetService(), *arn, e.app)
 		e.app.AddAndSwitch(tagsView)
 	}
 }

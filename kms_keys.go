@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -13,8 +14,9 @@ import (
 type KmsKeys struct {
 	*ui.Table
 	view.KMS
-	repo *repo.KMS
-	app  *Application
+	repo  *repo.KMS
+	app   *Application
+	model []model.KMSKey
 }
 
 func NewKmsKeys(repo *repo.KMS, app *Application) *KmsKeys {
@@ -58,12 +60,14 @@ func (k KmsKeys) grantsHandler() {
 }
 
 func (k KmsKeys) tagsHandler() {
-	keyId, err := k.GetColSelection("ID")
+	row, err := k.GetRowSelection()
 	if err != nil {
 		return
 	}
-	tagsView := NewKmsKeyTags(k.repo, keyId, k.app)
-	k.app.AddAndSwitch(tagsView)
+	if arn := k.model[row-1].Arn; arn != nil {
+		tagsView := NewTags(k.repo, k.GetService(), *arn, k.app)
+		k.app.AddAndSwitch(tagsView)
+	}
 }
 
 func (k KmsKeys) GetKeyActions() []KeyAction {
@@ -86,8 +90,9 @@ func (k KmsKeys) GetKeyActions() []KeyAction {
 	}
 }
 
-func (k KmsKeys) Render() {
+func (k *KmsKeys) Render() {
 	model, err := k.repo.ListKeys()
+	k.model = model
 	if err != nil {
 		panic(err)
 	}

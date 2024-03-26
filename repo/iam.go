@@ -8,6 +8,7 @@ import (
 	iamTypes "github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/bporter816/aws-tui/model"
 	"net/url"
+	"strings"
 )
 
 type IAM struct {
@@ -480,8 +481,22 @@ func (i IAM) ListAccessKeys(userName string) ([]model.IAMAccessKey, error) {
 	return accessKeys, nil
 }
 
-// TODO combine these functions and abstract it?
-func (i IAM) ListRoleTags(roleName string) (model.Tags, error) {
+func (i IAM) ListTags(typeAndName string) (model.Tags, error) {
+	parts := strings.Split(typeAndName, ":")
+	if len(parts) != 2 {
+		return model.Tags{}, errors.New("must specify type and id for iam tags")
+	}
+	switch parts[0] {
+	case "role":
+		return i.listRoleTags(parts[1])
+	case "user":
+		return i.listUserTags(parts[1])
+	default:
+		return model.Tags{}, errors.New("must get iam tags for a role or a user")
+	}
+}
+
+func (i IAM) listRoleTags(roleName string) (model.Tags, error) {
 	pg := iam.NewListRoleTagsPaginator(
 		i.iamClient,
 		&iam.ListRoleTagsInput{
@@ -502,7 +517,7 @@ func (i IAM) ListRoleTags(roleName string) (model.Tags, error) {
 	return tags, nil
 }
 
-func (i IAM) ListUserTags(userName string) (model.Tags, error) {
+func (i IAM) listUserTags(userName string) (model.Tags, error) {
 	pg := iam.NewListUserTagsPaginator(
 		i.iamClient,
 		&iam.ListUserTagsInput{

@@ -44,10 +44,6 @@ func (c CloudWatchLogGroups) tagsHandler() {
 	if err != nil {
 		return
 	}
-	name, err := c.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
 	if c.model[row-1].Arn == nil {
 		return
 	}
@@ -55,7 +51,7 @@ func (c CloudWatchLogGroups) tagsHandler() {
 	if strings.HasSuffix(arn, ":*") {
 		arn = arn[:len(arn)-2]
 	}
-	tagsView := NewCloudWatchTags(c.repo, arn, name, c.app)
+	tagsView := NewTags(c.repo, c.GetService(), arn, c.app)
 	c.app.AddAndSwitch(tagsView)
 }
 

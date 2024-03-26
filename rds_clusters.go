@@ -62,7 +62,7 @@ func (r RDSClusters) tagsHandler() {
 	if err != nil || r.model[row-1].DBClusterArn == nil {
 		return
 	}
-	endpointsView := NewRDSTags(r.repo, *r.model[row-1].DBClusterArn, r.app)
+	endpointsView := NewTags(r.repo, r.GetService(), *r.model[row-1].DBClusterArn, r.app)
 	r.app.AddAndSwitch(endpointsView)
 }
 

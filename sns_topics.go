@@ -69,7 +69,7 @@ func (s SNSTopics) tagsHandler() {
 	if err != nil {
 		return
 	}
-	tagsView := NewSNSTags(s.repo, s.model[row-1].Arn, s.app)
+	tagsView := NewTags(s.repo, s.GetService(), s.model[row-1].Arn, s.app)
 	s.app.AddAndSwitch(tagsView)
 }
 
