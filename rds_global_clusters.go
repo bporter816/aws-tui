@@ -6,7 +6,6 @@ import (
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
-	"github.com/gdamore/tcell/v2"
 )
 
 type RDSGlobalClusters struct {
@@ -34,23 +33,8 @@ func (r RDSGlobalClusters) GetLabels() []string {
 	return []string{"Global Clusters"}
 }
 
-func (r RDSGlobalClusters) tagsHandler() {
-	row, err := r.GetRowSelection()
-	if err != nil || r.model[row-1].GlobalClusterArn == nil {
-		return
-	}
-	endpointsView := NewTags(r.repo, r.GetService(), *r.model[row-1].GlobalClusterArn, r.app)
-	r.app.AddAndSwitch(endpointsView)
-}
-
 func (r RDSGlobalClusters) GetKeyActions() []KeyAction {
-	return []KeyAction{
-		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
-			Description: "Tags",
-			Action:      r.tagsHandler,
-		},
-	}
+	return []KeyAction{}
 }
 
 func (r *RDSGlobalClusters) Render() {
