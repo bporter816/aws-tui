@@ -48,8 +48,9 @@ func (t Tags) GetLabels() []string {
 		parts := strings.Split(t.resourceId, "/")
 		name = parts[len(parts)-1]
 	} else {
-		// use the id as is
-		name = t.resourceId
+		// use the id as is, removing prefixes added for IAM, Route 53, and S3
+		parts := strings.Split(t.resourceId, ":")
+		name = parts[len(parts)-1]
 	}
 	return []string{name, "Tags"}
 }
