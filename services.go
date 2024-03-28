@@ -75,6 +75,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		},
 		"RDS": {
 			"Clusters",
+			"Global Clusters",
 		},
 		"Route 53": {
 			"Hosted Zones",
@@ -221,6 +222,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewLambdaFunctions(s.repos["Lambda"].(*repo.Lambda), s.app)
 	case "RDS.Clusters":
 		item = NewRDSClusters(s.repos["RDS"].(*repo.RDS), s.app)
+	case "RDS.Global Clusters":
+		item = NewRDSGlobalClusters(s.repos["RDS"].(*repo.RDS), s.app)
 	case "Route 53.Hosted Zones":
 		item = NewRoute53HostedZones(s.repos["Route 53"].(*repo.Route53), s.app)
 	case "Route 53.Health Checks":
