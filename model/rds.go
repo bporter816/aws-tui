@@ -8,10 +8,18 @@ type (
 	RDSCluster                rdsTypes.DBCluster
 	RDSGlobalCluster          rdsTypes.GlobalCluster
 	RDSInstance               rdsTypes.DBInstance
-	RDSInstanceParameterGroup rdsTypes.DBParameterGroup
 	RDSClusterParameterGroup  rdsTypes.DBClusterParameterGroup
+	RDSInstanceParameterGroup rdsTypes.DBParameterGroup
 	RDSParameter              rdsTypes.Parameter
 )
+
+func (r RDSClusterParameterGroup) Arn() string {
+	return *r.DBClusterParameterGroupArn
+}
+
+func (r RDSInstanceParameterGroup) Arn() string {
+	return *r.DBParameterGroupArn
+}
 
 type RDSParameterGroupType string
 

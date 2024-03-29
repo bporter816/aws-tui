@@ -11,8 +11,9 @@ import (
 type RDSParameterGroups struct {
 	*ui.Table
 	view.RDS
-	repo *repo.RDS
-	app  *Application
+	repo  *repo.RDS
+	app   *Application
+	model []model.ModelWithArn
 }
 
 func NewRDSParameterGroups(repo *repo.RDS, app *Application) *RDSParameterGroups {
@@ -52,6 +53,15 @@ func (r RDSParameterGroups) parametersHandler() {
 	r.app.AddAndSwitch(parametersView)
 }
 
+func (r RDSParameterGroups) tagsHandler() {
+	row, err := r.GetRowSelection()
+	if err != nil {
+		return
+	}
+	tagsView := NewTags(r.repo, r.GetService(), r.model[row-1].Arn(), r.app)
+	r.app.AddAndSwitch(tagsView)
+}
+
 func (r RDSParameterGroups) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
@@ -59,10 +69,15 @@ func (r RDSParameterGroups) GetKeyActions() []KeyAction {
 			Description: "Parameters",
 			Action:      r.parametersHandler,
 		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      r.tagsHandler,
+		},
 	}
 }
 
-func (r RDSParameterGroups) Render() {
+func (r *RDSParameterGroups) Render() {
 	clusterParameterGroups, err := r.repo.ListClusterParameterGroups()
 	if err != nil {
 		panic(err)
@@ -72,9 +87,11 @@ func (r RDSParameterGroups) Render() {
 	if err != nil {
 		panic(err)
 	}
+	var objects []model.ModelWithArn
 
 	var data [][]string
 	for _, v := range clusterParameterGroups {
+		objects = append(objects, v)
 		var name, family, desc string
 		if v.DBClusterParameterGroupName != nil {
 			name = *v.DBClusterParameterGroupName
@@ -93,6 +110,7 @@ func (r RDSParameterGroups) Render() {
 		})
 	}
 	for _, v := range instanceParameterGroups {
+		objects = append(objects, v)
 		var name, family, desc string
 		if v.DBParameterGroupName != nil {
 			name = *v.DBParameterGroupName
@@ -110,5 +128,6 @@ func (r RDSParameterGroups) Render() {
 			desc,
 		})
 	}
+	r.model = objects
 	r.SetData(data)
 }
