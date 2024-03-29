@@ -77,6 +77,42 @@ func (r RDS) ListInstances(filters []rdsTypes.Filter) ([]model.RDSInstance, erro
 	return instances, nil
 }
 
+func (r RDS) ListClusterParameterGroups() ([]model.RDSClusterParameterGroup, error) {
+	pg := rds.NewDescribeDBClusterParameterGroupsPaginator(
+		r.rdsClient,
+		&rds.DescribeDBClusterParameterGroupsInput{},
+	)
+	var parameterGroups []model.RDSClusterParameterGroup
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.RDSClusterParameterGroup{}, err
+		}
+		for _, v := range out.DBClusterParameterGroups {
+			parameterGroups = append(parameterGroups, model.RDSClusterParameterGroup(v))
+		}
+	}
+	return parameterGroups, nil
+}
+
+func (r RDS) ListInstanceParameterGroups() ([]model.RDSInstanceParameterGroup, error) {
+	pg := rds.NewDescribeDBParameterGroupsPaginator(
+		r.rdsClient,
+		&rds.DescribeDBParameterGroupsInput{},
+	)
+	var parameterGroups []model.RDSInstanceParameterGroup
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.RDSInstanceParameterGroup{}, err
+		}
+		for _, v := range out.DBParameterGroups {
+			parameterGroups = append(parameterGroups, model.RDSInstanceParameterGroup(v))
+		}
+	}
+	return parameterGroups, nil
+}
+
 func (r RDS) ListTags(resourceId string) (model.Tags, error) {
 	out, err := r.rdsClient.ListTagsForResource(
 		context.TODO(),

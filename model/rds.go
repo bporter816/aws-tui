@@ -5,7 +5,9 @@ import (
 )
 
 type (
-	RDSCluster       rdsTypes.DBCluster
-	RDSGlobalCluster rdsTypes.GlobalCluster
-	RDSInstance      rdsTypes.DBInstance
+	RDSCluster                rdsTypes.DBCluster
+	RDSGlobalCluster          rdsTypes.GlobalCluster
+	RDSInstance               rdsTypes.DBInstance
+	RDSInstanceParameterGroup rdsTypes.DBParameterGroup
+	RDSClusterParameterGroup  rdsTypes.DBClusterParameterGroup
 )

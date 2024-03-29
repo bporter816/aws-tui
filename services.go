@@ -76,6 +76,7 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		"RDS": {
 			"Clusters",
 			"Global Clusters",
+			"Parameter Groups",
 		},
 		"Route 53": {
 			"Hosted Zones",
@@ -224,6 +225,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewRDSClusters(s.repos["RDS"].(*repo.RDS), s.app)
 	case "RDS.Global Clusters":
 		item = NewRDSGlobalClusters(s.repos["RDS"].(*repo.RDS), s.app)
+	case "RDS.Parameter Groups":
+		item = NewRDSParameterGroups(s.repos["RDS"].(*repo.RDS), s.app)
 	case "Route 53.Hosted Zones":
 		item = NewRoute53HostedZones(s.repos["Route 53"].(*repo.Route53), s.app)
 	case "Route 53.Health Checks":
