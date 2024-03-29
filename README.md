@@ -14,6 +14,7 @@ A k9s-inspired terminal UI for AWS services. Supports:
 * IAM
 * Key Management Service
 * Lambda
+* RDS
 * Route 53
 * S3
 * SNS
