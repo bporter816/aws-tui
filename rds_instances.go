@@ -26,6 +26,7 @@ func NewRDSInstances(repo *repo.RDS, app *Application, dbClusterId string) *RDSI
 		Table: ui.NewTable([]string{
 			"NAME",
 			"STATUS",
+			"CLASS",
 			"ENDPOINT",
 		}, 1, 0),
 		repo:        repo,
@@ -72,12 +73,15 @@ func (r *RDSInstances) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, status, endpoint string
+		var name, status, class, endpoint string
 		if v.DBInstanceIdentifier != nil {
 			name = *v.DBInstanceIdentifier
 		}
 		if v.DBInstanceStatus != nil {
 			status = utils.AutoCase(*v.DBInstanceStatus)
+		}
+		if v.DBInstanceClass != nil {
+			class = *v.DBInstanceClass
 		}
 		if v.Endpoint != nil {
 			if v.Endpoint.Address != nil {
@@ -90,6 +94,7 @@ func (r *RDSInstances) Render() {
 		data = append(data, []string{
 			name,
 			status,
+			class,
 			endpoint,
 		})
 	}
