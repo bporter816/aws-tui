@@ -10,4 +10,10 @@ type (
 	RDSInstance               rdsTypes.DBInstance
 	RDSInstanceParameterGroup rdsTypes.DBParameterGroup
 	RDSClusterParameterGroup  rdsTypes.DBClusterParameterGroup
+	RDSParameter              rdsTypes.Parameter
 )
+
+type RDSParameterGroupType string
+
+const RDSParameterGroupTypeCluster RDSParameterGroupType = "Cluster"
+const RDSParameterGroupTypeInstance RDSParameterGroupType = "Instance"

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 )
 
 type RDSParameterGroups struct {
@@ -31,8 +33,33 @@ func (r RDSParameterGroups) GetLabels() []string {
 	return []string{"Parameter Groups"}
 }
 
+func (r RDSParameterGroups) parametersHandler() {
+	name, err := r.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	groupType, err := r.GetColSelection("TYPE")
+	if err != nil {
+		return
+	}
+	var parameterGroupType model.RDSParameterGroupType
+	if groupType == "Cluster" {
+		parameterGroupType = model.RDSParameterGroupTypeCluster
+	} else {
+		parameterGroupType = model.RDSParameterGroupTypeInstance
+	}
+	parametersView := NewRDSParameters(r.repo, r.app, name, parameterGroupType)
+	r.app.AddAndSwitch(parametersView)
+}
+
 func (r RDSParameterGroups) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
+			Description: "Parameters",
+			Action:      r.parametersHandler,
+		},
+	}
 }
 
 func (r RDSParameterGroups) Render() {
