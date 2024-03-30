@@ -63,7 +63,7 @@ func (e ElastiCacheSubnetGroups) tagsHandler() {
 		return
 	}
 	if arn := e.model[row-1].ARN; arn != nil {
-		tagsView := NewTags(e.repo, e.GetService(), *e.model[row-1].ARN, e.app)
+		tagsView := NewTags(e.repo, e.GetService(), *arn, e.app)
 		e.app.AddAndSwitch(tagsView)
 	}
 }

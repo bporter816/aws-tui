@@ -11,6 +11,7 @@ type (
 	RDSClusterParameterGroup  rdsTypes.DBClusterParameterGroup
 	RDSInstanceParameterGroup rdsTypes.DBParameterGroup
 	RDSParameter              rdsTypes.Parameter
+	RDSSubnetGroup            rdsTypes.DBSubnetGroup
 )
 
 func (r RDSClusterParameterGroup) Arn() string {

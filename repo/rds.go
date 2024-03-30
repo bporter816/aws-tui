@@ -153,6 +153,24 @@ func (r RDS) ListInstanceParameters(paramGroupName string) ([]model.RDSParameter
 	return parameters, nil
 }
 
+func (r RDS) ListSubnetGroups() ([]model.RDSSubnetGroup, error) {
+	pg := rds.NewDescribeDBSubnetGroupsPaginator(
+		r.rdsClient,
+		&rds.DescribeDBSubnetGroupsInput{},
+	)
+	var subnetGroups []model.RDSSubnetGroup
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.RDSSubnetGroup{}, err
+		}
+		for _, v := range out.DBSubnetGroups {
+			subnetGroups = append(subnetGroups, model.RDSSubnetGroup(v))
+		}
+	}
+	return subnetGroups, nil
+}
+
 func (r RDS) ListTags(resourceId string) (model.Tags, error) {
 	out, err := r.rdsClient.ListTagsForResource(
 		context.TODO(),
