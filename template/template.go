@@ -19,8 +19,8 @@ var (
 			}
 			return b.Bytes()
 		},
-		"chunk":        func(str string, length int) []string { return utils.Chunk(str, length) },
-		"formatSerial": func(bytes []byte) string { return utils.FormatSerial(bytes) },
+		"chunk":        func(str string, length int) []string { return Chunk(str, length) },
+		"formatSerial": func(bytes []byte) string { return FormatSerial(bytes) },
 		"formatTime":   func(t time.Time) string { return t.Format(utils.DefaultTimeFormat) },
 		"isRSA":        func(algo x509.PublicKeyAlgorithm) bool { return algo == x509.RSA },
 		"join":         func(arr []string, sep string) string { return strings.Join(arr, sep) },
