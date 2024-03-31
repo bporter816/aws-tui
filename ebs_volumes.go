@@ -69,8 +69,6 @@ func (e EBSVolumes) Render() {
 		var name, id, volumeType, size, iops, throughput, attachments, encrypted string
 		if n, ok := lookupTag(v.Tags, "Name"); ok {
 			name = n
-		} else {
-			name = "-"
 		}
 		if v.VolumeId != nil {
 			id = *v.VolumeId

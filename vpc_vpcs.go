@@ -63,8 +63,6 @@ func (e VPCVPCs) Render() {
 		var name, id, state, ipv4CIDR string
 		if n, ok := lookupTag(v.Tags, "Name"); ok {
 			name = n
-		} else {
-			name = "-"
 		}
 		if v.VpcId != nil {
 			id = *v.VpcId

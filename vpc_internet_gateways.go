@@ -78,8 +78,6 @@ func (e VPCInternetGateways) Render() {
 		var name, id, ownerId, attachments string
 		if n, ok := lookupTag(v.Tags, "Name"); ok {
 			name = n
-		} else {
-			name = "-"
 		}
 		if v.InternetGatewayId != nil {
 			id = *v.InternetGatewayId

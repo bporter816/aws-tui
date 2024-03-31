@@ -75,8 +75,6 @@ func (e VPCSubnets) Render() {
 		var name, subnetId, state, availabilityZone, ipv4Cidr, vpcId string
 		if n, ok := lookupTag(v.Tags, "Name"); ok {
 			name = n
-		} else {
-			name = "-"
 		}
 		if v.SubnetId != nil {
 			subnetId = *v.SubnetId

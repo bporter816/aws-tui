@@ -66,8 +66,6 @@ func (e EC2Instances) Render() {
 		var name, id, state, publicIP, instanceType, subnetId, keyName string
 		if n, ok := lookupTag(v.Tags, "Name"); ok {
 			name = n
-		} else {
-			name = "-"
 		}
 		if v.InstanceId != nil {
 			id = *v.InstanceId
