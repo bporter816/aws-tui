@@ -23,6 +23,7 @@ func NewEKSClusters(repo *repo.EKS, app *Application) *EKSClusters {
 			"NAME",
 			"STATUS",
 			"K8S VERSION",
+			"OIDC ISSUER",
 			"CREATED",
 		}, 1, 0),
 		repo: repo,
@@ -65,13 +66,16 @@ func (e *EKSClusters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, status, k8sVersion, created string
+		var name, status, k8sVersion, oidcIssuer, created string
 		if v.Name != nil {
 			name = *v.Name
 		}
 		status = utils.TitleCase(string(v.Status))
 		if v.Version != nil {
 			k8sVersion = *v.Version
+		}
+		if v.Identity != nil && v.Identity.Oidc != nil && v.Identity.Oidc.Issuer != nil {
+			oidcIssuer = *v.Identity.Oidc.Issuer
 		}
 		if v.CreatedAt != nil {
 			created = v.CreatedAt.Format(utils.DefaultTimeFormat)
@@ -80,6 +84,7 @@ func (e *EKSClusters) Render() {
 			name,
 			status,
 			k8sVersion,
+			oidcIssuer,
 			created,
 		})
 	}
