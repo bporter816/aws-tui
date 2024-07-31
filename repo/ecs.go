@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/bporter816/aws-tui/model"
 )
@@ -53,4 +54,21 @@ func (e ECS) ListClusters() ([]model.ECSCluster, error) {
 		clusters = append(clusters, model.ECSCluster(v))
 	}
 	return clusters, nil
+}
+
+func (e ECS) ListTags(resourceId string) (model.Tags, error) {
+	out, err := e.ecsClient.ListTagsForResource(
+		context.TODO(),
+		&ecs.ListTagsForResourceInput{
+			ResourceArn: aws.String(resourceId),
+		},
+	)
+	if err != nil {
+		return model.Tags{}, err
+	}
+	var tags model.Tags
+	for _, v := range out.Tags {
+		tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+	}
+	return tags, nil
 }

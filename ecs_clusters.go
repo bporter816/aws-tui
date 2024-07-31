@@ -1,18 +1,21 @@
 package main
 
 import (
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
 type ECSClusters struct {
 	*ui.Table
 	view.ECS
-	repo *repo.ECS
-	app  *Application
+	repo  *repo.ECS
+	app   *Application
+	model []model.ECSCluster
 }
 
 func NewECSClusters(repo *repo.ECS, app *Application) *ECSClusters {
@@ -33,15 +36,33 @@ func (e ECSClusters) GetLabels() []string {
 	return []string{"Clusters"}
 }
 
-func (e ECSClusters) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (e ECSClusters) tagsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if arn := e.model[row-1].ClusterArn; arn != nil {
+		tagsView := NewTags(e.repo, e.GetService(), *arn, e.app)
+		e.app.AddAndSwitch(tagsView)
+	}
 }
 
-func (e ECSClusters) Render() {
+func (e ECSClusters) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
+}
+
+func (e *ECSClusters) Render() {
 	model, err := e.repo.ListClusters()
 	if err != nil {
 		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
 	for _, v := range model {
