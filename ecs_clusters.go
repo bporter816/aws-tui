@@ -25,6 +25,7 @@ func NewECSClusters(repo *repo.ECS, app *Application) *ECSClusters {
 			"STATUS",
 			"SERVICES",
 			"TASKS (P/R)",
+			"CONTAINER INSTANCES",
 		}, 1, 0),
 		repo: repo,
 		app:  app,
@@ -66,7 +67,7 @@ func (e *ECSClusters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, status, services, tasks string
+		var name, status, services, tasks, containerInstances string
 		if v.ClusterName != nil {
 			name = *v.ClusterName
 		}
@@ -75,11 +76,13 @@ func (e *ECSClusters) Render() {
 		}
 		services = strconv.Itoa(int(v.ActiveServicesCount))
 		tasks = strconv.Itoa(int(v.PendingTasksCount)) + "/" + strconv.Itoa(int(v.RunningTasksCount))
+		containerInstances = strconv.Itoa(int(v.RegisteredContainerInstancesCount))
 		data = append(data, []string{
 			name,
 			status,
 			services,
 			tasks,
+			containerInstances,
 		})
 	}
 	e.SetData(data)
