@@ -37,13 +37,22 @@ func (e ECSClusters) GetLabels() []string {
 	return []string{"Clusters"}
 }
 
+func (e ECSClusters) tasksHandler() {
+	name, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tasksView := NewECSTasks(name, e.repo, e.app)
+	e.app.AddAndSwitch(tasksView)
+}
+
 func (e ECSClusters) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
 		return
 	}
-	if arn := e.model[row-1].ClusterArn; arn != nil {
-		tagsView := NewTags(e.repo, e.GetService(), *arn, e.app)
+	if a := e.model[row-1].ClusterArn; a != nil {
+		tagsView := NewTags(e.repo, e.GetService(), *a, e.app)
 		e.app.AddAndSwitch(tagsView)
 	}
 }
@@ -52,6 +61,11 @@ func (e ECSClusters) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tasks",
+			Action:      e.tasksHandler,
+		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,
 		},

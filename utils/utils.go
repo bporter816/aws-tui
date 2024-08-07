@@ -24,6 +24,7 @@ var (
 	sizePrefixes = []string{"KiB", "MiB", "GiB", "TiB", "PiB"}
 
 	replacements = map[string]string{
+		"ec2":   "EC2",
 		"ebs":   "EBS",
 		"http":  "HTTP",
 		"https": "HTTPS",
