@@ -8,6 +8,7 @@ import (
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
@@ -42,8 +43,23 @@ func (r RDSReservedInstances) GetLabels() []string {
 	return []string{"Reserved Instances"}
 }
 
+func (r RDSReservedInstances) tagsHandler() {
+	row, err := r.GetRowSelection()
+	if err != nil || r.model[row-1].ReservedDBInstanceArn == nil {
+		return
+	}
+	tagsView := NewTags(r.repo, r.GetService(), *r.model[row-1].ReservedDBInstanceArn, r.app)
+	r.app.AddAndSwitch(tagsView)
+}
+
 func (r RDSReservedInstances) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tags",
+			Action:      r.tagsHandler,
+		},
+	}
 }
 
 func (r *RDSReservedInstances) Render() {
