@@ -171,6 +171,24 @@ func (r RDS) ListSubnetGroups() ([]model.RDSSubnetGroup, error) {
 	return subnetGroups, nil
 }
 
+func (r RDS) ListReservedInstances() ([]model.RDSReservedInstance, error) {
+	pg := rds.NewDescribeReservedDBInstancesPaginator(
+		r.rdsClient,
+		&rds.DescribeReservedDBInstancesInput{},
+	)
+	var reservedInstances []model.RDSReservedInstance
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []model.RDSReservedInstance{}, err
+		}
+		for _, v := range out.ReservedDBInstances {
+			reservedInstances = append(reservedInstances, model.RDSReservedInstance(v))
+		}
+	}
+	return reservedInstances, nil
+}
+
 func (r RDS) ListTags(resourceId string) (model.Tags, error) {
 	out, err := r.rdsClient.ListTagsForResource(
 		context.TODO(),
