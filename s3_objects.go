@@ -85,7 +85,7 @@ func (s S3Objects) GetKeyActions() []KeyAction {
 			Action:      s.metadataHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      s.tagsHandler,
 		},

@@ -79,7 +79,7 @@ func (r RDSClusters) GetKeyActions() []KeyAction {
 			Action:      r.endpointsHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      r.tagsHandler,
 		},

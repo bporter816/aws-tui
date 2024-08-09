@@ -83,7 +83,7 @@ func (k KmsKeys) GetKeyActions() []KeyAction {
 			Action:      k.grantsHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      k.tagsHandler,
 		},

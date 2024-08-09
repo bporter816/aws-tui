@@ -59,7 +59,7 @@ func (r Route53HostedZones) tagsHandler() {
 func (r Route53HostedZones) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      r.tagsHandler,
 		},

@@ -60,7 +60,7 @@ func (e EC2KeyPairs) GetKeyActions() []KeyAction {
 			Action:      e.pubKeyHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,
 		},

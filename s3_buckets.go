@@ -81,7 +81,7 @@ func (s S3Buckets) GetKeyActions() []KeyAction {
 			Action:      s.corsRulesHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      s.tagsHandler,
 		},
