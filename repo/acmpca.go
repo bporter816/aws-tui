@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/acmpca"
 	"github.com/bporter816/aws-tui/model"
 )
@@ -32,4 +33,24 @@ func (a ACMPCA) ListCertificateAuthorities() ([]model.ACMPCACertificateAuthority
 		}
 	}
 	return certificateAuthorities, nil
+}
+
+func (a ACMPCA) ListTags(certificateAuthorityArn string) (model.Tags, error) {
+	pg := acmpca.NewListTagsPaginator(
+		a.acmPCAClient,
+		&acmpca.ListTagsInput{
+			CertificateAuthorityArn: aws.String(certificateAuthorityArn),
+		},
+	)
+	var tags model.Tags
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return model.Tags{}, err
+		}
+		for _, v := range out.Tags {
+			tags = append(tags, model.Tag{Key: *v.Key, Value: *v.Value})
+		}
+	}
+	return tags, nil
 }
