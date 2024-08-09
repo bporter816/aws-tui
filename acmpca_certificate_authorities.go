@@ -2,17 +2,20 @@ package main
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ACMPCACertificateAuthorities struct {
 	*ui.Table
 	view.ACMPCA
-	repo *repo.ACMPCA
-	app  *Application
+	repo  *repo.ACMPCA
+	app   *Application
+	model []model.ACMPCACertificateAuthority
 }
 
 func NewACMPCACertificateAuthorities(repo *repo.ACMPCA, app *Application) *ACMPCACertificateAuthorities {
@@ -36,15 +39,33 @@ func (a ACMPCACertificateAuthorities) GetLabels() []string {
 	return []string{"Certificate Authorities"}
 }
 
-func (a ACMPCACertificateAuthorities) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (a ACMPCACertificateAuthorities) tagsHandler() {
+	row, err := a.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if aa := a.model[row-1].Arn; aa != nil {
+		tagsView := NewTags(a.repo, a.GetService(), *aa, a.app)
+		a.app.AddAndSwitch(tagsView)
+	}
 }
 
-func (a ACMPCACertificateAuthorities) Render() {
+func (a ACMPCACertificateAuthorities) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
+			Description: "Tags",
+			Action:      a.tagsHandler,
+		},
+	}
+}
+
+func (a *ACMPCACertificateAuthorities) Render() {
 	model, err := a.repo.ListCertificateAuthorities()
 	if err != nil {
 		panic(err)
 	}
+	a.model = model
 
 	var data [][]string
 	for _, v := range model {
