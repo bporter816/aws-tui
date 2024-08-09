@@ -55,7 +55,7 @@ func (r RDSReservedInstances) tagsHandler() {
 func (r RDSReservedInstances) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      r.tagsHandler,
 		},

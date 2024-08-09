@@ -107,7 +107,7 @@ func (c CFDistributions) GetKeyActions() []KeyAction {
 			Action:      c.invalidationsHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      c.tagsHandler,
 		},

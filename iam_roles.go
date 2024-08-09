@@ -92,7 +92,7 @@ func (i IAMRoles) GetKeyActions() []KeyAction {
 			Action:      i.permissionsBoundaryHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      i.tagsHandler,
 		},

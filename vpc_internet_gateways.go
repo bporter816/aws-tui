@@ -60,7 +60,7 @@ func (e VPCInternetGateways) GetKeyActions() []KeyAction {
 			Action:      e.attachmentsHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,
 		},

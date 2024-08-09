@@ -57,7 +57,7 @@ func (e VPCSubnets) tagsHandler() {
 func (e VPCSubnets) GetKeyActions() []KeyAction {
 	return []KeyAction{
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,
 		},

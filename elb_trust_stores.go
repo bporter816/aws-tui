@@ -69,7 +69,7 @@ func (e ELBTrustStores) GetKeyActions() []KeyAction {
 			Action:      e.associationsHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      e.tagsHandler,
 		},

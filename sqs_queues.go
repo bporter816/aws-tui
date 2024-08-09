@@ -59,7 +59,7 @@ func (s SQSQueues) GetKeyActions() []KeyAction {
 			Action:      s.accessPolicyHandler,
 		},
 		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
 			Description: "Tags",
 			Action:      s.tagsHandler,
 		},
