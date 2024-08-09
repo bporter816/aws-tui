@@ -10,6 +10,7 @@ import (
 	// "net/http"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
+	"github.com/aws/aws-sdk-go-v2/service/acmpca"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cw "github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	cwLogs "github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
@@ -54,6 +55,7 @@ func NewApplication() *Application {
 	app := tview.NewApplication()
 
 	acmClient := acm.NewFromConfig(cfg)
+	acmPCAClient := acmpca.NewFromConfig(cfg)
 	cfClient := cf.NewFromConfig(cfg)
 	cwClient := cw.NewFromConfig(cfg)
 	cwLogsClient := cwLogs.NewFromConfig(cfg)
@@ -79,6 +81,7 @@ func NewApplication() *Application {
 	a := &Application{}
 
 	acmRepo := repo.NewACM(acmClient)
+	acmPCARepo := repo.NewACMPCA(acmPCAClient)
 	cfRepo := repo.NewCloudFront(cfClient)
 	cwRepo := repo.NewCloudWatch(cwLogsClient)
 	ddbRepo := repo.NewDynamoDB(ddbClient)
@@ -102,6 +105,7 @@ func NewApplication() *Application {
 
 	repos := map[string]interface{}{
 		"ACM":             acmRepo,
+		"ACM PCA":         acmPCARepo,
 		"CloudFront":      cfRepo,
 		"CloudWatch":      cwRepo,
 		"DynamoDB":        ddbRepo,
