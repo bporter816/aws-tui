@@ -20,6 +20,9 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 		"ACM": {
 			"Certificates",
 		},
+		"ACM PCA": {
+			"Certificate Authorities",
+		},
 		"CloudFront": {
 			"Distributions",
 			"Functions",
@@ -164,6 +167,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 	switch view {
 	case "ACM.Certificates":
 		item = NewACMCertificates(s.repos["ACM"].(*repo.ACM), s.app)
+	case "ACM PCA.Certificate Authorities":
+		item = NewACMPCACertificateAuthorities(s.repos["ACM PCA"].(*repo.ACMPCA), s.app)
 	case "CloudFront.Distributions":
 		item = NewCFDistributions(s.repos["CloudFront"].(*repo.CloudFront), s.app)
 	case "CloudFront.Functions":
