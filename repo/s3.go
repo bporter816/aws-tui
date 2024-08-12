@@ -124,12 +124,11 @@ func (s S3) GetObject(bucketName string, key string) ([]byte, error) {
 	if out.ContentLength == nil {
 		return []byte{}, errors.New("missing content length")
 	}
-	b := make([]byte, *out.ContentLength)
-	n, err := out.Body.Read(b)
-	if err != nil && err != io.EOF {
+	b, err := io.ReadAll(out.Body)
+	if err != nil {
 		return []byte{}, err
 	}
-	return b[0:n], nil
+	return b, nil
 }
 
 func (s S3) GetObjectMetadata(bucketName string, key string) (model.Tags, error) {
