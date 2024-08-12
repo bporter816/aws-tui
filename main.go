@@ -6,8 +6,6 @@ import (
 
 	// "os/exec"
 	// "sort"
-	"strings"
-	// "net/http"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
 	"github.com/aws/aws-sdk-go-v2/service/acmpca"
@@ -36,6 +34,8 @@ import (
 	"github.com/bporter816/aws-tui/template"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"net/http"
+	"strings"
 )
 
 type Application struct {
@@ -53,6 +53,8 @@ func NewApplication() *Application {
 	}
 
 	app := tview.NewApplication()
+
+	httpClient := &http.Client{}
 
 	acmClient := acm.NewFromConfig(cfg)
 	acmPCAClient := acmpca.NewFromConfig(cfg)
@@ -88,7 +90,7 @@ func NewApplication() *Application {
 	ec2Repo := repo.NewEC2(ec2Client)
 	ecsRepo := repo.NewECS(ecsClient)
 	eksRepo := repo.NewEKS(eksClient)
-	elbRepo := repo.NewELB(elbClient)
+	elbRepo := repo.NewELB(elbClient, httpClient)
 	ecRepo := repo.NewElastiCache(ecClient, cwClient)
 	iamRepo := repo.NewIAM(iamClient)
 	kmsRepo := repo.NewKMS(kmsClient)

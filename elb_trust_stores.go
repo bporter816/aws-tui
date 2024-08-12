@@ -51,6 +51,17 @@ func (e ELBTrustStores) associationsHandler() {
 	e.app.AddAndSwitch(associationsView)
 }
 
+func (e ELBTrustStores) bundleHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if a := e.model[row-1].TrustStoreArn; a != nil {
+		certView := NewELBTrustStoreBundle(e.repo, *a, e.app)
+		e.app.AddAndSwitch(certView)
+	}
+}
+
 func (e ELBTrustStores) tagsHandler() {
 	row, err := e.GetRowSelection()
 	if err != nil {
@@ -67,6 +78,11 @@ func (e ELBTrustStores) GetKeyActions() []KeyAction {
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'a', tcell.ModNone),
 			Description: "Associations",
 			Action:      e.associationsHandler,
+		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
+			Description: "Certificate Bundle",
+			Action:      e.bundleHandler,
 		},
 		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),

@@ -3,6 +3,9 @@ package repo
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
@@ -11,12 +14,14 @@ import (
 )
 
 type ELB struct {
-	elbClient *elb.Client
+	elbClient  *elb.Client
+	httpClient *http.Client
 }
 
-func NewELB(elbClient *elb.Client) *ELB {
+func NewELB(elbClient *elb.Client, httpClient *http.Client) *ELB {
 	return &ELB{
-		elbClient: elbClient,
+		elbClient:  elbClient,
+		httpClient: httpClient,
 	}
 }
 
@@ -163,4 +168,32 @@ func (e ELB) ListTrustStoreAssociations(a arn.ARN) ([]model.ELBTrustStoreAssocia
 		}
 	}
 	return associations, nil
+}
+
+func (e ELB) GetTrustStoreCACertificatesBundle(trustStoreArn string) (string, error) {
+	out, err := e.elbClient.GetTrustStoreCaCertificatesBundle(
+		context.TODO(),
+		&elb.GetTrustStoreCaCertificatesBundleInput{
+			TrustStoreArn: aws.String(trustStoreArn),
+		},
+	)
+	if err != nil {
+		return "", err
+	}
+	if out.Location == nil {
+		return "", errors.New("empty s3 location for trust store")
+	}
+	resp, err := e.httpClient.Get(*out.Location)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("invalid status code: %v", resp.StatusCode)
+	}
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
 }
