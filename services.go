@@ -66,6 +66,9 @@ func NewServices(repos map[string]interface{}, app *Application) *Services {
 			"Events",
 			"Service Updates",
 		},
+		"Global Accelerator": {
+			"Accelerators",
+		},
 		"IAM": {
 			"Users",
 			"Roles",
@@ -219,6 +222,8 @@ func (s Services) selectHandler(n *tview.TreeNode) {
 		item = NewElastiCacheEvents(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
 	case "ElastiCache.Service Updates":
 		item = NewElastiCacheServiceUpdates(s.repos["ElastiCache"].(*repo.ElastiCache), s.app)
+	case "Global Accelerator.Accelerators":
+		item = NewGlobalAcceleratorAccelerators(s.repos["Global Accelerator"].(*repo.GlobalAccelerator), s.app)
 	case "IAM.Users":
 		item = NewIAMUsers(s.repos["IAM"].(*repo.IAM), nil, s.app)
 	case "IAM.Roles":

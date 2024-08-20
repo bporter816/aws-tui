@@ -18,6 +18,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	ec "github.com/aws/aws-sdk-go-v2/service/elasticache"
 	elb "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
+	ga "github.com/aws/aws-sdk-go-v2/service/globalaccelerator"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
@@ -51,6 +52,8 @@ func NewApplication() *Application {
 	if err != nil {
 		panic(err)
 	}
+	westCfg := cfg.Copy()
+	westCfg.Region = "us-west-2"
 
 	app := tview.NewApplication()
 
@@ -67,6 +70,7 @@ func NewApplication() *Application {
 	ecsClient := ecs.NewFromConfig(cfg)
 	eksClient := eks.NewFromConfig(cfg)
 	elbClient := elb.NewFromConfig(cfg)
+	gaClient := ga.NewFromConfig(westCfg)
 	iamClient := iam.NewFromConfig(cfg)
 	kmsClient := kms.NewFromConfig(cfg)
 	lambdaClient := lambda.NewFromConfig(cfg)
@@ -92,6 +96,7 @@ func NewApplication() *Application {
 	eksRepo := repo.NewEKS(eksClient)
 	elbRepo := repo.NewELB(elbClient, httpClient)
 	ecRepo := repo.NewElastiCache(ecClient, cwClient)
+	gaRepo := repo.NewGlobalAccelerator(gaClient)
 	iamRepo := repo.NewIAM(iamClient)
 	kmsRepo := repo.NewKMS(kmsClient)
 	lambdaRepo := repo.NewLambda(lambdaClient)
@@ -106,28 +111,29 @@ func NewApplication() *Application {
 	stsRepo := repo.NewSTS(stsClient)
 
 	repos := map[string]interface{}{
-		"ACM":             acmRepo,
-		"ACM PCA":         acmPCARepo,
-		"CloudFront":      cfRepo,
-		"CloudWatch":      cwRepo,
-		"DynamoDB":        ddbRepo,
-		"EC2":             ec2Repo,
-		"ECS":             ecsRepo,
-		"EKS":             eksRepo,
-		"ELB":             elbRepo,
-		"ElastiCache":     ecRepo,
-		"IAM":             iamRepo,
-		"KMS":             kmsRepo,
-		"Lambda":          lambdaRepo,
-		"RDS":             rdsRepo,
-		"Route 53":        r53Repo,
-		"S3":              s3Repo,
-		"SNS":             snsRepo,
-		"SQS":             sqsRepo,
-		"STS":             stsRepo,
-		"Secrets Manager": smRepo,
-		"SSM":             ssmRepo,
-		"Service Quotas":  sqRepo,
+		"ACM":                acmRepo,
+		"ACM PCA":            acmPCARepo,
+		"CloudFront":         cfRepo,
+		"CloudWatch":         cwRepo,
+		"DynamoDB":           ddbRepo,
+		"EC2":                ec2Repo,
+		"ECS":                ecsRepo,
+		"EKS":                eksRepo,
+		"ELB":                elbRepo,
+		"ElastiCache":        ecRepo,
+		"Global Accelerator": gaRepo,
+		"IAM":                iamRepo,
+		"KMS":                kmsRepo,
+		"Lambda":             lambdaRepo,
+		"RDS":                rdsRepo,
+		"Route 53":           r53Repo,
+		"S3":                 s3Repo,
+		"SNS":                snsRepo,
+		"SQS":                sqsRepo,
+		"STS":                stsRepo,
+		"Secrets Manager":    smRepo,
+		"SSM":                ssmRepo,
+		"Service Quotas":     sqRepo,
 	}
 
 	services := NewServices(repos, a)
