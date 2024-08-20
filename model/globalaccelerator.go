@@ -6,4 +6,5 @@ import (
 
 type (
 	GlobalAcceleratorAccelerator gaTypes.Accelerator
+	GlobalAcceleratorListener    gaTypes.Listener
 )

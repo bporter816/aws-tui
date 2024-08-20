@@ -1,18 +1,21 @@
 package main
 
 import (
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 	"strconv"
 )
 
 type GlobalAcceleratorAccelerators struct {
 	*ui.Table
 	view.GlobalAccelerator
-	repo *repo.GlobalAccelerator
-	app  *Application
+	repo  *repo.GlobalAccelerator
+	app   *Application
+	model []model.GlobalAcceleratorAccelerator
 }
 
 func NewGlobalAcceleratorAccelerators(repo *repo.GlobalAccelerator, app *Application) *GlobalAcceleratorAccelerators {
@@ -36,15 +39,49 @@ func (g GlobalAcceleratorAccelerators) GetLabels() []string {
 	return []string{"Acclerators"}
 }
 
-func (g GlobalAcceleratorAccelerators) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (g GlobalAcceleratorAccelerators) listenersHandler() {
+	row, err := g.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if r := g.model[row-1]; r.AcceleratorArn != nil && r.Name != nil {
+		listenersView := NewGlobalAcceleratorListeners(g.repo, *r.Name, *r.AcceleratorArn, g.app)
+		g.app.AddAndSwitch(listenersView)
+	}
 }
 
-func (g GlobalAcceleratorAccelerators) Render() {
+func (g GlobalAcceleratorAccelerators) tagsHandler() {
+	row, err := g.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if a := g.model[row-1].AcceleratorArn; a != nil {
+		tagsView := NewTags(g.repo, g.GetService(), *a, g.app)
+		g.app.AddAndSwitch(tagsView)
+	}
+}
+
+func (g GlobalAcceleratorAccelerators) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'i', tcell.ModNone),
+			Description: "Listeners",
+			Action:      g.listenersHandler,
+		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
+			Description: "Tags",
+			Action:      g.tagsHandler,
+		},
+	}
+}
+
+func (g *GlobalAcceleratorAccelerators) Render() {
 	model, err := g.repo.ListAccelerators()
 	if err != nil {
 		panic(err)
 	}
+	g.model = model
 
 	var data [][]string
 	for _, v := range model {

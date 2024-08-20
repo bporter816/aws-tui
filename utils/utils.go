@@ -35,6 +35,8 @@ var (
 		"json":  "JSON",
 		"sms":   "SMS",
 		"sqs":   "SQS",
+		"tcp":   "TCP",
+		"udp":   "UDP",
 	}
 
 	abbreviations = map[string]string{
