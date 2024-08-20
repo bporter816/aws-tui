@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	cf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	cfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
@@ -159,6 +160,29 @@ func (c CloudFront) ListFunctions() ([]model.CloudFrontFunction, error) {
 		}
 	}
 	return functions, nil
+}
+
+func (c CloudFront) GetFunctionCode(name string, stage string) (string, error) {
+	var stg cfTypes.FunctionStage
+	// TODO this has to know about case, refactor
+	if stage == "Development" {
+		stg = cfTypes.FunctionStageDevelopment
+	} else if stage == "Live" {
+		stg = cfTypes.FunctionStageLive
+	} else {
+		return "", errors.New("invalid function stage")
+	}
+	out, err := c.cfClient.GetFunction(
+		context.TODO(),
+		&cf.GetFunctionInput{
+			Name:  aws.String(name),
+			Stage: stg,
+		},
+	)
+	if err != nil {
+		return "", err
+	}
+	return string(out.FunctionCode), nil
 }
 
 func (c CloudFront) ListTags(resourceId string) (model.Tags, error) {

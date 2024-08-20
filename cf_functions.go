@@ -5,6 +5,7 @@ import (
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 )
 
 type CFFunctions struct {
@@ -34,8 +35,27 @@ func (c CFFunctions) GetLabels() []string {
 	return []string{"Functions"}
 }
 
+func (c CFFunctions) codeHandler() {
+	name, err := c.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	stage, err := c.GetColSelection("STAGE")
+	if err != nil {
+		return
+	}
+	codeView := NewCFFunctionCode(c.repo, name, stage, c.app)
+	c.app.AddAndSwitch(codeView)
+}
+
 func (c CFFunctions) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
+			Description: "View Code",
+			Action:      c.codeHandler,
+		},
+	}
 }
 
 func (c CFFunctions) Render() {
