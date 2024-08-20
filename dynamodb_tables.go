@@ -100,11 +100,11 @@ func (d *DynamoDBTables) Render() {
 		if v.TableName != nil {
 			name = *v.TableName
 		}
-		partitionKey, sortKey := getPartitionAndSortKeys(v.KeySchema)
-		if partitionKeyType, ok := getAttributeType(partitionKey, v.AttributeDefinitions); ok {
+		partitionKey, sortKey := utils.GetDynamoDBPartitionAndSortKeys(v.KeySchema)
+		if partitionKeyType, ok := utils.GetDynamoDBAttributeType(partitionKey, v.AttributeDefinitions); ok {
 			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
 		}
-		if sortKeyType, ok := getAttributeType(sortKey, v.AttributeDefinitions); ok {
+		if sortKeyType, ok := utils.GetDynamoDBAttributeType(sortKey, v.AttributeDefinitions); ok {
 			sortKey = fmt.Sprintf("%v (%v)", sortKey, sortKeyType)
 		}
 		var billingMode ddbTypes.BillingMode

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 )
 
@@ -49,7 +50,7 @@ func (k KmsKeyGrants) Render() {
 		if v.Name != nil {
 			name = *v.Name
 		}
-		operations = joinGrantOperations(v.Operations, ", ")
+		operations = utils.JoinKMSGrantOperations(v.Operations, ", ")
 		if v.GranteePrincipal != nil {
 			granteePrincipal = *v.GranteePrincipal
 		}

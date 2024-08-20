@@ -4,6 +4,7 @@ import (
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -75,7 +76,7 @@ func (r Route53HealthChecks) Render() {
 		}
 		if v.HealthCheckConfig != nil {
 			checkType = string(v.HealthCheckConfig.Type)
-			description = getHealthCheckDescription(*v.HealthCheckConfig)
+			description = utils.FormatRoute53HealthCheckDescription(*v.HealthCheckConfig)
 		}
 		data = append(data, []string{
 			id,

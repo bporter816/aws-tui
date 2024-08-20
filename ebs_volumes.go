@@ -67,7 +67,7 @@ func (e EBSVolumes) Render() {
 	var data [][]string
 	for _, v := range model {
 		var name, id, volumeType, size, iops, throughput, attachments, encrypted string
-		if n, ok := lookupTag(v.Tags, "Name"); ok {
+		if n, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = n
 		}
 		if v.VolumeId != nil {

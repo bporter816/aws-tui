@@ -64,7 +64,7 @@ func (e EC2Instances) Render() {
 	var data [][]string
 	for _, v := range model {
 		var name, id, state, publicIP, instanceType, subnetId, keyName string
-		if n, ok := lookupTag(v.Tags, "Name"); ok {
+		if n, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = n
 		}
 		if v.InstanceId != nil {

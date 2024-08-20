@@ -24,19 +24,24 @@ var (
 	sizePrefixes = []string{"KiB", "MiB", "GiB", "TiB", "PiB"}
 
 	replacements = map[string]string{
-		"ec2":   "EC2",
-		"ebs":   "EBS",
-		"http":  "HTTP",
-		"https": "HTTPS",
-		"hvm":   "HVM",
-		"iam":   "IAM",
-		"ipv4":  "IPv4",
-		"ipv6":  "IPv6",
-		"json":  "JSON",
-		"sms":   "SMS",
-		"sqs":   "SQS",
-		"tcp":   "TCP",
-		"udp":   "UDP",
+		"alb":      "ALB",
+		"ec2":      "EC2",
+		"ebs":      "EBS",
+		"http":     "HTTP",
+		"https":    "HTTPS",
+		"hvm":      "HVM",
+		"iam":      "IAM",
+		"instance": "Instance",
+		"ip":       "IP",
+		"ipv4":     "IPv4",
+		"ipv6":     "IPv6",
+		"json":     "JSON",
+		"lambda":   "Lambda",
+		"nlb":      "NLB",
+		"sms":      "SMS",
+		"sqs":      "SQS",
+		"tcp":      "TCP",
+		"udp":      "UDP",
 	}
 
 	abbreviations = map[string]string{

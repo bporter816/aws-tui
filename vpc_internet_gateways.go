@@ -5,6 +5,7 @@ import (
 
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -76,7 +77,7 @@ func (e VPCInternetGateways) Render() {
 	var data [][]string
 	for _, v := range model {
 		var name, id, ownerId, attachments string
-		if n, ok := lookupTag(v.Tags, "Name"); ok {
+		if n, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = n
 		}
 		if v.InternetGatewayId != nil {

@@ -1,11 +1,13 @@
-package main
+package utils
 
 import (
 	"fmt"
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
+	"strings"
 )
 
-func getHealthCheckDescription(v r53Types.HealthCheckConfig) string {
+// TODO add tests
+func FormatRoute53HealthCheckDescription(v r53Types.HealthCheckConfig) string {
 	if v.Type == r53Types.HealthCheckTypeCalculated {
 		return fmt.Sprintf("Calculated threshold: %v out of %v", *v.HealthThreshold, len(v.ChildHealthChecks))
 	} else if v.Type == r53Types.HealthCheckTypeCloudwatchMetric {
@@ -41,4 +43,29 @@ func getHealthCheckDescription(v r53Types.HealthCheckConfig) string {
 		}
 		return fmt.Sprintf("%v://%v:%v%v", protocol, host, port, path)
 	}
+}
+
+// TODO add tests
+func FormatRoute53ResourceRecords(items []r53Types.ResourceRecord) string {
+	values := make([]string, len(items))
+	for i, v := range items {
+		if v.Value != nil {
+			values[i] = string(*v.Value)
+		}
+	}
+	return TruncateStrings(values, 1)
+}
+
+// TODO consider removing, also see route53_records.go
+// TODO add tests
+func JoinRoute53ResourceRecords(items []r53Types.ResourceRecord, sep string) string {
+	if len(items) == 0 {
+		return ""
+	}
+	var ret string
+	for _, v := range items {
+		ret += sep
+		ret += *v.Value
+	}
+	return strings.TrimPrefix(ret, sep)
 }

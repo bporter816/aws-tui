@@ -1,10 +1,11 @@
-package main
+package utils
 
 import (
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-func getPartitionAndSortKeys(keySchema []ddbTypes.KeySchemaElement) (string, string) {
+// TODO add tests
+func GetDynamoDBPartitionAndSortKeys(keySchema []ddbTypes.KeySchemaElement) (string, string) {
 	var partitionKey, sortKey string
 	for _, ks := range keySchema {
 		if ks.KeyType == ddbTypes.KeyTypeHash {
@@ -16,7 +17,8 @@ func getPartitionAndSortKeys(keySchema []ddbTypes.KeySchemaElement) (string, str
 	return partitionKey, sortKey
 }
 
-func getAttributeType(attribute string, defs []ddbTypes.AttributeDefinition) (string, bool) {
+// TODO add tests
+func GetDynamoDBAttributeType(attribute string, defs []ddbTypes.AttributeDefinition) (string, bool) {
 	for _, v := range defs {
 		if attribute == *v.AttributeName {
 			return string(v.AttributeType), true

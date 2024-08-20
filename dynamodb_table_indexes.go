@@ -8,6 +8,7 @@ import (
 	ddbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 )
 
@@ -56,11 +57,11 @@ func (d DynamoDBTableIndexes) Render() {
 
 	var data [][]string
 	for _, v := range model.Global {
-		partitionKey, sortKey := getPartitionAndSortKeys(v.KeySchema)
-		if partitionKeyType, ok := getAttributeType(partitionKey, d.attributes); ok {
+		partitionKey, sortKey := utils.GetDynamoDBPartitionAndSortKeys(v.KeySchema)
+		if partitionKeyType, ok := utils.GetDynamoDBAttributeType(partitionKey, d.attributes); ok {
 			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
 		}
-		if sortKeyType, ok := getAttributeType(sortKey, d.attributes); ok {
+		if sortKeyType, ok := utils.GetDynamoDBAttributeType(sortKey, d.attributes); ok {
 			sortKey = fmt.Sprintf("%v (%v)", sortKey, sortKeyType)
 		}
 		var projection string
@@ -83,11 +84,11 @@ func (d DynamoDBTableIndexes) Render() {
 		})
 	}
 	for _, v := range model.Local {
-		partitionKey, sortKey := getPartitionAndSortKeys(v.KeySchema)
-		if partitionKeyType, ok := getAttributeType(partitionKey, d.attributes); ok {
+		partitionKey, sortKey := utils.GetDynamoDBPartitionAndSortKeys(v.KeySchema)
+		if partitionKeyType, ok := utils.GetDynamoDBAttributeType(partitionKey, d.attributes); ok {
 			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
 		}
-		if sortKeyType, ok := getAttributeType(sortKey, d.attributes); ok {
+		if sortKeyType, ok := utils.GetDynamoDBAttributeType(sortKey, d.attributes); ok {
 			sortKey = fmt.Sprintf("%v (%v)", sortKey, sortKeyType)
 		}
 		var projection string

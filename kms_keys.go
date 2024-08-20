@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
@@ -111,7 +109,7 @@ func (k *KmsKeys) Render() {
 		}
 		data = append(data, []string{
 			keyId,
-			renderAliases(v.Aliases),
+			utils.FormatKMSAliases(v.Aliases),
 			utils.BoolToString(v.Enabled, "Yes", "No"),
 			string(v.KeyState),
 			string(v.KeySpec),
@@ -121,14 +119,4 @@ func (k *KmsKeys) Render() {
 		})
 	}
 	k.SetData(data)
-}
-
-func renderAliases(a []string) string {
-	if len(a) == 0 {
-		return "-"
-	}
-	if len(a) == 1 {
-		return a[0]
-	}
-	return fmt.Sprintf("%v + %v more", a[0], len(a)-1)
 }

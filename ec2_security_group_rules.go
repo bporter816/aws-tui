@@ -69,7 +69,7 @@ func (e EC2SecurityGroupRules) Render() {
 	for _, v := range model {
 		name := "-"
 		var id, ruleType, protocol, ports, cidr, description string
-		if ruleName, ok := lookupTag(v.Tags, "Name"); ok {
+		if ruleName, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = ruleName
 		}
 		if v.SecurityGroupRuleId != nil {

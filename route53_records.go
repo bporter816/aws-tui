@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"strings"
 
-	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -109,8 +108,9 @@ func (r Route53Records) Render() {
 				label,
 				strconv.FormatInt(*v.TTL, 10),
 				"No",
-				// joinRoute53ResourceRecords(v.ResourceRecords, ","),
-				fmtResourceRecords(v.ResourceRecords),
+				// TODO consider removing, also see utils/route53.go
+				// utils.JoinRoute53ResourceRecords(v.ResourceRecords, ","),
+				utils.FormatRoute53ResourceRecords(v.ResourceRecords),
 			})
 		} else {
 			// is an alias
@@ -127,26 +127,4 @@ func (r Route53Records) Render() {
 		}
 	}
 	r.SetData(data)
-}
-
-func fmtResourceRecords(items []r53Types.ResourceRecord) string {
-	values := make([]string, len(items))
-	for i, v := range items {
-		if v.Value != nil {
-			values[i] = string(*v.Value)
-		}
-	}
-	return utils.TruncateStrings(values, 1)
-}
-
-func joinRoute53ResourceRecords(items []r53Types.ResourceRecord, sep string) string {
-	if len(items) == 0 {
-		return ""
-	}
-	var ret string
-	for _, v := range items {
-		ret += sep
-		ret += *v.Value
-	}
-	return strings.TrimPrefix(ret, sep)
 }

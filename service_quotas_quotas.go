@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
@@ -54,9 +52,9 @@ func (s ServiceQuotasQuotas) Render() {
 		if v.QuotaName != nil {
 			name = *v.QuotaName
 		}
-		defaultValue = formatValue(v.DefaultValue, v.Unit)
+		defaultValue = utils.FormatServiceQuotasValue(v.DefaultValue, v.Unit)
 		if v.AppliedValue != nil {
-			appliedValue = formatValue(v.AppliedValue, v.Unit)
+			appliedValue = utils.FormatServiceQuotasValue(v.AppliedValue, v.Unit)
 		}
 		adjustable = utils.BoolToString(v.Adjustable, "Yes", "No")
 		data = append(data, []string{
@@ -67,18 +65,4 @@ func (s ServiceQuotasQuotas) Render() {
 		})
 	}
 	s.SetData(data)
-}
-
-func formatValue(value *float64, unit *string) string {
-	if value == nil {
-		return ""
-	}
-
-	v := utils.SimplifyFloat(*value)
-
-	if unit != nil && *unit != "None" {
-		return fmt.Sprintf("%v %v", v, utils.AbbreviateUnit(*unit))
-	} else {
-		return v
-	}
 }

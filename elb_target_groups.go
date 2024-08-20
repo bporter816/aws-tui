@@ -3,10 +3,10 @@ package main
 import (
 	"strconv"
 
-	elbTypes "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -81,7 +81,7 @@ func (e *ELBTargetGroups) Render() {
 			vpcId = *v.VpcId
 		}
 		protocol = string(v.Protocol)
-		targetType = formatTargetType(v.TargetType)
+		targetType = utils.AutoCase(string(v.TargetType))
 		data = append(data, []string{
 			name,
 			port,
@@ -91,19 +91,4 @@ func (e *ELBTargetGroups) Render() {
 		})
 	}
 	e.SetData(data)
-}
-
-func formatTargetType(e elbTypes.TargetTypeEnum) string {
-	switch e {
-	case elbTypes.TargetTypeEnumInstance:
-		return "Instance"
-	case elbTypes.TargetTypeEnumIp:
-		return "IP"
-	case elbTypes.TargetTypeEnumLambda:
-		return "Lambda"
-	case elbTypes.TargetTypeEnumAlb:
-		return "ALB"
-	default:
-		return "<unknown>"
-	}
 }
