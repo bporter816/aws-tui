@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test(t *testing.T) {
+func TestFormatGlobalAcceleratorPortRanges(t *testing.T) {
 	tests := []struct {
 		input    []gaTypes.PortRange
 		expected string
