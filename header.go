@@ -65,10 +65,6 @@ func (h Header) Render() {
 		userId = *identityModel.UserId
 	}
 
-	if err != nil {
-		panic(err)
-	}
-
 	aliases, err := h.iamRepo.ListAccountAliases()
 	var aliasesStr string
 	if len(aliases) > 0 {
