@@ -71,11 +71,8 @@ func (e *ElastiCacheSnapshots) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, cluster, snapshotType, created, status, size string
+		var cluster, snapshotType, created, status, size string
 		shards := "-"
-		if v.SnapshotName != nil {
-			name = *v.SnapshotName
-		}
 		if v.ReplicationGroupId != nil {
 			cluster = *v.ReplicationGroupId
 			shards = strconv.Itoa(len(v.NodeSnapshots))
@@ -100,7 +97,7 @@ func (e *ElastiCacheSnapshots) Render() {
 		}
 		size = strings.Join(sizes, ", ")
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.SnapshotName, ""),
 			cluster,
 			snapshotType,
 			created,

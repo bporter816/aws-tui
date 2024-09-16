@@ -51,7 +51,7 @@ func (s SNSSubscriptions) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, protocol, endpoint, status string
+		var id, protocol, status string
 		if v.SubscriptionArn != nil {
 			arn, err := arn.Parse(*v.SubscriptionArn)
 			if err != nil {
@@ -62,16 +62,13 @@ func (s SNSSubscriptions) Render() {
 		if v.Protocol != nil {
 			protocol = utils.AutoCase(*v.Protocol)
 		}
-		if v.Endpoint != nil {
-			endpoint = *v.Endpoint
-		}
 		if s, ok := v.Attributes["PendingConfirmation"]; ok {
 			status = utils.BoolToString(s == "true", "Pending confirmation", "Confirmed")
 		}
 		data = append(data, []string{
 			id,
 			protocol,
-			endpoint,
+			utils.DerefString(v.Endpoint, ""),
 			status,
 		})
 	}

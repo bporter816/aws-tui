@@ -75,26 +75,16 @@ func (e EC2KeyPairs) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, keyType, fingerprint, created, id string
-		if v.KeyName != nil {
-			name = *v.KeyName
-		}
-		keyType = string(v.KeyType)
-		if v.KeyFingerprint != nil {
-			fingerprint = *v.KeyFingerprint
-		}
+		var created string
 		if v.CreateTime != nil {
 			created = v.CreateTime.Format(utils.DefaultTimeFormat)
 		}
-		if v.KeyPairId != nil {
-			id = *v.KeyPairId
-		}
 		data = append(data, []string{
-			name,
-			keyType,
-			fingerprint,
+			utils.DerefString(v.KeyName, ""),
+			string(v.KeyType),
+			utils.DerefString(v.KeyFingerprint, ""),
 			created,
-			id,
+			utils.DerefString(v.KeyPairId, ""),
 		})
 	}
 	e.SetData(data)

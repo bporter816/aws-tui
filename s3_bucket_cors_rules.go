@@ -6,6 +6,7 @@ import (
 
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 )
 
@@ -50,22 +51,13 @@ func (s S3CORSRules) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, allowedMethods, allowedOrigins, allowedHeaders, exposeHeaders, maxAge string
-		if v.ID != nil {
-			id = *v.ID
-		}
-		allowedMethods = strings.Join(v.AllowedMethods, ", ")
-		allowedOrigins = strings.Join(v.AllowedOrigins, ", ")
-		allowedHeaders = strings.Join(v.AllowedHeaders, ", ")
-		exposeHeaders = strings.Join(v.ExposeHeaders, ", ")
-		maxAge = strconv.Itoa(int(*v.MaxAgeSeconds)) + " sec"
 		data = append(data, []string{
-			id,
-			allowedMethods,
-			allowedOrigins,
-			allowedHeaders,
-			exposeHeaders,
-			maxAge,
+			utils.DerefString(v.ID, ""),
+			strings.Join(v.AllowedMethods, ", "),
+			strings.Join(v.AllowedOrigins, ", "),
+			strings.Join(v.AllowedHeaders, ", "),
+			strings.Join(v.ExposeHeaders, ", "),
+			strconv.Itoa(int(*v.MaxAgeSeconds)) + " sec",
 		})
 	}
 	s.SetData(data)

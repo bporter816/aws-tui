@@ -107,32 +107,20 @@ func (i IAMRoles) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var roleId, roleName, path, maxSession, created, description string
-		if v.RoleId != nil {
-			roleId = *v.RoleId
-		}
-		if v.RoleName != nil {
-			roleName = *v.RoleName
-		}
-		if v.Path != nil {
-			path = *v.Path
-		}
+		var maxSession, created string
 		if v.MaxSessionDuration != nil {
 			maxSession = strconv.Itoa(int(*v.MaxSessionDuration))
 		}
 		if v.CreateDate != nil {
 			created = v.CreateDate.Format(utils.DefaultTimeFormat)
 		}
-		if v.Description != nil {
-			description = *v.Description
-		}
 		data = append(data, []string{
-			roleId,
-			roleName,
-			path,
+			utils.DerefString(v.RoleId, ""),
+			utils.DerefString(v.RoleName, ""),
+			utils.DerefString(v.Path, ""),
 			maxSession,
 			created,
-			description,
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	i.SetData(data)

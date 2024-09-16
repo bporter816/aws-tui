@@ -60,22 +60,15 @@ func (e VPCVPCs) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, id, state, ipv4CIDR string
+		var name string
 		if n, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = n
 		}
-		if v.VpcId != nil {
-			id = *v.VpcId
-		}
-		state = utils.TitleCase(string(v.State))
-		if v.CidrBlock != nil {
-			ipv4CIDR = *v.CidrBlock
-		}
 		data = append(data, []string{
 			name,
-			id,
-			state,
-			ipv4CIDR,
+			utils.DerefString(v.VpcId, ""),
+			utils.TitleCase(string(v.State)),
+			utils.DerefString(v.CidrBlock, ""),
 		})
 	}
 	e.SetData(data)

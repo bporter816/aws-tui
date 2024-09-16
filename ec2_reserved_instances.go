@@ -60,12 +60,8 @@ func (e EC2ReservedInstances) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id string
-		if v.ReservedInstancesId != nil {
-			id = *v.ReservedInstancesId
-		}
 		data = append(data, []string{
-			id,
+			utils.DerefString(v.ReservedInstancesId, ""),
 			string(v.InstanceType),
 			string(v.Scope),
 			utils.AutoCase(string(v.State)),

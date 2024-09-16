@@ -86,22 +86,11 @@ func (e *ELBLoadBalancers) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, dnsName, lbType, vpcId string
-		if v.LoadBalancerName != nil {
-			name = *v.LoadBalancerName
-		}
-		if v.DNSName != nil {
-			dnsName = *v.DNSName
-		}
-		if v.VpcId != nil {
-			vpcId = *v.VpcId
-		}
-		lbType = utils.TitleCase(string(v.Type))
 		data = append(data, []string{
-			name,
-			dnsName,
-			lbType,
-			vpcId,
+			utils.DerefString(v.LoadBalancerName, ""),
+			utils.DerefString(v.DNSName, ""),
+			utils.TitleCase(string(v.Type)),
+			utils.DerefString(v.VpcId, ""),
 		})
 	}
 	e.SetData(data)

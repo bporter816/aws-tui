@@ -60,23 +60,14 @@ func (e ElastiCacheParameterGroups) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, family, description, isGlobal string
-		if v.CacheParameterGroupName != nil {
-			name = *v.CacheParameterGroupName
-		}
-		if v.CacheParameterGroupFamily != nil {
-			family = *v.CacheParameterGroupFamily
-		}
-		if v.Description != nil {
-			description = *v.Description
-		}
+		var isGlobal string
 		if v.IsGlobal != nil {
 			isGlobal = utils.BoolToString(*v.IsGlobal, "Yes", "No")
 		}
 		data = append(data, []string{
-			name,
-			family,
-			description,
+			utils.DerefString(v.CacheParameterGroupName, ""),
+			utils.DerefString(v.CacheParameterGroupFamily, ""),
+			utils.DerefString(v.Description, ""),
 			isGlobal,
 		})
 	}

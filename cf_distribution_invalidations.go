@@ -61,19 +61,13 @@ func (c CFDistributionInvalidations) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		id, status, created := "-", "-", "-"
-		if v.Id != nil {
-			id = *v.Id
-		}
-		if v.Status != nil {
-			status = *v.Status
-		}
+		created := "-"
 		if v.CreateTime != nil {
 			created = v.CreateTime.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
-			id,
-			status,
+			utils.DerefString(v.Id, "-"),
+			utils.DerefString(v.Status, "-"),
 			created,
 		})
 	}

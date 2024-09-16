@@ -93,33 +93,20 @@ func (r *RDSSubnetGroups) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, status, subnets, vpcId, networkTypes, desc string
-		if v.DBSubnetGroupName != nil {
-			name = *v.DBSubnetGroupName
-		}
-		if v.SubnetGroupStatus != nil {
-			status = *v.SubnetGroupStatus
-		}
-		subnets = strconv.Itoa(len(v.Subnets))
-		if v.VpcId != nil {
-			vpcId = *v.VpcId
-		}
+		var networkTypes string
 		for i, n := range v.SupportedNetworkTypes {
 			networkTypes += utils.AutoCase(n)
 			if i < len(v.SupportedNetworkTypes)-1 {
 				networkTypes += ", "
 			}
 		}
-		if v.DBSubnetGroupDescription != nil {
-			desc = *v.DBSubnetGroupDescription
-		}
 		data = append(data, []string{
-			name,
-			status,
-			subnets,
-			vpcId,
+			utils.DerefString(v.DBSubnetGroupName, ""),
+			utils.DerefString(v.SubnetGroupStatus, ""),
+			strconv.Itoa(len(v.Subnets)),
+			utils.DerefString(v.VpcId, ""),
 			networkTypes,
-			desc,
+			utils.DerefString(v.DBSubnetGroupDescription, ""),
 		})
 	}
 	r.SetData(data)

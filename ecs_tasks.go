@@ -71,7 +71,7 @@ func (e *ECSTasks) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, lastStatus, desiredStatus, launchType, platform, cpu, mem string
+		var id, lastStatus, desiredStatus, platform, cpu, mem string
 		if v.TaskArn != nil {
 			a, err := arn.Parse(*v.TaskArn)
 			if err != nil {
@@ -85,7 +85,6 @@ func (e *ECSTasks) Render() {
 		if v.DesiredStatus != nil {
 			desiredStatus = utils.AutoCase(*v.DesiredStatus)
 		}
-		launchType = utils.AutoCase(string(v.LaunchType))
 		if v.PlatformFamily != nil {
 			platform = *v.PlatformFamily
 			if v.PlatformVersion != nil {
@@ -102,7 +101,7 @@ func (e *ECSTasks) Render() {
 			id,
 			lastStatus,
 			desiredStatus,
-			launchType,
+			utils.AutoCase(string(v.LaunchType)),
 			platform,
 			cpu,
 			mem,

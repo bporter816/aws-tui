@@ -71,32 +71,22 @@ func (l *LambdaFunctions) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, status, runtime, codeSize, memory, timeout, layers, description string
-		if v.FunctionName != nil {
-			name = *v.FunctionName
-		}
-		status = utils.TitleCase(string(v.State))
-		runtime = string(v.Runtime)
-		codeSize = utils.FormatSize(v.CodeSize, 1)
+		var memory, timeout string
 		if v.MemorySize != nil {
 			memory = utils.FormatSize(int64(*v.MemorySize)<<20, 1)
 		}
 		if v.Timeout != nil {
 			timeout = strconv.FormatInt(int64(*v.Timeout), 10) + " sec"
 		}
-		layers = strconv.Itoa(len(v.Layers))
-		if v.Description != nil {
-			description = *v.Description
-		}
 		data = append(data, []string{
-			name,
-			status,
-			runtime,
-			codeSize,
+			utils.DerefString(v.FunctionName, ""),
+			utils.TitleCase(string(v.State)),
+			string(v.Runtime),
+			utils.FormatSize(v.CodeSize, 1),
 			memory,
 			timeout,
-			layers,
-			description,
+			strconv.Itoa(len(v.Layers)),
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	l.SetData(data)

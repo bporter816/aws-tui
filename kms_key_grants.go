@@ -46,22 +46,11 @@ func (k KmsKeyGrants) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, operations, granteePrincipal, retiringPrincipal string
-		if v.Name != nil {
-			name = *v.Name
-		}
-		operations = utils.JoinKMSGrantOperations(v.Operations, ", ")
-		if v.GranteePrincipal != nil {
-			granteePrincipal = *v.GranteePrincipal
-		}
-		if v.RetiringPrincipal != nil {
-			retiringPrincipal = *v.RetiringPrincipal
-		}
 		data = append(data, []string{
-			name,
-			operations,
-			granteePrincipal,
-			retiringPrincipal,
+			utils.DerefString(v.Name, ""),
+			utils.JoinKMSGrantOperations(v.Operations, ", "),
+			utils.DerefString(v.GranteePrincipal, ""),
+			utils.DerefString(v.RetiringPrincipal, ""),
 		})
 	}
 	k.SetData(data)

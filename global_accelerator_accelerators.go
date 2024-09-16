@@ -85,12 +85,7 @@ func (g *GlobalAcceleratorAccelerators) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, acceleratorType, status, enabled, dnsName, dualStackDnsName string
-		if v.Name != nil {
-			name = *v.Name
-		}
-		acceleratorType = utils.AutoCase(string(v.IpAddressType))
-		status = utils.AutoCase(string(v.Status))
+		var enabled string
 		if v.Enabled != nil {
 			enabled = utils.BoolToString(*v.Enabled, "Yes", "No")
 		}
@@ -98,20 +93,14 @@ func (g *GlobalAcceleratorAccelerators) Render() {
 		for _, ip := range v.IpSets {
 			addrs += len(ip.IpAddresses)
 		}
-		if v.DnsName != nil {
-			dnsName = *v.DnsName
-		}
-		if v.DualStackDnsName != nil {
-			dualStackDnsName = *v.DualStackDnsName
-		}
 		data = append(data, []string{
-			name,
-			acceleratorType,
-			status,
+			utils.DerefString(v.Name, ""),
+			utils.AutoCase(string(v.IpAddressType)),
+			utils.AutoCase(string(v.Status)),
 			enabled,
 			strconv.Itoa(addrs),
-			dnsName,
-			dualStackDnsName,
+			utils.DerefString(v.DnsName, ""),
+			utils.DerefString(v.DualStackDnsName, ""),
 		})
 	}
 	g.SetData(data)

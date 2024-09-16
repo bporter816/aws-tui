@@ -50,14 +50,10 @@ func (g *GlobalAcceleratorListeners) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var protocol, portRanges, clientAffinity string
-		protocol = utils.AutoCase(string(v.Protocol))
-		portRanges = utils.FormatGlobalAcceleratorPortRanges(v.PortRanges)
-		clientAffinity = utils.AutoCase(string(v.ClientAffinity))
 		data = append(data, []string{
-			protocol,
-			portRanges,
-			clientAffinity,
+			utils.AutoCase(string(v.Protocol)),
+			utils.FormatGlobalAcceleratorPortRanges(v.PortRanges),
+			utils.AutoCase(string(v.ClientAffinity)),
 		})
 	}
 	g.SetData(data)

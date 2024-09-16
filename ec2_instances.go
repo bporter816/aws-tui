@@ -63,34 +63,21 @@ func (e EC2Instances) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, id, state, publicIP, instanceType, subnetId, keyName string
+		var name, state string
 		if n, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = n
-		}
-		if v.InstanceId != nil {
-			id = *v.InstanceId
 		}
 		if v.State != nil {
 			state = utils.TitleCase(string(v.State.Name))
 		}
-		if v.PublicIpAddress != nil {
-			publicIP = *v.PublicIpAddress
-		}
-		instanceType = string(v.InstanceType)
-		if v.SubnetId != nil {
-			subnetId = *v.SubnetId
-		}
-		if v.KeyName != nil {
-			keyName = *v.KeyName
-		}
 		data = append(data, []string{
 			name,
-			id,
+			utils.DerefString(v.InstanceId, ""),
 			state,
-			publicIP,
-			instanceType,
-			subnetId,
-			keyName,
+			utils.DerefString(v.PublicIpAddress, ""),
+			string(v.InstanceType),
+			utils.DerefString(v.SubnetId, ""),
+			utils.DerefString(v.KeyName, ""),
 		})
 	}
 	e.SetData(data)

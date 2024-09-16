@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -61,16 +62,9 @@ func (s ServiceQuotasServices) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, code string
-		if v.ServiceName != nil {
-			name = *v.ServiceName
-		}
-		if v.ServiceCode != nil {
-			code = *v.ServiceCode
-		}
 		data = append(data, []string{
-			name,
-			code,
+			utils.DerefString(v.ServiceName, ""),
+			utils.DerefString(v.ServiceCode, ""),
 		})
 	}
 	s.SetData(data)

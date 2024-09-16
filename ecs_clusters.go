@@ -81,22 +81,16 @@ func (e *ECSClusters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, status, services, tasks, containerInstances string
-		if v.ClusterName != nil {
-			name = *v.ClusterName
-		}
+		var status string
 		if v.Status != nil {
 			status = utils.TitleCase(*v.Status)
 		}
-		services = strconv.Itoa(int(v.ActiveServicesCount))
-		tasks = strconv.Itoa(int(v.PendingTasksCount)) + "/" + strconv.Itoa(int(v.RunningTasksCount))
-		containerInstances = strconv.Itoa(int(v.RegisteredContainerInstancesCount))
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.ClusterName, ""),
 			status,
-			services,
-			tasks,
-			containerInstances,
+			strconv.Itoa(int(v.ActiveServicesCount)),
+			strconv.Itoa(int(v.PendingTasksCount)) + "/" + strconv.Itoa(int(v.RunningTasksCount)),
+			strconv.Itoa(int(v.RegisteredContainerInstancesCount)),
 		})
 	}
 	e.SetData(data)

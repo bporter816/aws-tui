@@ -64,16 +64,7 @@ func (e ElastiCacheServiceUpdates) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, engineVersion, serviceUpdateType, severity, status, released, applyBy, autoApply string
-		if v.ServiceUpdateName != nil {
-			name = *v.ServiceUpdateName
-		}
-		if v.EngineVersion != nil {
-			engineVersion = *v.EngineVersion
-		}
-		serviceUpdateType = utils.AutoCase(string(v.ServiceUpdateType))
-		severity = utils.AutoCase(string(v.ServiceUpdateSeverity))
-		status = utils.AutoCase(string(v.ServiceUpdateStatus))
+		var released, applyBy, autoApply string
 		if v.ServiceUpdateReleaseDate != nil {
 			released = v.ServiceUpdateReleaseDate.Format(utils.DefaultTimeFormat)
 		}
@@ -84,11 +75,11 @@ func (e ElastiCacheServiceUpdates) Render() {
 			autoApply = utils.BoolToString(*v.AutoUpdateAfterRecommendedApplyByDate, "Yes", "No")
 		}
 		data = append(data, []string{
-			name,
-			engineVersion,
-			serviceUpdateType,
-			severity,
-			status,
+			utils.DerefString(v.ServiceUpdateName, ""),
+			utils.DerefString(v.EngineVersion, ""),
+			utils.AutoCase(string(v.ServiceUpdateType)),
+			utils.AutoCase(string(v.ServiceUpdateSeverity)),
+			utils.AutoCase(string(v.ServiceUpdateStatus)),
 			released,
 			applyBy,
 			autoApply,

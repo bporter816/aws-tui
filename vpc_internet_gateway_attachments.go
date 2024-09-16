@@ -44,14 +44,9 @@ func (e VPCInternetGatewayAttachments) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var vpcId, state string
-		if v.VpcId != nil {
-			vpcId = *v.VpcId
-		}
-		state = utils.AutoCase(string(v.State))
 		data = append(data, []string{
-			vpcId,
-			state,
+			utils.DerefString(v.VpcId, ""),
+			utils.AutoCase(string(v.State)),
 		})
 	}
 	e.SetData(data)

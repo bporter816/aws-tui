@@ -52,39 +52,26 @@ func (e EC2Images) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var amiId, name, status, visibility, platform, architecture, virtualization, rootDevice, blockDevices string
-		if v.ImageId != nil {
-			amiId = *v.ImageId
-		}
-		if v.Name != nil {
-			name = *v.Name
-		}
-		status = utils.AutoCase(string(v.State))
+		var visibility, rootDevice string
 		if v.Public != nil {
 			visibility = utils.BoolToString(*v.Public, "Public", "Private")
 		}
-		if v.PlatformDetails != nil {
-			platform = *v.PlatformDetails
-		}
-		architecture = string(v.Architecture)
-		virtualization = utils.AutoCase(string(v.VirtualizationType))
 		rootDeviceType := utils.AutoCase(string(v.RootDeviceType))
 		if v.RootDeviceName != nil {
 			rootDevice = fmt.Sprintf("%v (%v)", *v.RootDeviceName, rootDeviceType)
 		} else {
 			rootDevice = rootDeviceType
 		}
-		blockDevices = strconv.Itoa(len(v.BlockDeviceMappings))
 		data = append(data, []string{
-			amiId,
-			name,
-			status,
+			utils.DerefString(v.ImageId, ""),
+			utils.DerefString(v.Name, ""),
+			utils.AutoCase(string(v.State)),
 			visibility,
-			platform,
-			architecture,
-			virtualization,
+			utils.DerefString(v.PlatformDetails, ""),
+			string(v.Architecture),
+			utils.AutoCase(string(v.VirtualizationType)),
 			rootDevice,
-			blockDevices,
+			strconv.Itoa(len(v.BlockDeviceMappings)),
 		})
 	}
 	e.SetData(data)

@@ -44,22 +44,15 @@ func (e ElastiCacheEvents) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var date, sourceId, sourceType, message string
+		var date string
 		if v.Date != nil {
 			date = v.Date.Format(utils.DefaultTimeFormat)
 		}
-		if v.SourceIdentifier != nil {
-			sourceId = *v.SourceIdentifier
-		}
-		sourceType = string(v.SourceType)
-		if v.Message != nil {
-			message = *v.Message
-		}
 		data = append(data, []string{
 			date,
-			sourceId,
-			sourceType,
-			message,
+			utils.DerefString(v.SourceIdentifier, ""),
+			string(v.SourceType),
+			utils.DerefString(v.Message, ""),
 		})
 	}
 	e.SetData(data)

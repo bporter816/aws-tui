@@ -66,14 +66,7 @@ func (e *EKSClusters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, status, k8sVersion, oidcIssuer, created string
-		if v.Name != nil {
-			name = *v.Name
-		}
-		status = utils.TitleCase(string(v.Status))
-		if v.Version != nil {
-			k8sVersion = *v.Version
-		}
+		var oidcIssuer, created string
 		if v.Identity != nil && v.Identity.Oidc != nil && v.Identity.Oidc.Issuer != nil {
 			oidcIssuer = *v.Identity.Oidc.Issuer
 		}
@@ -81,9 +74,9 @@ func (e *EKSClusters) Render() {
 			created = v.CreatedAt.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
-			name,
-			status,
-			k8sVersion,
+			utils.DerefString(v.Name, ""),
+			utils.TitleCase(string(v.Status)),
+			utils.DerefString(v.Version, ""),
 			oidcIssuer,
 			created,
 		})

@@ -66,14 +66,10 @@ func (e EBSVolumes) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, id, volumeType, size, iops, throughput, attachments, encrypted string
+		var name, size, iops, throughput, attachments, encrypted string
 		if n, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = n
 		}
-		if v.VolumeId != nil {
-			id = *v.VolumeId
-		}
-		volumeType = string(v.VolumeType)
 		if v.Size != nil {
 			size = strconv.Itoa(int(*v.Size)) + " GiB"
 		}
@@ -89,8 +85,8 @@ func (e EBSVolumes) Render() {
 		}
 		data = append(data, []string{
 			name,
-			id,
-			volumeType,
+			utils.DerefString(v.VolumeId, ""),
+			string(v.VolumeType),
 			size,
 			iops,
 			throughput,

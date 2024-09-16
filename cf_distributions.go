@@ -123,10 +123,7 @@ func (c *CFDistributions) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, distributionType, status, domainName, alternateDomainNames, description string
-		if v.Id != nil {
-			id = *v.Id
-		}
+		var distributionType, alternateDomainNames string
 		if v.Staging != nil {
 			if *v.Staging {
 				distributionType = "Staging"
@@ -134,25 +131,16 @@ func (c *CFDistributions) Render() {
 				distributionType = "Production"
 			}
 		}
-		if v.Status != nil {
-			status = *v.Status
-		}
-		if v.DomainName != nil {
-			domainName = *v.DomainName
-		}
 		if v.Aliases != nil && len(v.Aliases.Items) > 0 {
 			alternateDomainNames = utils.TruncateStrings(v.Aliases.Items, 1)
 		}
-		if v.Comment != nil {
-			description = *v.Comment
-		}
 		data = append(data, []string{
-			id,
+			utils.DerefString(v.Id, ""),
 			distributionType,
-			status,
-			domainName,
+			utils.DerefString(v.Status, ""),
+			utils.DerefString(v.DomainName, ""),
 			alternateDomainNames,
-			description,
+			utils.DerefString(v.Comment, ""),
 		})
 	}
 	c.SetData(data)

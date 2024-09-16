@@ -62,34 +62,18 @@ func (r RDSParameters) Render() {
 
 	var data [][]string
 	for _, v := range parameters {
-		var name, value, dataType, applyMethod, applyType, modifiable, desc string
-		if v.ParameterName != nil {
-			name = *v.ParameterName
-		}
-		if v.ParameterValue != nil {
-			value = *v.ParameterValue
-		}
-		if v.DataType != nil {
-			dataType = *v.DataType
-		}
-		applyMethod = string(v.ApplyMethod)
-		if v.ApplyType != nil {
-			applyType = *v.ApplyType
-		}
+		var modifiable string
 		if v.IsModifiable != nil {
 			modifiable = utils.BoolToString(*v.IsModifiable, "Yes", "No")
 		}
-		if v.Description != nil {
-			desc = *v.Description
-		}
 		data = append(data, []string{
-			name,
-			value,
-			dataType,
-			applyMethod,
-			applyType,
+			utils.DerefString(v.ParameterName, ""),
+			utils.DerefString(v.ParameterValue, ""),
+			utils.DerefString(v.DataType, ""),
+			string(v.ApplyMethod),
+			utils.DerefString(v.ApplyType, ""),
 			modifiable,
-			desc,
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	r.SetData(data)

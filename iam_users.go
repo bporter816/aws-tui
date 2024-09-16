@@ -124,16 +124,7 @@ func (i IAMUsers) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var userId, userName, path, created, passwordLastUsed string
-		if v.UserId != nil {
-			userId = *v.UserId
-		}
-		if v.UserName != nil {
-			userName = *v.UserName
-		}
-		if v.Path != nil {
-			path = *v.Path
-		}
+		var created, passwordLastUsed string
 		if v.CreateDate != nil {
 			created = v.CreateDate.Format(utils.DefaultTimeFormat)
 		}
@@ -141,9 +132,9 @@ func (i IAMUsers) Render() {
 			passwordLastUsed = v.PasswordLastUsed.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
-			userId,
-			userName,
-			path,
+			utils.DerefString(v.UserId, ""),
+			utils.DerefString(v.UserName, ""),
+			utils.DerefString(v.Path, ""),
 			created,
 			passwordLastUsed,
 		})

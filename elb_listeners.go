@@ -86,14 +86,9 @@ func (e *ELBListeners) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var protocol, port, rules, sslPolicy, defaultCertificate, mtlsMode string
-		protocol = string(v.Protocol)
+		var port, defaultCertificate, mtlsMode string
 		if v.Port != nil {
 			port = strconv.Itoa(int(*v.Port))
-		}
-		rules = strconv.Itoa(v.Rules)
-		if v.SslPolicy != nil {
-			sslPolicy = *v.SslPolicy
 		}
 		for _, c := range v.Certificates {
 			if c.IsDefault != nil && *c.IsDefault && c.CertificateArn != nil {
@@ -108,10 +103,10 @@ func (e *ELBListeners) Render() {
 			mtlsMode = utils.AutoCase(*v.MutualAuthentication.Mode)
 		}
 		data = append(data, []string{
-			protocol,
+			string(v.Protocol),
 			port,
-			rules,
-			sslPolicy,
+			strconv.Itoa(v.Rules),
+			utils.DerefString(v.SslPolicy, ""),
 			defaultCertificate,
 			mtlsMode,
 		})

@@ -81,23 +81,14 @@ func (i IAMGroups) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var groupId, groupName, path, created string
-		if v.GroupId != nil {
-			groupId = *v.GroupId
-		}
-		if v.GroupName != nil {
-			groupName = *v.GroupName
-		}
-		if v.Path != nil {
-			path = *v.Path
-		}
+		var created string
 		if v.CreateDate != nil {
 			created = v.CreateDate.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
-			groupId,
-			groupName,
-			path,
+			utils.DerefString(v.GroupId, ""),
+			utils.DerefString(v.GroupName, ""),
+			utils.DerefString(v.Path, ""),
 			created,
 		})
 	}

@@ -70,10 +70,10 @@ func (e *ElastiCacheReservedCacheNodes) Render() {
 	var data [][]string
 	for _, v := range model {
 		data = append(data, []string{
-			*v.ReservedCacheNodeId,
-			*v.OfferingType,
+			utils.DerefString(v.ReservedCacheNodeId, ""),
+			utils.DerefString(v.OfferingType, ""),
 			utils.TitleCase(*v.ProductDescription),
-			*v.CacheNodeType,
+			utils.DerefString(v.CacheNodeType, ""),
 			strconv.Itoa(int(*v.CacheNodeCount)),
 			utils.TitleCase(*v.State),
 		})

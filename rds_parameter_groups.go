@@ -4,6 +4,7 @@ import (
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -92,40 +93,20 @@ func (r *RDSParameterGroups) Render() {
 	var data [][]string
 	for _, v := range clusterParameterGroups {
 		objects = append(objects, v)
-		var name, family, desc string
-		if v.DBClusterParameterGroupName != nil {
-			name = *v.DBClusterParameterGroupName
-		}
-		if v.DBParameterGroupFamily != nil {
-			family = *v.DBParameterGroupFamily
-		}
-		if v.Description != nil {
-			desc = *v.Description
-		}
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.DBClusterParameterGroupName, ""),
 			"Cluster",
-			family,
-			desc,
+			utils.DerefString(v.DBParameterGroupFamily, ""),
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	for _, v := range instanceParameterGroups {
 		objects = append(objects, v)
-		var name, family, desc string
-		if v.DBParameterGroupName != nil {
-			name = *v.DBParameterGroupName
-		}
-		if v.DBParameterGroupFamily != nil {
-			family = *v.DBParameterGroupFamily
-		}
-		if v.Description != nil {
-			desc = *v.Description
-		}
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.DBParameterGroupName, ""),
 			"Instance",
-			family,
-			desc,
+			utils.DerefString(v.DBParameterGroupFamily, ""),
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	r.model = objects

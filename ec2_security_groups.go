@@ -5,6 +5,7 @@ import (
 
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -77,29 +78,13 @@ func (e EC2SecurityGroups) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, id, description, ingressCount, egressCount string
-		vpcId := "-"
-		if v.GroupName != nil {
-			name = *v.GroupName
-		}
-		if v.GroupId != nil {
-			id = *v.GroupId
-		}
-		if v.VpcId != nil {
-			vpcId = *v.VpcId
-		}
-		if v.Description != nil {
-			description = *v.Description
-		}
-		ingressCount = strconv.Itoa(len(v.IpPermissions))
-		egressCount = strconv.Itoa(len(v.IpPermissionsEgress))
 		data = append(data, []string{
-			name,
-			id,
-			vpcId,
-			ingressCount,
-			egressCount,
-			description,
+			utils.DerefString(v.GroupName, ""),
+			utils.DerefString(v.GroupId, ""),
+			utils.DerefString(v.VpcId, ""),
+			strconv.Itoa(len(v.IpPermissions)),
+			strconv.Itoa(len(v.IpPermissionsEgress)),
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	e.SetData(data)

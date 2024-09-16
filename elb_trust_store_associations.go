@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 )
 
@@ -43,12 +44,8 @@ func (e ELBTrustStoreAssociations) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var resourceArn string
-		if v.ResourceArn != nil {
-			resourceArn = *v.ResourceArn
-		}
 		data = append(data, []string{
-			resourceArn,
+			utils.DerefString(v.ResourceArn, ""),
 		})
 	}
 	e.SetData(data)

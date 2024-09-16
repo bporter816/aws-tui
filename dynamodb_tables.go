@@ -96,10 +96,6 @@ func (d *DynamoDBTables) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name string
-		if v.TableName != nil {
-			name = *v.TableName
-		}
 		partitionKey, sortKey := utils.GetDynamoDBPartitionAndSortKeys(v.KeySchema)
 		if partitionKeyType, ok := utils.GetDynamoDBAttributeType(partitionKey, v.AttributeDefinitions); ok {
 			partitionKey = fmt.Sprintf("%v (%v)", partitionKey, partitionKeyType)
@@ -133,7 +129,7 @@ func (d *DynamoDBTables) Render() {
 			tableSize = *v.TableSizeBytes
 		}
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.TableName, ""),
 			utils.TitleCase(string(v.TableStatus)),
 			partitionKey,
 			sortKey,

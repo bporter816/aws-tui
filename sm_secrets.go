@@ -74,24 +74,15 @@ func (s SMSecrets) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, primaryRegion, rotationEnabled, desc string
-		if v.Name != nil {
-			name = *v.Name
-		}
-		if v.PrimaryRegion != nil {
-			primaryRegion = *v.PrimaryRegion
-		}
+		var rotationEnabled string
 		if v.RotationEnabled != nil {
 			rotationEnabled = utils.BoolToString(*v.RotationEnabled, "Yes", "No")
 		}
-		if v.Description != nil {
-			desc = *v.Description
-		}
 		data = append(data, []string{
-			name,
-			primaryRegion,
+			utils.DerefString(v.Name, ""),
+			utils.DerefString(v.PrimaryRegion, ""),
 			rotationEnabled,
-			desc,
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	s.SetData(data)

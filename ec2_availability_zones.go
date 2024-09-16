@@ -44,14 +44,7 @@ func (e EC2AvailabilityZones) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, id, state, messages string
-		if v.ZoneName != nil {
-			name = *v.ZoneName
-		}
-		if v.ZoneId != nil {
-			id = *v.ZoneId
-		}
-		state = utils.TitleCase(string(v.State))
+		var messages string
 		if len(v.Messages) > 0 {
 			for _, m := range v.Messages {
 				if m.Message != nil {
@@ -63,9 +56,9 @@ func (e EC2AvailabilityZones) Render() {
 			messages = "-"
 		}
 		data = append(data, []string{
-			name,
-			id,
-			state,
+			utils.DerefString(v.ZoneName, ""),
+			utils.DerefString(v.ZoneId, ""),
+			utils.TitleCase(string(v.State)),
 			messages,
 		})
 	}

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 )
 
@@ -45,25 +46,16 @@ func (c CFDistributionOrigins) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, domainName, originPath, originType string
-		if v.Id != nil {
-			id = *v.Id
-		}
-		if v.DomainName != nil {
-			domainName = *v.DomainName
-		}
-		if v.OriginPath != nil {
-			originPath = *v.OriginPath
-		}
+		var originType string
 		if v.S3OriginConfig != nil {
 			originType = "S3"
 		} else if v.CustomOriginConfig != nil {
 			originType = "Custom origin"
 		}
 		data = append(data, []string{
-			id,
-			domainName,
-			originPath,
+			utils.DerefString(v.Id, ""),
+			utils.DerefString(v.DomainName, ""),
+			utils.DerefString(v.OriginPath, ""),
 			originType,
 		})
 	}

@@ -66,10 +66,7 @@ func (c CFFunctions) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, comment, status, stage, created, modified string
-		if v.Name != nil {
-			name = *v.Name
-		}
+		var comment, status, stage, created, modified string
 		if v.FunctionConfig != nil && v.FunctionConfig.Comment != nil {
 			comment = *v.FunctionConfig.Comment
 		}
@@ -86,7 +83,7 @@ func (c CFFunctions) Render() {
 			}
 		}
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.Name, ""),
 			comment,
 			status,
 			stage,

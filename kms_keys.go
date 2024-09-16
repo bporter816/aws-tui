@@ -97,25 +97,19 @@ func (k *KmsKeys) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var keyId, regionality, description string
-		if v.KeyId != nil {
-			keyId = *v.KeyId
-		}
+		var regionality string
 		if v.MultiRegion != nil && *v.MultiRegion && v.MultiRegionConfiguration != nil {
 			regionality = string(v.MultiRegionConfiguration.MultiRegionKeyType)
 		}
-		if v.Description != nil {
-			description = *v.Description
-		}
 		data = append(data, []string{
-			keyId,
+			utils.DerefString(v.KeyId, ""),
 			utils.FormatKMSAliases(v.Aliases),
 			utils.BoolToString(v.Enabled, "Yes", "No"),
 			string(v.KeyState),
 			string(v.KeySpec),
 			string(v.KeyUsage),
 			regionality,
-			description,
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	k.SetData(data)

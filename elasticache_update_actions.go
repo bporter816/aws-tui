@@ -61,7 +61,7 @@ func (e ElastiCacheUpdateActions) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, status, nodesUpdated string
+		var id string
 		if e.serviceUpdateName == "" {
 			if v.ServiceUpdateName != nil {
 				id = *v.ServiceUpdateName
@@ -73,14 +73,10 @@ func (e ElastiCacheUpdateActions) Render() {
 				id = *v.ReplicationGroupId
 			}
 		}
-		status = utils.AutoCase(string(v.UpdateActionStatus))
-		if v.NodesUpdated != nil {
-			nodesUpdated = *v.NodesUpdated
-		}
 		data = append(data, []string{
 			id,
-			status,
-			nodesUpdated,
+			utils.AutoCase(string(v.UpdateActionStatus)),
+			utils.DerefString(v.NodesUpdated, ""),
 		})
 	}
 	e.SetData(data)

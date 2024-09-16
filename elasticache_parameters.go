@@ -50,38 +50,19 @@ func (e ElastiCacheParameters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, allowedValues, value, dataType, isModifiable, source, description string
-		if v.ParameterName != nil {
-			name = *v.ParameterName
-		}
-		if v.AllowedValues != nil {
-			allowedValues = *v.AllowedValues
-		}
+		var isModifiable string
 		if v.IsModifiable != nil {
 			isModifiable = utils.BoolToString(*v.IsModifiable, "Yes", "No")
 		}
-		if v.ParameterValue != nil {
-			value = *v.ParameterValue
-		}
-		if v.DataType != nil {
-			dataType = *v.DataType
-		}
-		var changeType = string(v.ChangeType)
-		if v.Source != nil {
-			source = *v.Source
-		}
-		if v.Description != nil {
-			description = *v.Description
-		}
 		data = append(data, []string{
-			name,
-			allowedValues,
-			value,
-			dataType,
+			utils.DerefString(v.ParameterName, ""),
+			utils.DerefString(v.AllowedValues, ""),
+			utils.DerefString(v.ParameterValue, ""),
+			utils.DerefString(v.DataType, ""),
 			isModifiable,
-			changeType,
-			source,
-			description,
+			string(v.ChangeType),
+			utils.DerefString(v.Source, ""),
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	e.SetData(data)

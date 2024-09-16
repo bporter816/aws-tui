@@ -69,25 +69,16 @@ func (e *ELBTargetGroups) Render() {
 	var data [][]string
 	for _, v := range model {
 		// TODO add attached load balancer
-		var name, protocol, targetType, vpcId string
 		port := "-"
-		if v.TargetGroupName != nil {
-			name = *v.TargetGroupName
-		}
 		if v.Port != nil {
 			port = strconv.Itoa(int(*v.Port))
 		}
-		if v.VpcId != nil {
-			vpcId = *v.VpcId
-		}
-		protocol = string(v.Protocol)
-		targetType = utils.AutoCase(string(v.TargetType))
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.TargetGroupName, ""),
 			port,
-			protocol,
-			targetType,
-			vpcId,
+			string(v.Protocol),
+			utils.AutoCase(string(v.TargetType)),
+			utils.DerefString(v.VpcId, ""),
 		})
 	}
 	e.SetData(data)

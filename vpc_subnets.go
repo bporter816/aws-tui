@@ -72,33 +72,23 @@ func (e VPCSubnets) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, subnetId, state, availabilityZone, ipv4Cidr, vpcId string
+		var name, availabilityZone string
 		if n, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = n
 		}
-		if v.SubnetId != nil {
-			subnetId = *v.SubnetId
-		}
-		state = utils.TitleCase(string(v.State))
 		if v.AvailabilityZone != nil {
 			availabilityZone = *v.AvailabilityZone
 			if v.AvailabilityZoneId != nil {
 				availabilityZone += fmt.Sprintf(" (%v)", *v.AvailabilityZoneId)
 			}
 		}
-		if v.CidrBlock != nil {
-			ipv4Cidr = *v.CidrBlock
-		}
-		if v.VpcId != nil {
-			vpcId = *v.VpcId
-		}
 		data = append(data, []string{
 			name,
-			subnetId,
-			state,
+			utils.DerefString(v.SubnetId, ""),
+			utils.TitleCase(string(v.State)),
 			availabilityZone,
-			ipv4Cidr,
-			vpcId,
+			utils.DerefString(v.CidrBlock, ""),
+			utils.DerefString(v.VpcId, ""),
 		})
 	}
 	e.SetData(data)

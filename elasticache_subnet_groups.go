@@ -92,29 +92,19 @@ func (e *ElastiCacheSubnetGroups) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, subnets, vpcId, networkTypes, description string
-		if v.CacheSubnetGroupName != nil {
-			name = *v.CacheSubnetGroupName
-		}
-		subnets = strconv.Itoa(len(v.Subnets))
-		if v.VpcId != nil {
-			vpcId = *v.VpcId
-		}
+		var networkTypes string
 		for i, n := range v.SupportedNetworkTypes {
 			networkTypes += utils.AutoCase(string(n))
 			if i < len(v.SupportedNetworkTypes)-1 {
 				networkTypes += ", "
 			}
 		}
-		if v.CacheSubnetGroupDescription != nil {
-			description = *v.CacheSubnetGroupDescription
-		}
 		data = append(data, []string{
-			name,
-			subnets,
-			vpcId,
+			utils.DerefString(v.CacheSubnetGroupName, ""),
+			strconv.Itoa(len(v.Subnets)),
+			utils.DerefString(v.VpcId, ""),
 			networkTypes,
-			description,
+			utils.DerefString(v.CacheSubnetGroupDescription, ""),
 		})
 	}
 	e.SetData(data)

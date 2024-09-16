@@ -71,22 +71,7 @@ func (r *RDSReservedInstances) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var reservationId, leaseId, product, offeringType, class, count, status, multiAZ, startTime string
-		if v.ReservedDBInstanceId != nil {
-			reservationId = *v.ReservedDBInstanceId
-		}
-		if v.LeaseId != nil {
-			leaseId = *v.LeaseId
-		}
-		if v.ProductDescription != nil {
-			product = *v.ProductDescription
-		}
-		if v.OfferingType != nil {
-			offeringType = *v.OfferingType
-		}
-		if v.DBInstanceClass != nil {
-			class = *v.DBInstanceClass
-		}
+		var count, status, multiAZ, startTime string
 		if v.DBInstanceCount != nil {
 			count = strconv.Itoa(int(*v.DBInstanceCount))
 		}
@@ -100,11 +85,11 @@ func (r *RDSReservedInstances) Render() {
 			startTime = v.StartTime.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
-			reservationId,
-			leaseId,
-			product,
-			offeringType,
-			class,
+			utils.DerefString(v.ReservedDBInstanceId, ""),
+			utils.DerefString(v.LeaseId, ""),
+			utils.DerefString(v.ProductDescription, ""),
+			utils.DerefString(v.OfferingType, ""),
+			utils.DerefString(v.DBInstanceClass, ""),
 			count,
 			status,
 			multiAZ,

@@ -76,22 +76,15 @@ func (e VPCInternetGateways) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, id, ownerId, attachments string
+		var name string
 		if n, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = n
 		}
-		if v.InternetGatewayId != nil {
-			id = *v.InternetGatewayId
-		}
-		if v.OwnerId != nil {
-			ownerId = *v.OwnerId
-		}
-		attachments = strconv.Itoa(len(v.Attachments))
 		data = append(data, []string{
 			name,
-			id,
-			ownerId,
-			attachments,
+			utils.DerefString(v.InternetGatewayId, ""),
+			utils.DerefString(v.OwnerId, ""),
+			strconv.Itoa(len(v.Attachments)),
 		})
 	}
 	e.SetData(data)

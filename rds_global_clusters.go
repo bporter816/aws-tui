@@ -46,10 +46,7 @@ func (r *RDSGlobalClusters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, engine, status string
-		if v.GlobalClusterIdentifier != nil {
-			name = *v.GlobalClusterIdentifier
-		}
+		var engine, status string
 		if v.Engine != nil {
 			engine = *v.Engine
 			if v.EngineVersion != nil {
@@ -60,7 +57,7 @@ func (r *RDSGlobalClusters) Render() {
 			status = utils.AutoCase(*v.Status)
 		}
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.GlobalClusterIdentifier, ""),
 			engine,
 			status,
 		})

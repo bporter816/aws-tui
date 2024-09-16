@@ -85,31 +85,24 @@ func (a *ACMCertificates) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, domainName, certificateType, algorithm, status, inUse, renewalEligibility string
+		var id, inUse string
 		if v.CertificateArn != nil {
 			arn, err := arn.Parse(*v.CertificateArn)
 			if err == nil {
 				id = utils.GetResourceNameFromArn(arn)
 			}
 		}
-		if v.DomainName != nil {
-			domainName = *v.DomainName
-		}
-		certificateType = utils.AutoCase(string(v.Type))
-		algorithm = string(v.KeyAlgorithm)
-		status = utils.AutoCase(string(v.Status))
 		if v.InUse != nil {
 			inUse = utils.BoolToString(*v.InUse, "Yes", "No")
 		}
-		renewalEligibility = string(v.RenewalEligibility)
 		data = append(data, []string{
 			id,
-			domainName,
-			certificateType,
-			algorithm,
-			status,
+			utils.DerefString(v.DomainName, ""),
+			utils.AutoCase(string(v.Type)),
+			string(v.KeyAlgorithm),
+			utils.AutoCase(string(v.Status)),
 			inUse,
-			renewalEligibility,
+			string(v.RenewalEligibility),
 		})
 	}
 	a.SetData(data)

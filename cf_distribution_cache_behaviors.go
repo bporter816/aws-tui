@@ -48,31 +48,13 @@ func (c CFDistributionCacheBehaviors) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var pathPattern, origin, viewerProtocolPolicy string
-		cachePolicyId, originRequestPolicyId, responseHeadersPolicyId := "-", "-", "-"
-		if v.PathPattern != nil {
-			pathPattern = *v.PathPattern
-		}
-		if v.TargetOriginId != nil {
-			origin = *v.TargetOriginId
-		}
-		viewerProtocolPolicy = utils.AutoCase(string(v.ViewerProtocolPolicy))
-		if v.CachePolicyId != nil {
-			cachePolicyId = *v.CachePolicyId
-		}
-		if v.OriginRequestPolicyId != nil {
-			originRequestPolicyId = *v.OriginRequestPolicyId
-		}
-		if v.ResponseHeadersPolicyId != nil {
-			responseHeadersPolicyId = *v.ResponseHeadersPolicyId
-		}
 		data = append(data, []string{
-			pathPattern,
-			origin,
-			viewerProtocolPolicy,
-			cachePolicyId,
-			originRequestPolicyId,
-			responseHeadersPolicyId,
+			utils.DerefString(v.PathPattern, ""),
+			utils.DerefString(v.TargetOriginId, ""),
+			utils.AutoCase(string(v.ViewerProtocolPolicy)),
+			utils.DerefString(v.CachePolicyId, "-"),
+			utils.DerefString(v.OriginRequestPolicyId, "-"),
+			utils.DerefString(v.ResponseHeadersPolicyId, "-"),
 		})
 	}
 	c.SetData(data)

@@ -96,15 +96,12 @@ func (s S3Buckets) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, created string
-		if v.Name != nil {
-			name = *v.Name
-		}
+		var created string
 		if v.CreationDate != nil {
 			created = v.CreationDate.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.Name, ""),
 			created,
 		})
 	}

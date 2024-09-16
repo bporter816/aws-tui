@@ -67,20 +67,15 @@ func (e *ElastiCacheGroups) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, status, users, clusters string
-		if v.UserGroupId != nil {
-			id = *v.UserGroupId
-		}
+		var status string
 		if v.Status != nil {
 			status = utils.TitleCase(*v.Status)
 		}
-		users = fmt.Sprintf("%v", len(v.UserIds))
-		clusters = fmt.Sprintf("%v", len(v.ReplicationGroups))
 		data = append(data, []string{
-			id,
+			utils.DerefString(v.UserGroupId, ""),
 			status,
-			users,
-			clusters,
+			fmt.Sprintf("%v", len(v.UserIds)),
+			fmt.Sprintf("%v", len(v.ReplicationGroups)),
 		})
 	}
 	e.SetData(data)

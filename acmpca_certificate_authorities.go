@@ -69,7 +69,7 @@ func (a *ACMPCACertificateAuthorities) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var commonName, id, status, caType, usageMode, keyAlgo, signingAlgo string
+		var commonName, id, keyAlgo, signingAlgo string
 		if c := v.CertificateAuthorityConfiguration; c != nil {
 			keyAlgo = utils.AutoCase(string(c.KeyAlgorithm))
 			signingAlgo = utils.AutoCase(string(c.SigningAlgorithm))
@@ -84,15 +84,12 @@ func (a *ACMPCACertificateAuthorities) Render() {
 				id = utils.GetResourceNameFromArn(aa)
 			}
 		}
-		status = utils.AutoCase(string(v.Status))
-		caType = utils.AutoCase(string(v.Type))
-		usageMode = utils.AutoCase(string(v.UsageMode))
 		data = append(data, []string{
 			commonName,
 			id,
-			status,
-			caType,
-			usageMode,
+			utils.AutoCase(string(v.Status)),
+			utils.AutoCase(string(v.Type)),
+			utils.AutoCase(string(v.UsageMode)),
 			keyAlgo,
 			signingAlgo,
 		})

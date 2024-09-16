@@ -74,17 +74,14 @@ func (c *CloudWatchLogGroups) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, retention, dataProtection, metricFilters, storedData string
-		if v.LogGroupName != nil {
-			name = *v.LogGroupName
-		}
+		var retention, metricFilters, storedData string
 		if v.RetentionInDays != nil {
 			// TODO have nice output for months, years
 			retention = strconv.Itoa(int(*v.RetentionInDays))
 		} else {
 			retention = "Never expire"
 		}
-		dataProtection = utils.TitleCase(string(v.DataProtectionStatus))
+		dataProtection := utils.TitleCase(string(v.DataProtectionStatus))
 		if len(dataProtection) == 0 {
 			dataProtection = "-"
 		}
@@ -95,7 +92,7 @@ func (c *CloudWatchLogGroups) Render() {
 			storedData = utils.FormatSize(*v.StoredBytes, 1)
 		}
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.LogGroupName, ""),
 			retention,
 			dataProtection,
 			metricFilters,

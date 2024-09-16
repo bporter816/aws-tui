@@ -7,6 +7,7 @@ import (
 	r53Types "github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -74,13 +75,10 @@ func (r Route53HostedZones) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, name, resourceRecordSetCount, visibility, comment string
+		var id, resourceRecordSetCount, visibility, comment string
 		if v.Id != nil {
 			split := strings.Split(*v.Id, "/")
 			id = split[len(split)-1]
-		}
-		if v.Name != nil {
-			name = *v.Name
 		}
 		if v.ResourceRecordSetCount != nil {
 			resourceRecordSetCount = strconv.FormatInt(*v.ResourceRecordSetCount, 10)
@@ -97,7 +95,7 @@ func (r Route53HostedZones) Render() {
 		}
 		data = append(data, []string{
 			id,
-			name,
+			utils.DerefString(v.Name, ""),
 			resourceRecordSetCount,
 			visibility,
 			comment,

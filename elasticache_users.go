@@ -70,16 +70,7 @@ func (e *ElastiCacheUsers) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, name, accessString, status, authType, groups string
-		if v.UserId != nil {
-			id = *v.UserId
-		}
-		if v.UserName != nil {
-			name = *v.UserName
-		}
-		if v.AccessString != nil {
-			accessString = *v.AccessString
-		}
+		var status, authType string
 		if v.Status != nil {
 			status = utils.TitleCase(*v.Status)
 		}
@@ -89,14 +80,13 @@ func (e *ElastiCacheUsers) Render() {
 				authType += fmt.Sprintf(" (%v)", *a.PasswordCount)
 			}
 		}
-		groups = fmt.Sprintf("%v", len(v.UserGroupIds))
 		data = append(data, []string{
-			id,
-			name,
-			accessString,
+			utils.DerefString(v.UserId, ""),
+			utils.DerefString(v.UserName, ""),
+			utils.DerefString(v.AccessString, ""),
 			status,
 			authType,
-			groups,
+			fmt.Sprintf("%v", len(v.UserGroupIds)),
 		})
 	}
 	e.SetData(data)

@@ -68,12 +68,9 @@ func (e EC2SecurityGroupRules) Render() {
 	var data [][]string
 	for _, v := range model {
 		name := "-"
-		var id, ruleType, protocol, ports, cidr, description string
+		var ruleType, protocol, ports, cidr string
 		if ruleName, ok := utils.LookupEC2Tag(v.Tags, "Name"); ok {
 			name = ruleName
-		}
-		if v.SecurityGroupRuleId != nil {
-			id = *v.SecurityGroupRuleId
 		}
 		if v.IsEgress != nil {
 			if *v.IsEgress {
@@ -108,17 +105,14 @@ func (e EC2SecurityGroupRules) Render() {
 				ports = fmt.Sprintf("%v-%v", from, to)
 			}
 		}
-		if v.Description != nil {
-			description = *v.Description
-		}
 		data = append(data, []string{
 			name,
-			id,
+			utils.DerefString(v.SecurityGroupRuleId, ""),
 			ruleType,
 			protocol,
 			ports,
 			cidr,
-			description,
+			utils.DerefString(v.Description, ""),
 		})
 	}
 	e.SetData(data)

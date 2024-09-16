@@ -101,10 +101,7 @@ func (e *ELBTrustStores) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, caCerts, revokedCerts string
-		if v.Name != nil {
-			name = *v.Name
-		}
+		var caCerts, revokedCerts string
 		if v.NumberOfCaCertificates != nil {
 			caCerts = strconv.Itoa(int(*v.NumberOfCaCertificates))
 		}
@@ -112,7 +109,7 @@ func (e *ELBTrustStores) Render() {
 			revokedCerts = strconv.FormatInt(*v.TotalRevokedEntries, 10)
 		}
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.Name, ""),
 			utils.AutoCase(string(v.Status)),
 			caCerts,
 			revokedCerts,

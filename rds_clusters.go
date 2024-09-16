@@ -7,6 +7,7 @@ import (
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -95,14 +96,10 @@ func (r *RDSClusters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, port, instances, engine, paramGroup, customEndpoints string
-		if v.DBClusterIdentifier != nil {
-			name = *v.DBClusterIdentifier
-		}
+		var port, engine string
 		if v.Port != nil {
 			port = strconv.Itoa(int(*v.Port))
 		}
-		instances = strconv.Itoa(len(v.DBClusterMembers))
 		if v.Engine != nil {
 			engine = *v.Engine
 			if v.EngineVersion != nil {
@@ -112,17 +109,13 @@ func (r *RDSClusters) Render() {
 				engine += " (" + *v.EngineMode + ")"
 			}
 		}
-		if v.DBClusterParameterGroup != nil {
-			paramGroup = *v.DBClusterParameterGroup
-		}
-		customEndpoints = strconv.Itoa(len(v.CustomEndpoints))
 		data = append(data, []string{
-			name,
+			utils.DerefString(v.DBClusterIdentifier, ""),
 			port,
-			instances,
+			strconv.Itoa(len(v.DBClusterMembers)),
 			engine,
-			paramGroup,
-			customEndpoints,
+			utils.DerefString(v.DBClusterParameterGroup, ""),
+			strconv.Itoa(len(v.CustomEndpoints)),
 		})
 	}
 	r.SetData(data)

@@ -47,11 +47,7 @@ func (k KmsCustomKeyStores) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, keyStoreType, connection, created string
-		if v.CustomKeyStoreName != nil {
-			name = *v.CustomKeyStoreName
-		}
-		keyStoreType = string(v.CustomKeyStoreType)
+		var created, connection string
 		if v.ConnectionState == kmsTypes.ConnectionStateTypeFailed {
 			connection = fmt.Sprintf("%v (%v)", v.ConnectionState, v.ConnectionErrorCode)
 		} else {
@@ -61,8 +57,8 @@ func (k KmsCustomKeyStores) Render() {
 			created = v.CreationDate.Format(utils.DefaultTimeFormat)
 		}
 		data = append(data, []string{
-			name,
-			keyStoreType,
+			utils.DerefString(v.CustomKeyStoreName, ""),
+			string(v.CustomKeyStoreType),
 			connection,
 			created,
 		})

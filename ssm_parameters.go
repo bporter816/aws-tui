@@ -6,6 +6,7 @@ import (
 	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
+	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
 	"github.com/gdamore/tcell/v2"
 )
@@ -68,24 +69,13 @@ func (s *SSMParameters) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var name, tier, parameterType, dataType, version, policies string
-		if v.Name != nil {
-			name = *v.Name
-		}
-		tier = string(v.Tier)
-		parameterType = string(v.Type)
-		if v.DataType != nil {
-			dataType = *v.DataType
-		}
-		version = strconv.FormatInt(v.Version, 10)
-		policies = strconv.Itoa(len(v.Policies))
 		data = append(data, []string{
-			name,
-			tier,
-			parameterType,
-			dataType,
-			version,
-			policies,
+			utils.DerefString(v.Name, ""),
+			string(v.Tier),
+			string(v.Type),
+			utils.DerefString(v.DataType, ""),
+			strconv.FormatInt(v.Version, 10),
+			strconv.Itoa(len(v.Policies)),
 		})
 	}
 	s.SetData(data)
