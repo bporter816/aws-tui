@@ -6,7 +6,6 @@ import (
 	"strings"
 )
 
-// TODO add tests
 func JoinKMSGrantOperations(operations []kmsTypes.GrantOperation, sep string) string {
 	if len(operations) == 0 {
 		return ""
@@ -19,7 +18,6 @@ func JoinKMSGrantOperations(operations []kmsTypes.GrantOperation, sep string) st
 	return strings.TrimPrefix(ret, sep)
 }
 
-// TODO add tests
 func FormatKMSAliases(a []string) string {
 	if len(a) == 0 {
 		return "-"
