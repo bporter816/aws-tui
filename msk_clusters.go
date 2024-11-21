@@ -55,7 +55,7 @@ func (m MSKClusters) GetKeyActions() []KeyAction {
 	}
 }
 
-func (m MSKClusters) Render() {
+func (m *MSKClusters) Render() {
 	model, err := m.repo.ListClusters()
 	if err != nil {
 		panic(err)
