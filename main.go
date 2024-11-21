@@ -22,6 +22,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
+	"github.com/aws/aws-sdk-go-v2/service/mq"
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	r53 "github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -74,6 +75,7 @@ func NewApplication() *Application {
 	iamClient := iam.NewFromConfig(cfg)
 	kmsClient := kms.NewFromConfig(cfg)
 	lambdaClient := lambda.NewFromConfig(cfg)
+	mqClient := mq.NewFromConfig(cfg)
 	rdsClient := rds.NewFromConfig(cfg)
 	r53Client := r53.NewFromConfig(cfg)
 	s3Client := s3.NewFromConfig(cfg)
@@ -100,6 +102,7 @@ func NewApplication() *Application {
 	iamRepo := repo.NewIAM(iamClient)
 	kmsRepo := repo.NewKMS(kmsClient)
 	lambdaRepo := repo.NewLambda(lambdaClient)
+	mqRepo := repo.NewMQ(mqClient)
 	rdsRepo := repo.NewRDS(rdsClient)
 	r53Repo := repo.NewRoute53(r53Client)
 	s3Repo := repo.NewS3(s3Client)
@@ -125,6 +128,7 @@ func NewApplication() *Application {
 		"IAM":                iamRepo,
 		"KMS":                kmsRepo,
 		"Lambda":             lambdaRepo,
+		"MQ":                 mqRepo,
 		"RDS":                rdsRepo,
 		"Route 53":           r53Repo,
 		"S3":                 s3Repo,

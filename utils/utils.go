@@ -24,6 +24,7 @@ var (
 	sizePrefixes = []string{"KiB", "MiB", "GiB", "TiB", "PiB"}
 
 	replacements = map[string]string{
+		"activemq": "ActiveMQ",
 		"alb":      "ALB",
 		"ec2":      "EC2",
 		"ebs":      "EBS",
@@ -38,6 +39,7 @@ var (
 		"json":     "JSON",
 		"lambda":   "Lambda",
 		"nlb":      "NLB",
+		"rabbitmq": "RabbitMQ",
 		"sms":      "SMS",
 		"sqs":      "SQS",
 		"tcp":      "TCP",
