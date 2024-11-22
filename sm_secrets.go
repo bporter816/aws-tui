@@ -42,6 +42,15 @@ func (s SMSecrets) resourcePolicyHandler() {
 	s.app.AddAndSwitch(resourcePolicyView)
 }
 
+func (s SMSecrets) valueHandler() {
+	secretName, err := s.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	valueView := NewSMSecretValue(s.repo, secretName, s.app)
+	s.app.AddAndSwitch(valueView)
+}
+
 func (s SMSecrets) tagsHandler() {
 	secretName, err := s.GetColSelection("NAME")
 	if err != nil {
@@ -57,6 +66,11 @@ func (s SMSecrets) GetKeyActions() []KeyAction {
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
 			Description: "Resource Policy",
 			Action:      s.resourcePolicyHandler,
+		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'v', tcell.ModNone),
+			Description: "Get Secret Value",
+			Action:      s.valueHandler,
 		},
 		{
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
