@@ -4,10 +4,12 @@ import (
 	"strconv"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
+	"github.com/bporter816/aws-tui/model"
 	"github.com/bporter816/aws-tui/repo"
 	"github.com/bporter816/aws-tui/ui"
 	"github.com/bporter816/aws-tui/utils"
 	"github.com/bporter816/aws-tui/view"
+	"github.com/gdamore/tcell/v2"
 )
 
 type ECSServices struct {
@@ -15,6 +17,7 @@ type ECSServices struct {
 	view.ECS
 	repo        *repo.ECS
 	app         *Application
+	model       []model.ECSService
 	clusterName string
 }
 
@@ -38,15 +41,47 @@ func (e ECSServices) GetLabels() []string {
 	return []string{e.clusterName, "Services"}
 }
 
-func (e ECSServices) GetKeyActions() []KeyAction {
-	return []KeyAction{}
+func (e ECSServices) tasksHandler() {
+	serviceName, err := e.GetColSelection("NAME")
+	if err != nil {
+		return
+	}
+	tasksView := NewECSTasks(e.clusterName, serviceName, e.repo, e.app)
+	e.app.AddAndSwitch(tasksView)
 }
 
-func (e ECSServices) Render() {
+func (e ECSServices) tagsHandler() {
+	row, err := e.GetRowSelection()
+	if err != nil {
+		return
+	}
+	if a := e.model[row-1].ServiceArn; a != nil {
+		tagsView := NewTags(e.repo, e.GetService(), *a, e.app)
+		e.app.AddAndSwitch(tagsView)
+	}
+}
+
+func (e ECSServices) GetKeyActions() []KeyAction {
+	return []KeyAction{
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 't', tcell.ModNone),
+			Description: "Tasks",
+			Action:      e.tasksHandler,
+		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
+			Description: "Tags",
+			Action:      e.tagsHandler,
+		},
+	}
+}
+
+func (e *ECSServices) Render() {
 	model, err := e.repo.ListServices(e.clusterName)
 	if err != nil {
 		panic(err)
 	}
+	e.model = model
 
 	var data [][]string
 	for _, v := range model {

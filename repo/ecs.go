@@ -102,13 +102,14 @@ func (e ECS) ListServices(clusterName string) ([]model.ECSService, error) {
 }
 
 // Internal function to get task arns
-func (e ECS) listTaskArns(clusterName string) ([]string, error) {
-	pg := ecs.NewListTasksPaginator(
-		e.ecsClient,
-		&ecs.ListTasksInput{
-			Cluster: aws.String(clusterName),
-		},
-	)
+func (e ECS) listTaskArns(clusterName string, serviceName string) ([]string, error) {
+	input := &ecs.ListTasksInput{
+		Cluster: aws.String(clusterName),
+	}
+	if len(serviceName) > 0 {
+		input.ServiceName = aws.String(serviceName)
+	}
+	pg := ecs.NewListTasksPaginator(e.ecsClient, input)
 	var arns []string
 	for pg.HasMorePages() {
 		out, err := pg.NextPage(context.TODO())
@@ -120,8 +121,8 @@ func (e ECS) listTaskArns(clusterName string) ([]string, error) {
 	return arns, nil
 }
 
-func (e ECS) ListTasks(clusterName string) ([]model.ECSTask, error) {
-	arns, err := e.listTaskArns(clusterName)
+func (e ECS) ListTasks(clusterName string, serviceName string) ([]model.ECSTask, error) {
+	arns, err := e.listTaskArns(clusterName, serviceName)
 	if err != nil {
 		return []model.ECSTask{}, err
 	}

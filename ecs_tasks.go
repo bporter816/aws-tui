@@ -17,12 +17,14 @@ type ECSTasks struct {
 	app         *Application
 	model       []model.ECSTask
 	clusterName string
+	serviceName string
 }
 
-func NewECSTasks(clusterName string, repo *repo.ECS, app *Application) *ECSTasks {
+func NewECSTasks(clusterName string, serviceName string, repo *repo.ECS, app *Application) *ECSTasks {
 	e := &ECSTasks{
 		Table: ui.NewTable([]string{
 			"ID",
+			"GROUP",
 			"LAST STATUS",
 			"DESIRED STATUS",
 			"LAUNCH TYPE",
@@ -31,6 +33,7 @@ func NewECSTasks(clusterName string, repo *repo.ECS, app *Application) *ECSTasks
 			"MEM",
 		}, 1, 0),
 		clusterName: clusterName,
+		serviceName: serviceName,
 		repo:        repo,
 		app:         app,
 	}
@@ -38,7 +41,10 @@ func NewECSTasks(clusterName string, repo *repo.ECS, app *Application) *ECSTasks
 }
 
 func (e ECSTasks) GetLabels() []string {
-	return []string{e.clusterName, "Tasks"}
+	if len(e.serviceName) == 0 {
+		return []string{e.clusterName, "Tasks"}
+	}
+	return []string{e.serviceName, "Tasks"}
 }
 
 func (e ECSTasks) tagsHandler() {
@@ -63,7 +69,7 @@ func (e ECSTasks) GetKeyActions() []KeyAction {
 }
 
 func (e *ECSTasks) Render() {
-	model, err := e.repo.ListTasks(e.clusterName)
+	model, err := e.repo.ListTasks(e.clusterName, e.serviceName)
 	if err != nil {
 		panic(err)
 	}
@@ -71,13 +77,16 @@ func (e *ECSTasks) Render() {
 
 	var data [][]string
 	for _, v := range model {
-		var id, lastStatus, desiredStatus, platform, cpu, mem string
+		var id, group, lastStatus, desiredStatus, platform, cpu, mem string
 		if v.TaskArn != nil {
 			a, err := arn.Parse(*v.TaskArn)
 			if err != nil {
 				panic(err)
 			}
 			id = utils.GetResourceNameFromArn(a)
+		}
+		if v.Group != nil {
+			group = *v.Group
 		}
 		if v.LastStatus != nil {
 			lastStatus = utils.AutoCase(*v.LastStatus)
@@ -99,6 +108,7 @@ func (e *ECSTasks) Render() {
 		}
 		data = append(data, []string{
 			id,
+			group,
 			lastStatus,
 			desiredStatus,
 			utils.AutoCase(string(v.LaunchType)),

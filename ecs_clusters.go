@@ -51,7 +51,7 @@ func (e ECSClusters) tasksHandler() {
 	if err != nil {
 		return
 	}
-	tasksView := NewECSTasks(name, e.repo, e.app)
+	tasksView := NewECSTasks(name, "", e.repo, e.app)
 	e.app.AddAndSwitch(tasksView)
 }
 
