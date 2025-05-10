@@ -80,6 +80,9 @@ func (e ECS) ListTasks(clusterName string) ([]model.ECSTask, error) {
 	if err != nil {
 		return []model.ECSTask{}, err
 	}
+	if len(arns) == 0 {
+		return []model.ECSTask{}, nil
+	}
 	var tasks []model.ECSTask
 	out, err := e.ecsClient.DescribeTasks(
 		context.TODO(),
