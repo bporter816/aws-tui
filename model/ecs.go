@@ -6,5 +6,6 @@ import (
 
 type (
 	ECSCluster ecsTypes.Cluster
+	ECSService ecsTypes.Service
 	ECSTask    ecsTypes.Task
 )

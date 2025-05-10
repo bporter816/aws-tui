@@ -56,6 +56,51 @@ func (e ECS) ListClusters() ([]model.ECSCluster, error) {
 	return clusters, nil
 }
 
+// Internal function to get all service arns
+func (e ECS) listServiceArns(clusterName string) ([]string, error) {
+	pg := ecs.NewListServicesPaginator(
+		e.ecsClient,
+		&ecs.ListServicesInput{
+			Cluster: aws.String(clusterName),
+		},
+	)
+	var arns []string
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []string{}, err
+		}
+		arns = append(arns, out.ServiceArns...)
+	}
+	return arns, nil
+}
+
+func (e ECS) ListServices(clusterName string) ([]model.ECSService, error) {
+	arns, err := e.listServiceArns(clusterName)
+	if err != nil {
+		return []model.ECSService{}, err
+	}
+	if len(arns) == 0 {
+		return []model.ECSService{}, nil
+	}
+	var services []model.ECSService
+	out, err := e.ecsClient.DescribeServices(
+		context.TODO(),
+		&ecs.DescribeServicesInput{
+			Cluster:  aws.String(clusterName),
+			Services: arns,
+		},
+	)
+	if err != nil {
+		return []model.ECSService{}, err
+	}
+	for _, v := range out.Services {
+		// TODO handle failures
+		services = append(services, model.ECSService(v))
+	}
+	return services, nil
+}
+
 // Internal function to get task arns
 func (e ECS) listTaskArns(clusterName string) ([]string, error) {
 	pg := ecs.NewListTasksPaginator(
