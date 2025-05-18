@@ -147,6 +147,40 @@ func (e ECS) ListTasks(clusterName string, serviceName string) ([]model.ECSTask,
 	return tasks, nil
 }
 
+func (e ECS) ListTaskDefinitions() ([]string, error) {
+	pg := ecs.NewListTaskDefinitionFamiliesPaginator(
+		e.ecsClient,
+		&ecs.ListTaskDefinitionFamiliesInput{},
+	)
+	var families []string
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []string{}, err
+		}
+		families = append(families, out.Families...)
+	}
+	return families, nil
+}
+
+func (e ECS) ListTaskDefinitionRevisions(family string) ([]string, error) {
+	pg := ecs.NewListTaskDefinitionsPaginator(
+		e.ecsClient,
+		&ecs.ListTaskDefinitionsInput{
+			FamilyPrefix: aws.String(family),
+		},
+	)
+	var revisions []string
+	for pg.HasMorePages() {
+		out, err := pg.NextPage(context.TODO())
+		if err != nil {
+			return []string{}, err
+		}
+		revisions = append(revisions, out.TaskDefinitionArns...)
+	}
+	return revisions, nil
+}
+
 func (e ECS) ListTags(resourceId string) (model.Tags, error) {
 	out, err := e.ecsClient.ListTagsForResource(
 		context.TODO(),

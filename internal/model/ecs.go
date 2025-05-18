@@ -5,7 +5,8 @@ import (
 )
 
 type (
-	ECSCluster ecsTypes.Cluster
-	ECSService ecsTypes.Service
-	ECSTask    ecsTypes.Task
+	ECSCluster        ecsTypes.Cluster
+	ECSService        ecsTypes.Service
+	ECSTask           ecsTypes.Task
+	ECSTaskDefinition ecsTypes.TaskDefinition
 )
