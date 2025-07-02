@@ -47,10 +47,7 @@ func (c CloudWatchLogGroups) tagsHandler() {
 	if c.model[row-1].Arn == nil {
 		return
 	}
-	arn := *c.model[row-1].Arn
-	if strings.HasSuffix(arn, ":*") {
-		arn = arn[:len(arn)-2]
-	}
+	arn := strings.TrimSuffix(*c.model[row-1].Arn, ":*")
 	tagsView := NewTags(c.repo, c.GetService(), arn, c.app)
 	c.app.AddAndSwitch(tagsView)
 }
