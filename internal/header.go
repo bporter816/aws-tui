@@ -2,10 +2,10 @@ package internal
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/rivo/tview"
-	"os/exec"
-	"strings"
 )
 
 type Header struct {
@@ -42,13 +42,14 @@ func NewHeader(stsRepo *repo.STS, iamRepo *repo.IAM, app *Application) *Header {
 	return h
 }
 
+func (h *Header) UpdateRepos(stsRepo *repo.STS, iamRepo *repo.IAM) {
+	h.stsRepo = stsRepo
+	h.iamRepo = iamRepo
+}
+
 func (h Header) Render() {
-	// The AWS Go SDK doesn't provide a nice way to get the current region so get the answer from the AWS CLI
-	var region string
-	regionCmd := exec.Command("aws", "configure", "get", "region")
-	if regionOutput, err := regionCmd.Output(); err == nil {
-		region = string(regionOutput)
-	} else {
+	region := h.app.GetRegion()
+	if region == "" {
 		region = "unknown"
 	}
 

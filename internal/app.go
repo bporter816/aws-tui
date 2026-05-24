@@ -3,6 +3,10 @@ package internal
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"strings"
+
+	aws "github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
 	"github.com/aws/aws-sdk-go-v2/service/acmpca"
@@ -33,8 +37,6 @@ import (
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"net/http"
-	"strings"
 )
 
 type Application struct {
@@ -43,17 +45,14 @@ type Application struct {
 	header     *Header
 	footer     *Footer
 	components []Component
+	region     string
+	profile    string
 }
 
-func NewApplication() *Application {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		panic(err)
-	}
+func buildRepos(cfg aws.Config) (Repos, *repo.STS) {
+	// Global Accelerator requires us-west-2 regardless of selected region.
 	westCfg := cfg.Copy()
 	westCfg.Region = "us-west-2"
-
-	app := tview.NewApplication()
 
 	httpClient := &http.Client{}
 
@@ -84,66 +83,53 @@ func NewApplication() *Application {
 	ssmClient := ssm.NewFromConfig(cfg)
 	stsClient := sts.NewFromConfig(cfg)
 
-	a := &Application{}
-
-	acmRepo := repo.NewACM(acmClient)
-	acmPCARepo := repo.NewACMPCA(acmPCAClient)
-	cfRepo := repo.NewCloudFront(cfClient)
-	cwRepo := repo.NewCloudWatch(cwLogsClient)
-	ddbRepo := repo.NewDynamoDB(ddbClient)
-	ec2Repo := repo.NewEC2(ec2Client)
-	ecsRepo := repo.NewECS(ecsClient)
-	eksRepo := repo.NewEKS(eksClient)
-	elbRepo := repo.NewELB(elbClient, httpClient)
-	ecRepo := repo.NewElastiCache(ecClient, cwClient)
-	gaRepo := repo.NewGlobalAccelerator(gaClient)
-	iamRepo := repo.NewIAM(iamClient)
-	kmsRepo := repo.NewKMS(kmsClient)
-	lambdaRepo := repo.NewLambda(lambdaClient)
-	mqRepo := repo.NewMQ(mqClient)
-	mskRepo := repo.NewMSK(mskClient)
-	rdsRepo := repo.NewRDS(rdsClient)
-	r53Repo := repo.NewRoute53(r53Client)
-	s3Repo := repo.NewS3(s3Client)
-	snsRepo := repo.NewSNS(snsClient)
-	smRepo := repo.NewSecretsManager(smClient)
-	sqRepo := repo.NewServiceQuotas(sqClient)
-	sqsRepo := repo.NewSQS(sqsClient)
-	ssmRepo := repo.NewSSM(ssmClient)
-	stsRepo := repo.NewSTS(stsClient)
-
 	repos := Repos{
-		ACM:               acmRepo,
-		ACMPCA:            acmPCARepo,
-		CloudFront:        cfRepo,
-		CloudWatch:        cwRepo,
-		DynamoDB:          ddbRepo,
-		EC2:               ec2Repo,
-		ECS:               ecsRepo,
-		EKS:               eksRepo,
-		ELB:               elbRepo,
-		ElastiCache:       ecRepo,
-		GlobalAccelerator: gaRepo,
-		IAM:               iamRepo,
-		KMS:               kmsRepo,
-		Lambda:            lambdaRepo,
-		MQ:                mqRepo,
-		MSK:               mskRepo,
-		RDS:               rdsRepo,
-		Route53:           r53Repo,
-		S3:                s3Repo,
-		SecretsManager:    smRepo,
-		ServiceQuotas:     sqRepo,
-		SNS:               snsRepo,
-		SQS:               sqsRepo,
-		SSM:               ssmRepo,
+		ACM:               repo.NewACM(acmClient),
+		ACMPCA:            repo.NewACMPCA(acmPCAClient),
+		CloudFront:        repo.NewCloudFront(cfClient),
+		CloudWatch:        repo.NewCloudWatch(cwLogsClient),
+		DynamoDB:          repo.NewDynamoDB(ddbClient),
+		EC2:               repo.NewEC2(ec2Client),
+		ECS:               repo.NewECS(ecsClient),
+		EKS:               repo.NewEKS(eksClient),
+		ELB:               repo.NewELB(elbClient, httpClient),
+		ElastiCache:       repo.NewElastiCache(ecClient, cwClient),
+		GlobalAccelerator: repo.NewGlobalAccelerator(gaClient),
+		IAM:               repo.NewIAM(iamClient),
+		KMS:               repo.NewKMS(kmsClient),
+		Lambda:            repo.NewLambda(lambdaClient),
+		MQ:                repo.NewMQ(mqClient),
+		MSK:               repo.NewMSK(mskClient),
+		RDS:               repo.NewRDS(rdsClient),
+		Route53:           repo.NewRoute53(r53Client),
+		S3:                repo.NewS3(s3Client),
+		SecretsManager:    repo.NewSecretsManager(smClient),
+		ServiceQuotas:     repo.NewServiceQuotas(sqClient),
+		SNS:               repo.NewSNS(snsClient),
+		SQS:               repo.NewSQS(sqsClient),
+		SSM:               repo.NewSSM(ssmClient),
+	}
+	stsRepo := repo.NewSTS(stsClient)
+	return repos, stsRepo
+}
+
+func NewApplication() *Application {
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		panic(err)
 	}
 
-	services := NewServices(repos, a)
+	repos, stsRepo := buildRepos(cfg)
+
+	a := &Application{
+		region: cfg.Region,
+	}
+
+	tviewApp := tview.NewApplication()
 	pages := tview.NewPages()
 	pages.SetBorder(true)
 
-	header := NewHeader(stsRepo, iamRepo, a)
+	header := NewHeader(stsRepo, repos.IAM, a)
 	footer := NewFooter(a)
 
 	flex := tview.NewFlex()
@@ -152,13 +138,26 @@ func NewApplication() *Application {
 	flex.AddItem(pages, 0, 1, true)   // main viewport is resizable
 	flex.AddItem(footer, 1, 0, false) // footer is 1 row
 
-	app.SetRoot(flex, true).SetFocus(pages)
-	a.app = app
+	tviewApp.SetRoot(flex, true).SetFocus(pages)
+	a.app = tviewApp
 	a.pages = pages
 	a.header = header
 	a.footer = footer
-	a.AddAndSwitch(services)
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	a.AddAndSwitch(NewServices(repos, a))
+
+	tviewApp.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		frontName, _ := a.pages.GetFrontPage()
+
+		// dismiss overlays with Escape without disturbing the navigation stack
+		if frontName == "picker" || frontName == "error" {
+			if event.Key() == tcell.KeyEscape {
+				a.pages.RemovePage(frontName)
+				a.app.SetFocus(a.pages)
+				return nil
+			}
+			return event
+		}
+
 		if event.Key() == tcell.KeyEscape {
 			a.Close()
 			return nil
@@ -178,7 +177,65 @@ func NewApplication() *Application {
 		}
 		return event
 	})
+
 	return a
+}
+
+func (a *Application) GetRegion() string {
+	return a.region
+}
+
+func (a *Application) rebuild(profile, region string) {
+	opts := []func(*config.LoadOptions) error{}
+	if profile != "" {
+		opts = append(opts, config.WithSharedConfigProfile(profile))
+	}
+	if region != "" {
+		opts = append(opts, config.WithRegion(region))
+	}
+
+	cfg, err := config.LoadDefaultConfig(context.TODO(), opts...)
+	if err != nil {
+		a.ShowError(err)
+		return
+	}
+
+	a.profile = profile
+	a.region = cfg.Region
+
+	repos, stsRepo := buildRepos(cfg)
+	a.header.UpdateRepos(stsRepo, repos.IAM)
+
+	// Walk the current navigation stack backward to find the deepest component
+	// that is a generic list view (i.e. its key exists in the registry). Detail
+	// views for specific resources have a resource ID as their first label, so
+	// they won't match. We stop at the first match and recreate from there.
+	var resumeKey string
+	for i := len(a.components) - 1; i >= 0; i-- {
+		labels := a.components[i].GetLabels()
+		if len(labels) == 0 {
+			continue
+		}
+		key := a.components[i].GetService() + "." + labels[0]
+		if _, ok := registry[key]; ok {
+			resumeKey = key
+			break
+		}
+	}
+
+	for a.pages.GetPageCount() > 0 {
+		name, _ := a.pages.GetFrontPage()
+		if name == "" {
+			break
+		}
+		a.pages.RemovePage(name)
+	}
+	a.components = nil
+
+	a.AddAndSwitch(NewServices(repos, a))
+	if resumeKey != "" {
+		a.AddAndSwitch(registry[resumeKey](repos, a))
+	}
 }
 
 func (a *Application) ShowError(err error) {
@@ -193,14 +250,14 @@ func (a *Application) ShowError(err error) {
 	a.app.SetFocus(modal)
 }
 
-func (a Application) refreshHandler() {
+func (a *Application) refreshHandler() {
 	_, primitive := a.pages.GetFrontPage()
 	if err := primitive.(Component).Render(); err != nil {
 		a.ShowError(err)
 	}
 }
 
-func (a Application) GetActiveKeyActions() []KeyAction {
+func (a *Application) GetActiveKeyActions() []KeyAction {
 	// TODO check that front page exists
 	_, primitive := a.pages.GetFrontPage()
 	// TODO avoid type coercion
@@ -210,6 +267,16 @@ func (a Application) GetActiveKeyActions() []KeyAction {
 			Key:         tcell.NewEventKey(tcell.KeyRune, 'r', tcell.ModCtrl),
 			Description: "Refresh",
 			Action:      a.refreshHandler,
+		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyCtrlG, 0, tcell.ModCtrl),
+			Description: "Switch Region",
+			Action:      a.showRegionPicker,
+		},
+		{
+			Key:         tcell.NewEventKey(tcell.KeyCtrlP, 0, tcell.ModCtrl),
+			Description: "Switch Profile",
+			Action:      a.showProfilePicker,
 		},
 	}
 	return append(localActions, globalActions...)
