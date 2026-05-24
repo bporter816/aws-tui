@@ -46,3 +46,9 @@ func NewELBTargetGroups(repo *repo.ELB, app *Application) *TableView[model.ELBTa
 		},
 	)
 }
+
+func init() {
+	register("ELB.Target Groups", func(r Repos, app *Application) Component {
+		return NewELBTargetGroups(r.ELB, app)
+	})
+}

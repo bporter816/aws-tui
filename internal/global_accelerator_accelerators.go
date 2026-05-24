@@ -62,3 +62,9 @@ func NewGlobalAcceleratorAccelerators(repo *repo.GlobalAccelerator, app *Applica
 		},
 	)
 }
+
+func init() {
+	register("Global Accelerator.Accelerators", func(r Repos, app *Application) Component {
+		return NewGlobalAcceleratorAccelerators(r.GlobalAccelerator, app)
+	})
+}

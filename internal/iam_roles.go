@@ -82,3 +82,9 @@ func NewIAMRoles(repo *repo.IAM, app *Application) *TableView[model.IAMRole] {
 		},
 	)
 }
+
+func init() {
+	register("IAM.Roles", func(r Repos, app *Application) Component {
+		return NewIAMRoles(r.IAM, app)
+	})
+}

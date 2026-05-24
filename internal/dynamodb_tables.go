@@ -96,3 +96,9 @@ func NewDynamoDBTables(repo *repo.DynamoDB, app *Application) *TableView[model.D
 		},
 	)
 }
+
+func init() {
+	register("DynamoDB.Tables", func(r Repos, app *Application) Component {
+		return NewDynamoDBTables(r.DynamoDB, app)
+	})
+}

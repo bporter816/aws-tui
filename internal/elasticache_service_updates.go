@@ -52,3 +52,9 @@ func NewElastiCacheServiceUpdates(repo *repo.ElastiCache, app *Application) *Tab
 		},
 	)
 }
+
+func init() {
+	register("ElastiCache.Service Updates", func(r Repos, app *Application) Component {
+		return NewElastiCacheServiceUpdates(r.ElastiCache, app)
+	})
+}

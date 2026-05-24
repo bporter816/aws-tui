@@ -70,3 +70,9 @@ func NewS3Buckets(repo *repo.S3, app *Application) *TableView[model.S3Bucket] {
 	})
 	return v
 }
+
+func init() {
+	register("S3.Buckets", func(r Repos, app *Application) Component {
+		return NewS3Buckets(r.S3, app)
+	})
+}

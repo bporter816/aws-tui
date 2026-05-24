@@ -44,3 +44,9 @@ func NewElastiCacheGroups(repo *repo.ElastiCache, app *Application) *TableView[m
 		},
 	)
 }
+
+func init() {
+	register("ElastiCache.Groups", func(r Repos, app *Application) Component {
+		return NewElastiCacheGroups(r.ElastiCache, app)
+	})
+}

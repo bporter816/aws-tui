@@ -35,3 +35,9 @@ func NewKmsCustomKeyStores(repo *repo.KMS, app *Application) *TableView[model.KM
 		nil,
 	)
 }
+
+func init() {
+	register("KMS.Custom Key Stores", func(r Repos, app *Application) Component {
+		return NewKmsCustomKeyStores(r.KMS, app)
+	})
+}

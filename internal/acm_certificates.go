@@ -63,3 +63,9 @@ func NewACMCertificates(repo *repo.ACM, app *Application) *TableView[model.ACMCe
 		},
 	)
 }
+
+func init() {
+	register("ACM.Certificates", func(r Repos, app *Application) Component {
+		return NewACMCertificates(r.ACM, app)
+	})
+}

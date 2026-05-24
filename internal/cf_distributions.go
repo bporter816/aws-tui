@@ -95,3 +95,9 @@ func NewCFDistributions(repo *repo.CloudFront, app *Application) *TableView[mode
 		},
 	)
 }
+
+func init() {
+	register("CloudFront.Distributions", func(r Repos, app *Application) Component {
+		return NewCFDistributions(r.CloudFront, app)
+	})
+}

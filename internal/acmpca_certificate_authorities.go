@@ -57,3 +57,9 @@ func NewACMPCACertificateAuthorities(repo *repo.ACMPCA, app *Application) *Table
 		},
 	)
 }
+
+func init() {
+	register("ACM PCA.Certificate Authorities", func(r Repos, app *Application) Component {
+		return NewACMPCACertificateAuthorities(r.ACMPCA, app)
+	})
+}

@@ -54,3 +54,9 @@ func NewEC2KeyPairs(repo *repo.EC2, app *Application) *TableView[model.EC2KeyPai
 		},
 	)
 }
+
+func init() {
+	register("EC2.Key Pairs", func(r Repos, app *Application) Component {
+		return NewEC2KeyPairs(r.EC2, app)
+	})
+}

@@ -55,3 +55,9 @@ func NewLambdaFunctions(repo lambdaRepo, app *Application) *TableView[model.Lamb
 		},
 	)
 }
+
+func init() {
+	register("Lambda.Functions", func(r Repos, app *Application) Component {
+		return NewLambdaFunctions(r.Lambda, app)
+	})
+}

@@ -54,3 +54,9 @@ func NewELBLoadBalancers(repo *repo.ELB, app *Application) *TableView[model.ELBL
 		},
 	)
 }
+
+func init() {
+	register("ELB.Load Balancers", func(r Repos, app *Application) Component {
+		return NewELBLoadBalancers(r.ELB, app)
+	})
+}

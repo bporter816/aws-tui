@@ -38,3 +38,9 @@ func NewMSKClusters(repo *repo.MSK, app *Application) *TableView[model.MSKCluste
 		},
 	)
 }
+
+func init() {
+	register("MSK.Clusters", func(r Repos, app *Application) Component {
+		return NewMSKClusters(r.MSK, app)
+	})
+}

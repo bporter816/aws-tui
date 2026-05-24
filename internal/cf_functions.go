@@ -60,3 +60,9 @@ func NewCFFunctions(repo *repo.CloudFront, app *Application) *TableView[model.Cl
 		},
 	)
 }
+
+func init() {
+	register("CloudFront.Functions", func(r Repos, app *Application) Component {
+		return NewCFFunctions(r.CloudFront, app)
+	})
+}

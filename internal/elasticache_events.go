@@ -27,3 +27,9 @@ func NewElastiCacheEvents(repo *repo.ElastiCache, app *Application) *TableView[m
 		nil,
 	)
 }
+
+func init() {
+	register("ElastiCache.Events", func(r Repos, app *Application) Component {
+		return NewElastiCacheEvents(r.ElastiCache, app)
+	})
+}

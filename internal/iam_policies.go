@@ -55,3 +55,9 @@ func NewIAMPolicies(repo *repo.IAM, identityType model.IAMIdentityType, id *stri
 		},
 	)
 }
+
+func init() {
+	register("IAM.Managed Policies", func(r Repos, app *Application) Component {
+		return NewIAMPolicies(r.IAM, model.IAMIdentityTypeAll, nil, app)
+	})
+}

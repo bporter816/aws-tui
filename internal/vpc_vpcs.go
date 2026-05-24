@@ -42,3 +42,9 @@ func NewVPCVPCs(repo *repo.EC2, app *Application) *TableView[model.EC2VPC] {
 		},
 	)
 }
+
+func init() {
+	register("VPC.VPCs", func(r Repos, app *Application) Component {
+		return NewVPCVPCs(r.EC2, app)
+	})
+}

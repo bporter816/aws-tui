@@ -34,3 +34,9 @@ func NewEC2AvailabilityZones(repo *repo.EC2, app *Application) *TableView[model.
 		nil,
 	)
 }
+
+func init() {
+	register("EC2.Availability Zones", func(r Repos, app *Application) Component {
+		return NewEC2AvailabilityZones(r.EC2, app)
+	})
+}

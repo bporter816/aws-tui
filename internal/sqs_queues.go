@@ -47,3 +47,9 @@ func NewSQSQueues(repo *repo.SQS, app *Application) *TableView[model.SQSQueue] {
 		},
 	)
 }
+
+func init() {
+	register("SQS.Queues", func(r Repos, app *Application) Component {
+		return NewSQSQueues(r.SQS, app)
+	})
+}

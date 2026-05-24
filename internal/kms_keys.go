@@ -68,3 +68,9 @@ func NewKmsKeys(repo *repo.KMS, app *Application) *TableView[model.KMSKey] {
 		},
 	)
 }
+
+func init() {
+	register("KMS.Keys", func(r Repos, app *Application) Component {
+		return NewKmsKeys(r.KMS, app)
+	})
+}

@@ -96,3 +96,9 @@ func NewRDSParameterGroups(repo *repo.RDS, app *Application) *TableView[rdsParam
 		},
 	)
 }
+
+func init() {
+	register("RDS.Parameter Groups", func(r Repos, app *Application) Component {
+		return NewRDSParameterGroups(r.RDS, app)
+	})
+}

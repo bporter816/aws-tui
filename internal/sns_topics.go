@@ -93,3 +93,9 @@ func NewSNSTopics(repo *repo.SNS, app *Application) *TableView[model.SNSTopic] {
 		},
 	)
 }
+
+func init() {
+	register("SNS.Topics", func(r Repos, app *Application) Component {
+		return NewSNSTopics(r.SNS, app)
+	})
+}

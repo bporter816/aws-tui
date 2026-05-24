@@ -60,3 +60,9 @@ func NewCloudWatchLogGroups(repo *repo.CloudWatch, app *Application) *TableView[
 		},
 	)
 }
+
+func init() {
+	register("CloudWatch.Log Groups", func(r Repos, app *Application) Component {
+		return NewCloudWatchLogGroups(r.CloudWatch, app)
+	})
+}

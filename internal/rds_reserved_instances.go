@@ -60,3 +60,9 @@ func NewRDSReservedInstances(repo *repo.RDS, app *Application) *TableView[model.
 		},
 	)
 }
+
+func init() {
+	register("RDS.Reserved Instances", func(r Repos, app *Application) Component {
+		return NewRDSReservedInstances(r.RDS, app)
+	})
+}

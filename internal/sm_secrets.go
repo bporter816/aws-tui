@@ -64,3 +64,9 @@ func NewSMSecrets(repo *repo.SecretsManager, app *Application) *TableView[model.
 		},
 	)
 }
+
+func init() {
+	register("Secrets Manager.Secrets", func(r Repos, app *Application) Component {
+		return NewSMSecrets(r.SecretsManager, app)
+	})
+}

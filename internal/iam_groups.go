@@ -61,3 +61,9 @@ func NewIAMGroups(repo *repo.IAM, userName *string, app *Application) *TableView
 		},
 	)
 }
+
+func init() {
+	register("IAM.Groups", func(r Repos, app *Application) Component {
+		return NewIAMGroups(r.IAM, nil, app)
+	})
+}

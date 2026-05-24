@@ -67,3 +67,9 @@ func NewElastiCacheSubnetGroups(repo *repo.ElastiCache, ec2Repo *repo.EC2, app *
 		},
 	)
 }
+
+func init() {
+	register("ElastiCache.Subnet Groups", func(r Repos, app *Application) Component {
+		return NewElastiCacheSubnetGroups(r.ElastiCache, r.EC2, app)
+	})
+}

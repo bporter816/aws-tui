@@ -100,3 +100,9 @@ func NewElastiCacheClusters(repo *repo.ElastiCache, app *Application) *TableView
 		},
 	)
 }
+
+func init() {
+	register("ElastiCache.Clusters", func(r Repos, app *Application) Component {
+		return NewElastiCacheClusters(r.ElastiCache, app)
+	})
+}

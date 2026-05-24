@@ -42,3 +42,9 @@ func NewElastiCacheParameterGroups(repo *repo.ElastiCache, app *Application) *Ta
 		},
 	)
 }
+
+func init() {
+	register("ElastiCache.Parameter Groups", func(r Repos, app *Application) Component {
+		return NewElastiCacheParameterGroups(r.ElastiCache, app)
+	})
+}

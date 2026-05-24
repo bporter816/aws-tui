@@ -46,3 +46,9 @@ func NewEKSClusters(repo *repo.EKS, app *Application) *TableView[model.EKSCluste
 		},
 	)
 }
+
+func init() {
+	register("EKS.Clusters", func(r Repos, app *Application) Component {
+		return NewEKSClusters(r.EKS, app)
+	})
+}

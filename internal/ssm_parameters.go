@@ -42,3 +42,9 @@ func NewSSMParameters(repo *repo.SSM, app *Application) *TableView[model.SSMPara
 		},
 	)
 }
+
+func init() {
+	register("Systems Manager.Parameters", func(r Repos, app *Application) Component {
+		return NewSSMParameters(r.SSM, app)
+	})
+}

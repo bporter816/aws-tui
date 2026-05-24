@@ -68,3 +68,9 @@ func NewRDSSubnetGroups(repo *repo.RDS, ec2Repo *repo.EC2, app *Application) *Ta
 		},
 	)
 }
+
+func init() {
+	register("RDS.Subnet Groups", func(r Repos, app *Application) Component {
+		return NewRDSSubnetGroups(r.RDS, r.EC2, app)
+	})
+}

@@ -60,3 +60,9 @@ func NewVPCSubnets(repo *repo.EC2, subnetIds []string, label string, app *Applic
 		},
 	)
 }
+
+func init() {
+	register("VPC.Subnets", func(r Repos, app *Application) Component {
+		return NewVPCSubnets(r.EC2, []string{}, "", app)
+	})
+}

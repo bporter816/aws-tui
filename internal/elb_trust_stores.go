@@ -74,3 +74,9 @@ func NewELBTrustStores(repo *repo.ELB, app *Application) *TableView[model.ELBTru
 		},
 	)
 }
+
+func init() {
+	register("ELB.Trust Stores", func(r Repos, app *Application) Component {
+		return NewELBTrustStores(r.ELB, app)
+	})
+}

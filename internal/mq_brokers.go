@@ -44,3 +44,9 @@ func NewMQBrokers(repo *repo.MQ, app *Application) *TableView[model.MQBroker] {
 		},
 	)
 }
+
+func init() {
+	register("MQ.Brokers", func(r Repos, app *Application) Component {
+		return NewMQBrokers(r.MQ, app)
+	})
+}

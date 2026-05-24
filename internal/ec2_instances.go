@@ -48,3 +48,9 @@ func NewEC2Instances(repo *repo.EC2, app *Application) *TableView[model.EC2Insta
 		},
 	)
 }
+
+func init() {
+	register("EC2.Instances", func(r Repos, app *Application) Component {
+		return NewEC2Instances(r.EC2, app)
+	})
+}

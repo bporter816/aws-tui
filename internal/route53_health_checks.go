@@ -56,3 +56,9 @@ func NewRoute53HealthChecks(repo *repo.Route53, app *Application) *TableView[mod
 		},
 	)
 }
+
+func init() {
+	register("Route 53.Health Checks", func(r Repos, app *Application) Component {
+		return NewRoute53HealthChecks(r.Route53, app)
+	})
+}

@@ -40,3 +40,9 @@ func NewEC2ReservedInstances(repo *repo.EC2, app *Application) *TableView[model.
 		},
 	)
 }
+
+func init() {
+	register("EC2.Reserved Instances", func(r Repos, app *Application) Component {
+		return NewEC2ReservedInstances(r.EC2, app)
+	})
+}

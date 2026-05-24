@@ -53,3 +53,9 @@ func NewElastiCacheUsers(repo *repo.ElastiCache, app *Application) *TableView[mo
 		},
 	)
 }
+
+func init() {
+	register("ElastiCache.Users", func(r Repos, app *Application) Component {
+		return NewElastiCacheUsers(r.ElastiCache, app)
+	})
+}

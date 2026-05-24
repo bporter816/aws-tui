@@ -69,3 +69,9 @@ func NewElastiCacheSnapshots(repo *repo.ElastiCache, app *Application) *TableVie
 		},
 	)
 }
+
+func init() {
+	register("ElastiCache.Snapshots", func(r Repos, app *Application) Component {
+		return NewElastiCacheSnapshots(r.ElastiCache, app)
+	})
+}

@@ -41,3 +41,9 @@ func NewEC2Images(repo *repo.EC2, app *Application) *TableView[model.EC2Image] {
 		nil,
 	)
 }
+
+func init() {
+	register("EC2.AMIs", func(r Repos, app *Application) Component {
+		return NewEC2Images(r.EC2, app)
+	})
+}

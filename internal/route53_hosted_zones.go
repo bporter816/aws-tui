@@ -70,3 +70,9 @@ func NewRoute53HostedZones(repo *repo.Route53, app *Application) *TableView[mode
 	})
 	return v
 }
+
+func init() {
+	register("Route 53.Hosted Zones", func(r Repos, app *Application) Component {
+		return NewRoute53HostedZones(r.Route53, app)
+	})
+}

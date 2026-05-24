@@ -29,3 +29,9 @@ func NewECSTaskDefinitions(repo *repo.ECS, app *Application) *TableView[string] 
 		},
 	)
 }
+
+func init() {
+	register("ECS.Task Definitions", func(r Repos, app *Application) Component {
+		return NewECSTaskDefinitions(r.ECS, app)
+	})
+}

@@ -42,3 +42,9 @@ func NewElastiCacheReservedCacheNodes(repo *repo.ElastiCache, app *Application) 
 		},
 	)
 }
+
+func init() {
+	register("ElastiCache.Reserved Nodes", func(r Repos, app *Application) Component {
+		return NewElastiCacheReservedCacheNodes(r.ElastiCache, app)
+	})
+}

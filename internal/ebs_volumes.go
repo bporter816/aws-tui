@@ -63,3 +63,9 @@ func NewEBSVolumes(repo *repo.EC2, app *Application) *TableView[model.EC2Volume]
 		},
 	)
 }
+
+func init() {
+	register("EBS.Volumes", func(r Repos, app *Application) Component {
+		return NewEBSVolumes(r.EC2, app)
+	})
+}

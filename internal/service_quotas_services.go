@@ -40,3 +40,9 @@ func NewServiceQuotasServices(repo *repo.ServiceQuotas, app *Application) *Table
 		},
 	)
 }
+
+func init() {
+	register("Service Quotas.Services", func(r Repos, app *Application) Component {
+		return NewServiceQuotasServices(r.ServiceQuotas, app)
+	})
+}

@@ -80,3 +80,9 @@ func NewRDSClusters(repo *repo.RDS, app *Application) *TableView[model.RDSCluste
 		},
 	)
 }
+
+func init() {
+	register("RDS.Clusters", func(r Repos, app *Application) Component {
+		return NewRDSClusters(r.RDS, app)
+	})
+}

@@ -53,3 +53,9 @@ func NewEC2SecurityGroups(repo *repo.EC2, app *Application) *TableView[model.EC2
 		},
 	)
 }
+
+func init() {
+	register("EC2.Security Groups", func(r Repos, app *Application) Component {
+		return NewEC2SecurityGroups(r.EC2, app)
+	})
+}

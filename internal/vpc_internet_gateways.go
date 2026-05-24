@@ -55,3 +55,9 @@ func NewVPCInternetGateways(repo *repo.EC2, app *Application) *TableView[model.E
 		},
 	)
 }
+
+func init() {
+	register("VPC.Internet Gateways", func(r Repos, app *Application) Component {
+		return NewVPCInternetGateways(r.EC2, app)
+	})
+}

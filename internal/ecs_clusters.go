@@ -67,3 +67,9 @@ func NewECSClusters(repo *repo.ECS, app *Application) *TableView[model.ECSCluste
 		},
 	)
 }
+
+func init() {
+	register("ECS.Clusters", func(r Repos, app *Application) Component {
+		return NewECSClusters(r.ECS, app)
+	})
+}

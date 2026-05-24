@@ -32,3 +32,9 @@ func NewRDSGlobalClusters(repo *repo.RDS, app *Application) *TableView[model.RDS
 		nil,
 	)
 }
+
+func init() {
+	register("RDS.Global Clusters", func(r Repos, app *Application) Component {
+		return NewRDSGlobalClusters(r.RDS, app)
+	})
+}
