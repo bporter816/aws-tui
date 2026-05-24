@@ -32,11 +32,12 @@ func (s S3BucketPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s S3BucketPolicy) Render() {
+func (s S3BucketPolicy) Render() error {
 	policy, err := s.repo.GetBucketPolicy(s.bucket)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	s.SetText(policy)
+	return nil
 }

@@ -27,21 +27,22 @@ func NewSNSDeliveryPolicy(repo *repo.SNS, topicArn string, app *Application) *SN
 func (s SNSDeliveryPolicy) GetService() string { return "SNS" }
 
 func (s SNSDeliveryPolicy) GetLabels() []string {
-	arn, err := arn.Parse(s.topicArn)
-	if err != nil {
-		panic(err)
+	label := s.topicArn
+	if parsed, err := arn.Parse(s.topicArn); err == nil {
+		label = utils.GetResourceNameFromArn(parsed)
 	}
-	return []string{utils.GetResourceNameFromArn(arn), "Delivery Policy"}
+	return []string{label, "Delivery Policy"}
 }
 
 func (s SNSDeliveryPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SNSDeliveryPolicy) Render() {
+func (s SNSDeliveryPolicy) Render() error {
 	policy, err := s.repo.GetDeliveryPolicy(s.topicArn)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	s.SetText(policy)
+	return nil
 }

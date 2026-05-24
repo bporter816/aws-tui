@@ -32,10 +32,11 @@ func (k KmsKeyPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (k KmsKeyPolicy) Render() {
+func (k KmsKeyPolicy) Render() error {
 	policy, err := k.repo.GetKeyPolicy(k.keyId)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	k.SetText(policy)
+	return nil
 }

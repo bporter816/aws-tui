@@ -23,11 +23,11 @@ func NewECSTasks(clusterName string, serviceName string, repo *repo.ECS, app *Ap
 		func(v model.ECSTask) []string {
 			var id, group, lastStatus, desiredStatus, platform, cpu, mem string
 			if v.TaskArn != nil {
-				a, err := arn.Parse(*v.TaskArn)
-				if err != nil {
-					panic(err)
+				if a, err := arn.Parse(*v.TaskArn); err == nil {
+					id = utils.GetResourceNameFromArn(a)
+				} else {
+					id = *v.TaskArn
 				}
-				id = utils.GetResourceNameFromArn(a)
 			}
 			if v.Group != nil {
 				group = *v.Group

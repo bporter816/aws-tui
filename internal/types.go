@@ -9,5 +9,5 @@ type Component interface {
 	GetService() string
 	GetLabels() []string
 	GetKeyActions() []KeyAction
-	Render()
+	Render() error
 }

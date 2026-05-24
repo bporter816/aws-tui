@@ -33,11 +33,12 @@ func (c CFFunctionCode) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (c CFFunctionCode) Render() {
+func (c CFFunctionCode) Render() error {
 	code, err := c.repo.GetFunctionCode(c.name, c.stage)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	c.SetText(code)
+	return nil
 }

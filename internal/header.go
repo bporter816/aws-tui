@@ -44,28 +44,28 @@ func NewHeader(stsRepo *repo.STS, iamRepo *repo.IAM, app *Application) *Header {
 
 func (h Header) Render() {
 	// The AWS Go SDK doesn't provide a nice way to get the current region so get the answer from the AWS CLI
+	var region string
 	regionCmd := exec.Command("aws", "configure", "get", "region")
-	regionOutput, err := regionCmd.Output()
-	if err != nil {
-		panic(err)
+	if regionOutput, err := regionCmd.Output(); err == nil {
+		region = string(regionOutput)
+	} else {
+		region = "unknown"
 	}
 
 	var account, arn, userId string
-	identityModel, err := h.stsRepo.GetCallerIdentity()
-	if err != nil {
-		panic(err)
-	}
-	if identityModel.Account != nil {
-		account = *identityModel.Account
-	}
-	if identityModel.Arn != nil {
-		arn = *identityModel.Arn
-	}
-	if identityModel.UserId != nil {
-		userId = *identityModel.UserId
+	if identityModel, err := h.stsRepo.GetCallerIdentity(); err == nil {
+		if identityModel.Account != nil {
+			account = *identityModel.Account
+		}
+		if identityModel.Arn != nil {
+			arn = *identityModel.Arn
+		}
+		if identityModel.UserId != nil {
+			userId = *identityModel.UserId
+		}
 	}
 
-	aliases, err := h.iamRepo.ListAccountAliases()
+	aliases, _ := h.iamRepo.ListAccountAliases()
 	var aliasesStr string
 	if len(aliases) > 0 {
 		aliasesStr = fmt.Sprintf(" (%v)", strings.Join(aliases, ", "))
@@ -74,7 +74,7 @@ func (h Header) Render() {
 	accountInfoStr := fmt.Sprintf("[orange::b]Account:[white::-] %v%v\n", account, aliasesStr)
 	accountInfoStr += fmt.Sprintf("[orange::b]ARN:[white::-]     %v\n", arn)
 	accountInfoStr += fmt.Sprintf("[orange::b]User ID:[white::-] %v\n", userId)
-	accountInfoStr += fmt.Sprintf("[orange::b]Region:[white::-]  %v", string(regionOutput))
+	accountInfoStr += fmt.Sprintf("[orange::b]Region:[white::-]  %v", region)
 	h.accountInfo.SetText(accountInfoStr)
 
 	h.Box = tview.NewBox() // this is needed because the areas not covered by items are considered transparent and will linger otherwise

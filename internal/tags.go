@@ -59,12 +59,11 @@ func (t Tags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (t Tags) Render() {
+func (t Tags) Render() error {
 	model, err := t.repo.ListTags(t.resourceId)
 	if err != nil {
-		panic(err)
+		return err
 	}
-
 	var data [][]string
 	for _, v := range model {
 		data = append(data, []string{
@@ -73,4 +72,5 @@ func (t Tags) Render() {
 		})
 	}
 	t.SetData(data)
+	return nil
 }

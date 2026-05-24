@@ -50,7 +50,7 @@ func (s SMSecretValue) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SMSecretValue) Render() {
+func (s SMSecretValue) Render() error {
 	if v, ok := s.Primitive.(*ui.Table); ok {
 		var data [][]string
 		for k, v := range s.valueKV {
@@ -59,7 +59,6 @@ func (s SMSecretValue) Render() {
 		v.SetData(data)
 	} else if v, ok := s.Primitive.(*ui.Text); ok {
 		v.SetText(s.valueText)
-	} else {
-		panic("invalid secret value type")
 	}
+	return nil
 }

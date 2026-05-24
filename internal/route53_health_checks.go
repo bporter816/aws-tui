@@ -20,12 +20,10 @@ func NewRoute53HealthChecks(repo *repo.Route53, app *Application) *TableView[mod
 				id = *v.Id
 
 				// name comes from the Name tag
-				tags, err := repo.ListTags(string(r53Types.TagResourceTypeHealthcheck) + ":" + *v.Id)
-				if err != nil {
-					panic(err)
-				}
-				if n, ok := tags.Get("Name"); ok {
-					name = n
+				if tags, err := repo.ListTags(string(r53Types.TagResourceTypeHealthcheck) + ":" + *v.Id); err == nil {
+					if n, ok := tags.Get("Name"); ok {
+						name = n
+					}
 				}
 			}
 			if v.HealthCheckConfig != nil {

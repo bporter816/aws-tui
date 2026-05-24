@@ -10,6 +10,7 @@ import (
 	"github.com/bporter816/aws-tui/internal/utils"
 )
 
+
 type ACMCertificateDetails struct {
 	*ui.Text
 	repo           *repo.ACM
@@ -32,25 +33,25 @@ func NewACMCertificateDetails(repo *repo.ACM, displayName string, certificateArn
 func (a ACMCertificateDetails) GetService() string { return "ACM" }
 
 func (a ACMCertificateDetails) GetLabels() []string {
-	arn, err := arn.Parse(a.certificateArn)
-	if err != nil {
-		panic(err)
+	label := a.certificateArn
+	if parsed, err := arn.Parse(a.certificateArn); err == nil {
+		label = utils.GetResourceNameFromArn(parsed)
 	}
-	return []string{utils.GetResourceNameFromArn(arn), a.displayName}
+	return []string{label, a.displayName}
 }
 
 func (a ACMCertificateDetails) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (a ACMCertificateDetails) Render() {
+func (a ACMCertificateDetails) Render() error {
 	cert, err := a.repo.GetCertificate(a.certificateArn)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	certs, err := utils.ParseCertsFromPEM([]byte(cert))
 	if err != nil {
-		panic(err)
+		return err
 	}
 	text, err := template.Render(template.X509Certificate, struct {
 		Metadata *x509.Certificate
@@ -60,7 +61,8 @@ func (a ACMCertificateDetails) Render() {
 		PEM:      cert,
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	a.SetText(text)
+	return nil
 }

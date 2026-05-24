@@ -8,13 +8,13 @@ import (
 )
 
 func NewSNSSubscriptions(repo *repo.SNS, topicArn string, app *Application) *TableView[model.SNSSubscription] {
-	topicArnParsed, err := arn.Parse(topicArn)
-	if err != nil {
-		panic(err)
+	topicLabel := topicArn
+	if a, err := arn.Parse(topicArn); err == nil {
+		topicLabel = utils.GetResourceNameFromArn(a)
 	}
 	return NewTableView(
 		"SNS",
-		[]string{utils.GetResourceNameFromArn(topicArnParsed), "Subscriptions"},
+		[]string{topicLabel, "Subscriptions"},
 		[]string{"ID", "PROTOCOL", "ENDPOINT", "STATUS"},
 		func() ([]model.SNSSubscription, error) {
 			return repo.ListSubscriptions(topicArn)
@@ -22,11 +22,11 @@ func NewSNSSubscriptions(repo *repo.SNS, topicArn string, app *Application) *Tab
 		func(v model.SNSSubscription) []string {
 			var id, protocol, status string
 			if v.SubscriptionArn != nil {
-				a, err := arn.Parse(*v.SubscriptionArn)
-				if err != nil {
-					panic(err)
+				if a, err := arn.Parse(*v.SubscriptionArn); err == nil {
+					id = utils.GetResourceNameFromArn(a)
+				} else {
+					id = *v.SubscriptionArn
 				}
-				id = utils.GetResourceNameFromArn(a)
 			}
 			if v.Protocol != nil {
 				protocol = utils.AutoCase(*v.Protocol)

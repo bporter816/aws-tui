@@ -39,10 +39,11 @@ func (s SQSAccessPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SQSAccessPolicy) Render() {
+func (s SQSAccessPolicy) Render() error {
 	policy, err := s.repo.GetAccessPolicy(s.queueUrl)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	s.SetText(policy)
+	return nil
 }

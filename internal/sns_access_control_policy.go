@@ -27,21 +27,22 @@ func NewSNSAccessControlPolicy(repo *repo.SNS, topicArn string, app *Application
 func (s SNSAccessControlPolicy) GetService() string { return "SNS" }
 
 func (s SNSAccessControlPolicy) GetLabels() []string {
-	arn, err := arn.Parse(s.topicArn)
-	if err != nil {
-		panic(err)
+	label := s.topicArn
+	if parsed, err := arn.Parse(s.topicArn); err == nil {
+		label = utils.GetResourceNameFromArn(parsed)
 	}
-	return []string{utils.GetResourceNameFromArn(arn), "Access Control Policy"}
+	return []string{label, "Access Control Policy"}
 }
 
 func (s SNSAccessControlPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SNSAccessControlPolicy) Render() {
+func (s SNSAccessControlPolicy) Render() error {
 	policy, err := s.repo.GetAccessControlPolicy(s.topicArn)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	s.SetText(policy)
+	return nil
 }

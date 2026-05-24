@@ -15,9 +15,9 @@ func NewSNSTopics(repo *repo.SNS, app *Application) *TableView[model.SNSTopic] {
 		[]string{"NAME", "TYPE", "PENDING SUBS", "CONFIRMED SUBS", "DELETED SUBS"},
 		repo.ListTopics,
 		func(v model.SNSTopic) []string {
-			a, err := arn.Parse(v.Arn)
-			if err != nil {
-				panic(err)
+			name := v.Arn
+			if a, err := arn.Parse(v.Arn); err == nil {
+				name = utils.GetResourceNameFromArn(a)
 			}
 			var topicType, pendingSubs, confirmedSubs, deletedSubs string
 			if len(v.Attributes) > 0 {
@@ -36,7 +36,7 @@ func NewSNSTopics(repo *repo.SNS, app *Application) *TableView[model.SNSTopic] {
 				}
 			}
 			return []string{
-				utils.GetResourceNameFromArn(a),
+				name,
 				topicType,
 				pendingSubs,
 				confirmedSubs,

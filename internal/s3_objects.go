@@ -36,7 +36,7 @@ func (s S3Objects) GetLabels() []string {
 }
 
 func (s S3Objects) selectHandler(n *tview.TreeNode) {
-	s.expandDir(n)
+	_ = s.expandDir(n)
 }
 
 func (s S3Objects) objectHandler() {
@@ -92,17 +92,17 @@ func (s S3Objects) GetKeyActions() []KeyAction {
 	}
 }
 
-func (s S3Objects) expandDir(n *tview.TreeNode) {
+func (s S3Objects) expandDir(n *tview.TreeNode) error {
 	if strings.HasSuffix(n.GetText(), "/") {
 		if len(n.GetChildren()) > 0 {
 			n.SetExpanded(!n.IsExpanded())
-			return
+			return nil
 		}
 
 		ref := n.GetReference().(string)
 		prefixes, objects, err := s.repo.ListObjects(s.bucket, ref)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		for _, prefix := range prefixes {
 			arr := strings.Split(prefix, "/")
@@ -122,8 +122,9 @@ func (s S3Objects) expandDir(n *tview.TreeNode) {
 			n.AddChild(c)
 		}
 	}
+	return nil
 }
 
-func (s S3Objects) Render() {
-	s.expandDir(s.GetRoot())
+func (s S3Objects) Render() error {
+	return s.expandDir(s.GetRoot())
 }

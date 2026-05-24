@@ -36,10 +36,10 @@ func (s S3Object) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s S3Object) Render() {
+func (s S3Object) Render() error {
 	b, err := s.repo.GetObject(s.bucket, s.key)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	split := strings.Split(s.key, ".")
@@ -50,4 +50,5 @@ func (s S3Object) Render() {
 		s.Text.Lang = split[len(split)-1]
 	}
 	s.SetText(string(b))
+	return nil
 }

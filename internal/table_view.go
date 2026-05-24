@@ -48,10 +48,10 @@ func (t *TableView[T]) Selected() (T, error) {
 	return t.items[row-1], nil
 }
 
-func (t *TableView[T]) Render() {
+func (t *TableView[T]) Render() error {
 	items, err := t.load()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	t.items = items
 	rows := make([][]string, len(items))
@@ -59,4 +59,5 @@ func (t *TableView[T]) Render() {
 		rows[i] = t.toRow(item)
 	}
 	t.SetData(rows)
+	return nil
 }

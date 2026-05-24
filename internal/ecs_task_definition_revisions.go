@@ -15,13 +15,10 @@ func NewECSTaskDefinitionRevisions(family string, repo *repo.ECS, app *Applicati
 			return repo.ListTaskDefinitionRevisions(family)
 		},
 		func(v string) []string {
-			a, err := arn.Parse(v)
-			if err != nil {
-				panic(err)
+			if a, err := arn.Parse(v); err == nil {
+				return []string{utils.GetResourceNameFromArn(a)}
 			}
-			return []string{
-				utils.GetResourceNameFromArn(a),
-			}
+			return []string{v}
 		},
 		nil,
 	)

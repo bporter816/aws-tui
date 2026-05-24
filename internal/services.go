@@ -74,5 +74,6 @@ func (s Services) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s Services) Render() {
+func (s Services) Render() error {
+	return nil
 }

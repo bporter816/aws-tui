@@ -32,10 +32,11 @@ func (s SMSecretResourcePolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SMSecretResourcePolicy) Render() {
+func (s SMSecretResourcePolicy) Render() error {
 	policy, err := s.repo.GetResourcePolicy(s.secretName)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	s.SetText(policy)
+	return nil
 }

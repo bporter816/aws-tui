@@ -181,9 +181,23 @@ func NewApplication() *Application {
 	return a
 }
 
+func (a *Application) ShowError(err error) {
+	modal := tview.NewModal().
+		SetText(err.Error()).
+		AddButtons([]string{"OK"}).
+		SetDoneFunc(func(_ int, _ string) {
+			a.pages.RemovePage("error")
+			a.app.SetFocus(a.pages)
+		})
+	a.pages.AddPage("error", modal, false, true)
+	a.app.SetFocus(modal)
+}
+
 func (a Application) refreshHandler() {
 	_, primitive := a.pages.GetFrontPage()
-	primitive.(Component).Render()
+	if err := primitive.(Component).Render(); err != nil {
+		a.ShowError(err)
+	}
 }
 
 func (a Application) GetActiveKeyActions() []KeyAction {
@@ -202,7 +216,10 @@ func (a Application) GetActiveKeyActions() []KeyAction {
 }
 
 func (a *Application) AddAndSwitch(v Component) {
-	v.Render()
+	if err := v.Render(); err != nil {
+		a.ShowError(err)
+		return
+	}
 	// create a unique name for the tview pages element
 	// TODO this hardcodes the index as part of the name to avoid collisions when similar views are chained together
 	name := fmt.Sprintf("%v | %v | %v ", a.pages.GetPageCount(), v.GetService(), strings.Join(v.GetLabels(), " > "))

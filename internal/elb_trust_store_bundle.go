@@ -27,23 +27,24 @@ func NewELBTrustStoreBundle(repo *repo.ELB, trustStoreArn string, app *Applicati
 func (e ELBTrustStoreBundle) GetService() string { return "ELB" }
 
 func (e ELBTrustStoreBundle) GetLabels() []string {
-	a, err := arn.Parse(e.trustStoreArn)
-	if err != nil {
-		panic(err)
+	label := e.trustStoreArn
+	if a, err := arn.Parse(e.trustStoreArn); err == nil {
+		label = utils.GetResourceNameFromArn(a)
 	}
-	return []string{utils.GetResourceNameFromArn(a), "Certificate Bundle"}
+	return []string{label, "Certificate Bundle"}
 }
 
 func (e ELBTrustStoreBundle) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e ELBTrustStoreBundle) Render() {
+func (e ELBTrustStoreBundle) Render() error {
 	cert, err := e.repo.GetTrustStoreCACertificatesBundle(e.trustStoreArn)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	// TODO show the details like in ACM
 	e.SetText(cert)
+	return nil
 }

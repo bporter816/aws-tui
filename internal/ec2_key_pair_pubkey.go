@@ -32,11 +32,12 @@ func (e EC2KeyPairPubKey) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2KeyPairPubKey) Render() {
+func (e EC2KeyPairPubKey) Render() error {
 	key, err := e.repo.GetPublicKey(e.keyPairId)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	e.SetText(key)
+	return nil
 }
