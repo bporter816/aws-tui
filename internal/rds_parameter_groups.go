@@ -3,112 +3,96 @@ package internal
 import (
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
-	"github.com/bporter816/aws-tui/internal/ui"
 	"github.com/bporter816/aws-tui/internal/utils"
-	"github.com/bporter816/aws-tui/internal/view"
 	"github.com/gdamore/tcell/v2"
 )
 
-type RDSParameterGroups struct {
-	*ui.Table
-	view.RDS
-	repo  *repo.RDS
-	app   *Application
-	model []model.ModelWithArn
+type rdsParameterGroup struct {
+	name        string
+	groupType   string
+	family      string
+	description string
+	arn         string
 }
 
-func NewRDSParameterGroups(repo *repo.RDS, app *Application) *RDSParameterGroups {
-	r := &RDSParameterGroups{
-		Table: ui.NewTable([]string{
-			"NAME",
-			"TYPE",
-			"FAMILY",
-			"DESCRIPTION",
-		}, 1, 0),
-		repo: repo,
-		app:  app,
-	}
-	return r
-}
-
-func (r RDSParameterGroups) GetLabels() []string {
-	return []string{"Parameter Groups"}
-}
-
-func (r RDSParameterGroups) parametersHandler() {
-	name, err := r.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
-	groupType, err := r.GetColSelection("TYPE")
-	if err != nil {
-		return
-	}
-	var parameterGroupType model.RDSParameterGroupType
-	if groupType == "Cluster" {
-		parameterGroupType = model.RDSParameterGroupTypeCluster
-	} else {
-		parameterGroupType = model.RDSParameterGroupTypeInstance
-	}
-	parametersView := NewRDSParameters(r.repo, r.app, name, parameterGroupType)
-	r.app.AddAndSwitch(parametersView)
-}
-
-func (r RDSParameterGroups) tagsHandler() {
-	row, err := r.GetRowSelection()
-	if err != nil {
-		return
-	}
-	tagsView := NewTags(r.repo, r.GetService(), r.model[row-1].Arn(), r.app)
-	r.app.AddAndSwitch(tagsView)
-}
-
-func (r RDSParameterGroups) GetKeyActions() []KeyAction {
-	return []KeyAction{
-		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
-			Description: "Parameters",
-			Action:      r.parametersHandler,
+func NewRDSParameterGroups(repo *repo.RDS, app *Application) *TableView[rdsParameterGroup] {
+	return NewTableView(
+		"RDS",
+		[]string{"Parameter Groups"},
+		[]string{"NAME", "TYPE", "FAMILY", "DESCRIPTION"},
+		func() ([]rdsParameterGroup, error) {
+			clusterGroups, err := repo.ListClusterParameterGroups()
+			if err != nil {
+				return nil, err
+			}
+			instanceGroups, err := repo.ListInstanceParameterGroups()
+			if err != nil {
+				return nil, err
+			}
+			var groups []rdsParameterGroup
+			for _, v := range clusterGroups {
+				groups = append(groups, rdsParameterGroup{
+					name:        utils.DerefString(v.DBClusterParameterGroupName, ""),
+					groupType:   "Cluster",
+					family:      utils.DerefString(v.DBParameterGroupFamily, ""),
+					description: utils.DerefString(v.Description, ""),
+					arn:         v.Arn(),
+				})
+			}
+			for _, v := range instanceGroups {
+				groups = append(groups, rdsParameterGroup{
+					name:        utils.DerefString(v.DBParameterGroupName, ""),
+					groupType:   "Instance",
+					family:      utils.DerefString(v.DBParameterGroupFamily, ""),
+					description: utils.DerefString(v.Description, ""),
+					arn:         v.Arn(),
+				})
+			}
+			return groups, nil
 		},
-		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
-			Description: "Tags",
-			Action:      r.tagsHandler,
+		func(v rdsParameterGroup) []string {
+			return []string{
+				v.name,
+				v.groupType,
+				v.family,
+				v.description,
+			}
 		},
-	}
-}
-
-func (r *RDSParameterGroups) Render() {
-	clusterParameterGroups, err := r.repo.ListClusterParameterGroups()
-	if err != nil {
-		panic(err)
-	}
-
-	instanceParameterGroups, err := r.repo.ListInstanceParameterGroups()
-	if err != nil {
-		panic(err)
-	}
-	var objects []model.ModelWithArn
-
-	var data [][]string
-	for _, v := range clusterParameterGroups {
-		objects = append(objects, v)
-		data = append(data, []string{
-			utils.DerefString(v.DBClusterParameterGroupName, ""),
-			"Cluster",
-			utils.DerefString(v.DBParameterGroupFamily, ""),
-			utils.DerefString(v.Description, ""),
-		})
-	}
-	for _, v := range instanceParameterGroups {
-		objects = append(objects, v)
-		data = append(data, []string{
-			utils.DerefString(v.DBParameterGroupName, ""),
-			"Instance",
-			utils.DerefString(v.DBParameterGroupFamily, ""),
-			utils.DerefString(v.Description, ""),
-		})
-	}
-	r.model = objects
-	r.SetData(data)
+		func(v *TableView[rdsParameterGroup]) []KeyAction {
+			return []KeyAction{
+				{
+					Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
+					Description: "Parameters",
+					Action: func() {
+						name, err := v.GetColSelection("NAME")
+						if err != nil {
+							return
+						}
+						groupType, err := v.GetColSelection("TYPE")
+						if err != nil {
+							return
+						}
+						var parameterGroupType model.RDSParameterGroupType
+						if groupType == "Cluster" {
+							parameterGroupType = model.RDSParameterGroupTypeCluster
+						} else {
+							parameterGroupType = model.RDSParameterGroupTypeInstance
+						}
+						app.AddAndSwitch(NewRDSParameters(repo, app, name, parameterGroupType))
+					},
+				},
+				{
+					Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
+					Description: "Tags",
+					Action: func() {
+						item, err := v.Selected()
+						if err != nil {
+							return
+						}
+						app.AddAndSwitch(NewTags(repo, v.GetService(), item.arn, app))
+					},
+				},
+			}
+		},
+	)
 }

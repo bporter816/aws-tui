@@ -1,109 +1,72 @@
 package internal
 
 import (
+	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
-	"github.com/bporter816/aws-tui/internal/ui"
 	"github.com/bporter816/aws-tui/internal/utils"
-	"github.com/bporter816/aws-tui/internal/view"
 	"github.com/gdamore/tcell/v2"
 )
 
-type S3Buckets struct {
-	*ui.Table
-	view.S3
-	repo *repo.S3
-	app  *Application
-}
-
-func NewS3Buckets(repo *repo.S3, app *Application) *S3Buckets {
-	s := &S3Buckets{
-		Table: ui.NewTable([]string{
-			"NAME",
-			"CREATED",
-		}, 1, 0),
-		repo: repo,
-		app:  app,
-	}
-	s.SetSelectedFunc(s.selectHandler)
-	return s
-}
-
-func (s S3Buckets) GetLabels() []string {
-	return []string{"Buckets"}
-}
-
-func (s S3Buckets) selectHandler(row, col int) {
-	bucket, err := s.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
-	objectsView := NewS3Objects(s.repo, bucket, s.app)
-	s.app.AddAndSwitch(objectsView)
-}
-
-func (s S3Buckets) bucketPolicyHandler() {
-	bucket, err := s.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
-	policyView := NewS3BucketPolicy(s.repo, bucket, s.app)
-	s.app.AddAndSwitch(policyView)
-}
-
-func (s S3Buckets) corsRulesHandler() {
-	bucket, err := s.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
-	corsRulesView := NewS3CORSRules(s.repo, bucket, s.app)
-	s.app.AddAndSwitch(corsRulesView)
-}
-
-func (s S3Buckets) tagsHandler() {
-	bucket, err := s.GetColSelection("NAME")
-	if err != nil {
-		return
-	}
-	tagsView := NewTags(s.repo, s.GetService(), "bucket:"+bucket, s.app)
-	s.app.AddAndSwitch(tagsView)
-}
-
-func (s S3Buckets) GetKeyActions() []KeyAction {
-	return []KeyAction{
-		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
-			Description: "Bucket Policy",
-			Action:      s.bucketPolicyHandler,
+func NewS3Buckets(repo *repo.S3, app *Application) *TableView[model.S3Bucket] {
+	v := NewTableView(
+		"S3",
+		[]string{"Buckets"},
+		[]string{"NAME", "CREATED"},
+		repo.ListBuckets,
+		func(b model.S3Bucket) []string {
+			var created string
+			if b.CreationDate != nil {
+				created = b.CreationDate.Format(utils.DefaultTimeFormat)
+			}
+			return []string{
+				utils.DerefString(b.Name, ""),
+				created,
+			}
 		},
-		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
-			Description: "CORS Rules",
-			Action:      s.corsRulesHandler,
+		func(v *TableView[model.S3Bucket]) []KeyAction {
+			return []KeyAction{
+				{
+					Key:         tcell.NewEventKey(tcell.KeyRune, 'p', tcell.ModNone),
+					Description: "Bucket Policy",
+					Action: func() {
+						bucket, err := v.GetColSelection("NAME")
+						if err != nil {
+							return
+						}
+						app.AddAndSwitch(NewS3BucketPolicy(repo, bucket, app))
+					},
+				},
+				{
+					Key:         tcell.NewEventKey(tcell.KeyRune, 'c', tcell.ModNone),
+					Description: "CORS Rules",
+					Action: func() {
+						bucket, err := v.GetColSelection("NAME")
+						if err != nil {
+							return
+						}
+						app.AddAndSwitch(NewS3CORSRules(repo, bucket, app))
+					},
+				},
+				{
+					Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
+					Description: "Tags",
+					Action: func() {
+						bucket, err := v.GetColSelection("NAME")
+						if err != nil {
+							return
+						}
+						app.AddAndSwitch(NewTags(repo, v.GetService(), "bucket:"+bucket, app))
+					},
+				},
+			}
 		},
-		{
-			Key:         tcell.NewEventKey(tcell.KeyRune, 'T', tcell.ModNone),
-			Description: "Tags",
-			Action:      s.tagsHandler,
-		},
-	}
-}
-
-func (s S3Buckets) Render() {
-	model, err := s.repo.ListBuckets()
-	if err != nil {
-		panic(err)
-	}
-
-	var data [][]string
-	for _, v := range model {
-		var created string
-		if v.CreationDate != nil {
-			created = v.CreationDate.Format(utils.DefaultTimeFormat)
+	)
+	v.SetSelectedFunc(func(row, col int) {
+		bucket, err := v.GetColSelection("NAME")
+		if err != nil {
+			return
 		}
-		data = append(data, []string{
-			utils.DerefString(v.Name, ""),
-			created,
-		})
-	}
-	s.SetData(data)
+		app.AddAndSwitch(NewS3Objects(repo, bucket, app))
+	})
+	return v
 }
