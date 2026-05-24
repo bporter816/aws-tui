@@ -5,12 +5,10 @@ import (
 
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
-	"github.com/bporter816/aws-tui/internal/view"
 )
 
 type SQSAccessPolicy struct {
 	*ui.Text
-	view.SQS
 	repo     *repo.SQS
 	queueUrl string
 	app      *Application
@@ -25,6 +23,8 @@ func NewSQSAccessPolicy(repo *repo.SQS, queueUrl string, app *Application) *SQSA
 	}
 	return s
 }
+
+func (s SQSAccessPolicy) GetService() string { return "SQS" }
 
 func (s SQSAccessPolicy) GetLabels() []string {
 	parts := strings.Split(s.queueUrl, "/")

@@ -3,12 +3,10 @@ package internal
 import (
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
-	"github.com/bporter816/aws-tui/internal/view"
 )
 
 type SMSecretResourcePolicy struct {
 	*ui.Text
-	view.SecretsManager
 	repo       *repo.SecretsManager
 	secretName string
 	app        *Application
@@ -23,6 +21,8 @@ func NewSMSecretResourcePolicy(repo *repo.SecretsManager, secretName string, app
 	}
 	return s
 }
+
+func (s SMSecretResourcePolicy) GetService() string { return "Secrets Manager" }
 
 func (s SMSecretResourcePolicy) GetLabels() []string {
 	return []string{s.secretName, "Resource Policy"}

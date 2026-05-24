@@ -4,13 +4,11 @@ import (
 	"encoding/json"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
-	"github.com/bporter816/aws-tui/internal/view"
 	"github.com/rivo/tview"
 )
 
 type SMSecretValue struct {
 	tview.Primitive
-	view.SecretsManager
 	secretName string
 	valueKV    map[string]string
 	valueText  string
@@ -41,6 +39,8 @@ func NewSMSecretValue(repo *repo.SecretsManager, secretName string, app *Applica
 	}
 	return s
 }
+
+func (s SMSecretValue) GetService() string { return "Secrets Manager" }
 
 func (s SMSecretValue) GetLabels() []string {
 	return []string{s.secretName, "Value"}

@@ -4,12 +4,10 @@ import (
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
-	"github.com/bporter816/aws-tui/internal/view"
 )
 
 type IAMPolicy struct {
 	*ui.Text
-	view.IAM
 	repo         *repo.IAM
 	identityType model.IAMIdentityType
 	policyType   model.IAMPolicyType
@@ -40,6 +38,8 @@ func NewIAMPolicy(
 	}
 	return i
 }
+
+func (i IAMPolicy) GetService() string { return "IAM" }
 
 func (i IAMPolicy) GetLabels() []string {
 	if i.policyType == model.IAMPolicyTypePermissionsBoundary || i.policyType == model.IAMPolicyTypeAssumeRolePolicy {

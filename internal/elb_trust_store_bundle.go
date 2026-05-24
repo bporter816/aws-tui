@@ -5,12 +5,10 @@ import (
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
 	"github.com/bporter816/aws-tui/internal/utils"
-	"github.com/bporter816/aws-tui/internal/view"
 )
 
 type ELBTrustStoreBundle struct {
 	*ui.Text
-	view.ELB
 	repo          *repo.ELB
 	trustStoreArn string
 	app           *Application
@@ -25,6 +23,8 @@ func NewELBTrustStoreBundle(repo *repo.ELB, trustStoreArn string, app *Applicati
 	}
 	return e
 }
+
+func (e ELBTrustStoreBundle) GetService() string { return "ELB" }
 
 func (e ELBTrustStoreBundle) GetLabels() []string {
 	a, err := arn.Parse(e.trustStoreArn)

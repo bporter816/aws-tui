@@ -4,12 +4,10 @@ import (
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
 	"github.com/bporter816/aws-tui/internal/utils"
-	"github.com/bporter816/aws-tui/internal/view"
 )
 
 type CFFunctionCode struct {
 	*ui.Text
-	view.CloudFront
 	repo  *repo.CloudFront
 	name  string
 	stage string
@@ -24,6 +22,8 @@ func NewCFFunctionCode(repo *repo.CloudFront, name string, stage string, app *Ap
 	}
 	return c
 }
+
+func (c CFFunctionCode) GetService() string { return "CloudFront" }
 
 func (c CFFunctionCode) GetLabels() []string {
 	return []string{c.name + utils.AutoCase(string(c.stage)), "Code"}

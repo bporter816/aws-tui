@@ -8,12 +8,10 @@ import (
 	"github.com/bporter816/aws-tui/internal/template"
 	"github.com/bporter816/aws-tui/internal/ui"
 	"github.com/bporter816/aws-tui/internal/utils"
-	"github.com/bporter816/aws-tui/internal/view"
 )
 
 type ACMCertificateDetails struct {
 	*ui.Text
-	view.ACM
 	repo           *repo.ACM
 	displayName    string
 	certificateArn string
@@ -30,6 +28,8 @@ func NewACMCertificateDetails(repo *repo.ACM, displayName string, certificateArn
 	}
 	return a
 }
+
+func (a ACMCertificateDetails) GetService() string { return "ACM" }
 
 func (a ACMCertificateDetails) GetLabels() []string {
 	arn, err := arn.Parse(a.certificateArn)

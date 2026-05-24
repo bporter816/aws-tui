@@ -3,12 +3,10 @@ package internal
 import (
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
-	"github.com/bporter816/aws-tui/internal/view"
 )
 
 type S3BucketPolicy struct {
 	*ui.Text
-	view.S3
 	repo   *repo.S3
 	bucket string
 	app    *Application
@@ -23,6 +21,8 @@ func NewS3BucketPolicy(repo *repo.S3, bucket string, app *Application) *S3Bucket
 	}
 	return s
 }
+
+func (s S3BucketPolicy) GetService() string { return "S3" }
 
 func (s S3BucketPolicy) GetLabels() []string {
 	return []string{s.bucket, "Bucket Policy"}
