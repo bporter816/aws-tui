@@ -241,11 +241,14 @@ func (a *Application) rebuild(profile, region string) {
 func (a *Application) ShowError(err error) {
 	modal := tview.NewModal().
 		SetText(err.Error()).
+		SetTextColor(tcell.ColorRed).
+		SetBackgroundColor(tcell.ColorDefault).
 		AddButtons([]string{"OK"}).
 		SetDoneFunc(func(_ int, _ string) {
 			a.pages.RemovePage("error")
 			a.app.SetFocus(a.pages)
 		})
+	modal.Box.SetBackgroundColor(tcell.ColorDefault)
 	a.pages.AddPage("error", modal, false, true)
 	a.app.SetFocus(modal)
 }
