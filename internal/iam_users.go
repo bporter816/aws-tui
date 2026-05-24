@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -18,8 +20,8 @@ func NewIAMUsers(repo *repo.IAM, groupName *string, app *Application) *TableView
 		"IAM",
 		labels,
 		[]string{"ID", "NAME", "PATH", "CREATED", "PASSWORD LAST USED"},
-		func() ([]model.IAMUser, error) {
-			return repo.ListUsers(groupName)
+		func(ctx context.Context) ([]model.IAMUser, error) {
+			return repo.ListUsers(ctx, groupName)
 		},
 		func(v model.IAMUser) []string {
 			var created, passwordLastUsed string

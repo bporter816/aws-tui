@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
@@ -14,8 +15,8 @@ func NewRoute53Records(repo *repo.Route53, zoneId string, app *Application) *Tab
 		"Route 53",
 		[]string{zoneId, "Records"},
 		[]string{"RECORD NAME", "TYPE", "ROUTING", "DIFF", "LABEL", "TTL", "ALIAS", "VALUE"},
-		func() ([]model.Route53Record, error) {
-			return repo.ListRecords(zoneId)
+		func(ctx context.Context) ([]model.Route53Record, error) {
+			return repo.ListRecords(ctx, zoneId)
 		},
 		func(v model.Route53Record) []string {
 			routingPolicy := "Simple"

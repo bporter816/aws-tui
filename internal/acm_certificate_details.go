@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"crypto/x509"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
@@ -44,8 +45,8 @@ func (a ACMCertificateDetails) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (a ACMCertificateDetails) Render() error {
-	cert, err := a.repo.GetCertificate(a.certificateArn)
+func (a ACMCertificateDetails) Render(ctx context.Context) error {
+	cert, err := a.repo.GetCertificate(ctx, a.certificateArn)
 	if err != nil {
 		return err
 	}

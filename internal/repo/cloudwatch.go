@@ -17,14 +17,14 @@ func NewCloudWatch(cwLogsClient *cwLogs.Client) *CloudWatch {
 	}
 }
 
-func (c CloudWatch) ListLogGroups() ([]model.CloudWatchLogGroup, error) {
+func (c CloudWatch) ListLogGroups(ctx context.Context) ([]model.CloudWatchLogGroup, error) {
 	pg := cwLogs.NewDescribeLogGroupsPaginator(
 		c.cwLogsClient,
 		&cwLogs.DescribeLogGroupsInput{},
 	)
 	var logGroups []model.CloudWatchLogGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.CloudWatchLogGroup{}, err
 		}
@@ -35,9 +35,9 @@ func (c CloudWatch) ListLogGroups() ([]model.CloudWatchLogGroup, error) {
 	return logGroups, nil
 }
 
-func (c CloudWatch) ListTags(resourceArn string) (model.Tags, error) {
+func (c CloudWatch) ListTags(ctx context.Context, resourceArn string) (model.Tags, error) {
 	out, err := c.cwLogsClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&cwLogs.ListTagsForResourceInput{
 			ResourceArn: aws.String(resourceArn),
 		},

@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"errors"
 
 	"github.com/bporter816/aws-tui/internal/model"
@@ -13,11 +14,11 @@ func NewRDSParameters(repo *repo.RDS, app *Application, groupName string, groupT
 		"RDS",
 		[]string{groupName, "Parameters"},
 		[]string{"NAME", "VALUE", "DATA TYPE", "APPLY METHOD", "APPLY TYPE", "MODIFIABLE", "DESCRIPTION"},
-		func() ([]model.RDSParameter, error) {
+		func(ctx context.Context) ([]model.RDSParameter, error) {
 			if groupType == model.RDSParameterGroupTypeCluster {
-				return repo.ListClusterParameters(groupName)
+				return repo.ListClusterParameters(ctx, groupName)
 			} else if groupType == model.RDSParameterGroupTypeInstance {
-				return repo.ListInstanceParameters(groupName)
+				return repo.ListInstanceParameters(ctx, groupName)
 			}
 			return nil, errors.New("param group type must be cluster or instance")
 		},

@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strings"
 
 	"github.com/bporter816/aws-tui/internal/repo"
@@ -36,7 +37,7 @@ func (s S3Objects) GetLabels() []string {
 }
 
 func (s S3Objects) selectHandler(n *tview.TreeNode) {
-	_ = s.expandDir(n)
+	_ = s.expandDir(s.app.ctx, n)
 }
 
 func (s S3Objects) objectHandler() {
@@ -92,7 +93,7 @@ func (s S3Objects) GetKeyActions() []KeyAction {
 	}
 }
 
-func (s S3Objects) expandDir(n *tview.TreeNode) error {
+func (s S3Objects) expandDir(ctx context.Context, n *tview.TreeNode) error {
 	if strings.HasSuffix(n.GetText(), "/") {
 		if len(n.GetChildren()) > 0 {
 			n.SetExpanded(!n.IsExpanded())
@@ -100,7 +101,7 @@ func (s S3Objects) expandDir(n *tview.TreeNode) error {
 		}
 
 		ref := n.GetReference().(string)
-		prefixes, objects, err := s.repo.ListObjects(s.bucket, ref)
+		prefixes, objects, err := s.repo.ListObjects(ctx, s.bucket, ref)
 		if err != nil {
 			return err
 		}
@@ -125,6 +126,6 @@ func (s S3Objects) expandDir(n *tview.TreeNode) error {
 	return nil
 }
 
-func (s S3Objects) Render() error {
-	return s.expandDir(s.GetRoot())
+func (s S3Objects) Render(ctx context.Context) error {
+	return s.expandDir(ctx, s.GetRoot())
 }

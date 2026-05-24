@@ -18,14 +18,14 @@ func NewDynamoDB(ddbClient *ddb.Client) *DynamoDB {
 	}
 }
 
-func (d DynamoDB) listTableNames() ([]string, error) {
+func (d DynamoDB) listTableNames(ctx context.Context) ([]string, error) {
 	pg := ddb.NewListTablesPaginator(
 		d.ddbClient,
 		&ddb.ListTablesInput{},
 	)
 	var tableNames []string
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []string{}, err
 		}
@@ -34,9 +34,9 @@ func (d DynamoDB) listTableNames() ([]string, error) {
 	return tableNames, nil
 }
 
-func (d DynamoDB) describeTable(tableName string) (ddbTypes.TableDescription, error) {
+func (d DynamoDB) describeTable(ctx context.Context, tableName string) (ddbTypes.TableDescription, error) {
 	out, err := d.ddbClient.DescribeTable(
-		context.TODO(),
+		ctx,
 		&ddb.DescribeTableInput{
 			TableName: aws.String(tableName),
 		},
@@ -47,15 +47,15 @@ func (d DynamoDB) describeTable(tableName string) (ddbTypes.TableDescription, er
 	return *out.Table, nil
 }
 
-func (d DynamoDB) ListTables() ([]model.DynamoDBTable, error) {
-	tableNames, err := d.listTableNames()
+func (d DynamoDB) ListTables(ctx context.Context) ([]model.DynamoDBTable, error) {
+	tableNames, err := d.listTableNames(ctx)
 	if err != nil {
 		return []model.DynamoDBTable{}, err
 	}
 
 	var tables []model.DynamoDBTable
 	for _, v := range tableNames {
-		table, err := d.describeTable(v)
+		table, err := d.describeTable(ctx, v)
 		if err != nil {
 			// TODO handle error more cleanly
 			tables = append(tables, model.DynamoDBTable{TableName: aws.String(v)})
@@ -66,17 +66,17 @@ func (d DynamoDB) ListTables() ([]model.DynamoDBTable, error) {
 	return tables, nil
 }
 
-func (d DynamoDB) ListIndexes(tableName string) (model.DynamoDBIndexes, error) {
-	table, err := d.describeTable(tableName)
+func (d DynamoDB) ListIndexes(ctx context.Context, tableName string) (model.DynamoDBIndexes, error) {
+	table, err := d.describeTable(ctx, tableName)
 	if err != nil {
 		return model.DynamoDBIndexes{}, err
 	}
 	return model.DynamoDBIndexes{Global: table.GlobalSecondaryIndexes, Local: table.LocalSecondaryIndexes}, nil
 }
 
-func (d DynamoDB) ListTags(resourceId string) (model.Tags, error) {
+func (d DynamoDB) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	out, err := d.ddbClient.ListTagsOfResource(
-		context.TODO(),
+		ctx,
 		&ddb.ListTagsOfResourceInput{
 			ResourceArn: aws.String(resourceId),
 		},

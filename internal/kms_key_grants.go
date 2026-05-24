@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -11,8 +13,8 @@ func NewKmsKeyGrants(repo *repo.KMS, keyId string, app *Application) *TableView[
 		"KMS",
 		[]string{keyId, "Grants"},
 		[]string{"NAME", "OPERATIONS", "GRANTEE PRINCIPAL", "RETIRING PRINCIPAL"},
-		func() ([]model.KMSGrant, error) {
-			return repo.ListGrants(keyId)
+		func(ctx context.Context) ([]model.KMSGrant, error) {
+			return repo.ListGrants(ctx, keyId)
 		},
 		func(v model.KMSGrant) []string {
 			return []string{

@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/ui"
 )
 
@@ -9,7 +11,7 @@ type TableView[T any] struct {
 	service    string
 	labels     []string
 	items      []T
-	load       func() ([]T, error)
+	load       func(context.Context) ([]T, error)
 	toRow      func(T) []string
 	keyActions []KeyAction
 }
@@ -18,7 +20,7 @@ func NewTableView[T any](
 	service string,
 	labels []string,
 	columns []string,
-	load func() ([]T, error),
+	load func(context.Context) ([]T, error),
 	toRow func(T) []string,
 	keyActions func(*TableView[T]) []KeyAction,
 ) *TableView[T] {
@@ -48,8 +50,8 @@ func (t *TableView[T]) Selected() (T, error) {
 	return t.items[row-1], nil
 }
 
-func (t *TableView[T]) Render() error {
-	items, err := t.load()
+func (t *TableView[T]) Render(ctx context.Context) error {
+	items, err := t.load(ctx)
 	if err != nil {
 		return err
 	}

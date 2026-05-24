@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
@@ -12,8 +14,8 @@ func NewELBTrustStoreAssociations(repo *repo.ELB, a arn.ARN, app *Application) *
 		"ELB",
 		[]string{a.Resource, "Associations"},
 		[]string{"ARN"},
-		func() ([]model.ELBTrustStoreAssociation, error) {
-			return repo.ListTrustStoreAssociations(a)
+		func(ctx context.Context) ([]model.ELBTrustStoreAssociation, error) {
+			return repo.ListTrustStoreAssociations(ctx, a)
 		},
 		func(v model.ELBTrustStoreAssociation) []string {
 			return []string{

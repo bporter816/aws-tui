@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strings"
 
 	"github.com/bporter816/aws-tui/internal/repo"
@@ -39,8 +40,8 @@ func (s SQSAccessPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SQSAccessPolicy) Render() error {
-	policy, err := s.repo.GetAccessPolicy(s.queueUrl)
+func (s SQSAccessPolicy) Render(ctx context.Context) error {
+	policy, err := s.repo.GetAccessPolicy(ctx, s.queueUrl)
 	if err != nil {
 		return err
 	}

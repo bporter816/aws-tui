@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
 )
@@ -32,8 +34,8 @@ func (s S3BucketPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s S3BucketPolicy) Render() error {
-	policy, err := s.repo.GetBucketPolicy(s.bucket)
+func (s S3BucketPolicy) Render(ctx context.Context) error {
+	policy, err := s.repo.GetBucketPolicy(ctx, s.bucket)
 	if err != nil {
 		return err
 	}

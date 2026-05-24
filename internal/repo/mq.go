@@ -18,14 +18,14 @@ func NewMQ(mqClient *mq.Client) *MQ {
 	}
 }
 
-func (m MQ) ListBrokers() ([]model.MQBroker, error) {
+func (m MQ) ListBrokers(ctx context.Context) ([]model.MQBroker, error) {
 	pg := mq.NewListBrokersPaginator(
 		m.mqClient,
 		&mq.ListBrokersInput{},
 	)
 	var brokers []model.MQBroker
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.MQBroker{}, err
 		}
@@ -36,9 +36,9 @@ func (m MQ) ListBrokers() ([]model.MQBroker, error) {
 	return brokers, nil
 }
 
-func (m MQ) ListTags(resourceId string) (model.Tags, error) {
+func (m MQ) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	out, err := m.mqClient.ListTags(
-		context.TODO(),
+		ctx,
 		&mq.ListTagsInput{
 			ResourceArn: aws.String(resourceId),
 		},

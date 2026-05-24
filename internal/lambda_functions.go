@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/bporter816/aws-tui/internal/model"
@@ -9,8 +10,8 @@ import (
 )
 
 type lambdaRepo interface {
-	ListFunctions() ([]model.LambdaFunction, error)
-	ListTags(string) (model.Tags, error)
+	ListFunctions(context.Context) ([]model.LambdaFunction, error)
+	ListTags(context.Context, string) (model.Tags, error)
 }
 
 func NewLambdaFunctions(repo lambdaRepo, app *Application) *TableView[model.LambdaFunction] {

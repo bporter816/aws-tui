@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strings"
 
 	"github.com/bporter816/aws-tui/internal/repo"
@@ -36,8 +37,8 @@ func (s S3Object) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s S3Object) Render() error {
-	b, err := s.repo.GetObject(s.bucket, s.key)
+func (s S3Object) Render(ctx context.Context) error {
+	b, err := s.repo.GetObject(ctx, s.bucket, s.key)
 	if err != nil {
 		return err
 	}

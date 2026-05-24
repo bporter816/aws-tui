@@ -17,14 +17,14 @@ func NewACMPCA(acmPCAClient *acmpca.Client) *ACMPCA {
 	}
 }
 
-func (a ACMPCA) ListCertificateAuthorities() ([]model.ACMPCACertificateAuthority, error) {
+func (a ACMPCA) ListCertificateAuthorities(ctx context.Context) ([]model.ACMPCACertificateAuthority, error) {
 	pg := acmpca.NewListCertificateAuthoritiesPaginator(
 		a.acmPCAClient,
 		&acmpca.ListCertificateAuthoritiesInput{},
 	)
 	var certificateAuthorities []model.ACMPCACertificateAuthority
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ACMPCACertificateAuthority{}, err
 		}
@@ -35,7 +35,7 @@ func (a ACMPCA) ListCertificateAuthorities() ([]model.ACMPCACertificateAuthority
 	return certificateAuthorities, nil
 }
 
-func (a ACMPCA) ListTags(certificateAuthorityArn string) (model.Tags, error) {
+func (a ACMPCA) ListTags(ctx context.Context, certificateAuthorityArn string) (model.Tags, error) {
 	pg := acmpca.NewListTagsPaginator(
 		a.acmPCAClient,
 		&acmpca.ListTagsInput{
@@ -44,7 +44,7 @@ func (a ACMPCA) ListTags(certificateAuthorityArn string) (model.Tags, error) {
 	)
 	var tags model.Tags
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return model.Tags{}, err
 		}

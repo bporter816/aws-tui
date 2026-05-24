@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
 )
@@ -32,8 +34,8 @@ func (e EC2KeyPairPubKey) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e EC2KeyPairPubKey) Render() error {
-	key, err := e.repo.GetPublicKey(e.keyPairId)
+func (e EC2KeyPairPubKey) Render(ctx context.Context) error {
+	key, err := e.repo.GetPublicKey(ctx, e.keyPairId)
 	if err != nil {
 		return err
 	}

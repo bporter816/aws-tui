@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
@@ -17,8 +19,8 @@ func NewECSTasks(clusterName string, serviceName string, repo *repo.ECS, app *Ap
 		"ECS",
 		labels,
 		[]string{"ID", "GROUP", "LAST STATUS", "DESIRED STATUS", "LAUNCH TYPE", "PLATFORM", "CPU", "MEM"},
-		func() ([]model.ECSTask, error) {
-			return repo.ListTasks(clusterName, serviceName)
+		func(ctx context.Context) ([]model.ECSTask, error) {
+			return repo.ListTasks(ctx, clusterName, serviceName)
 		},
 		func(v model.ECSTask) []string {
 			var id, group, lastStatus, desiredStatus, platform, cpu, mem string

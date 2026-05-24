@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
@@ -15,8 +16,8 @@ func NewECSServices(clusterName string, repo *repo.ECS, app *Application) *Table
 		"ECS",
 		[]string{clusterName, "Services"},
 		[]string{"NAME", "STATUS", "TASKS (P/R)", "TASK DEFINITION", "TYPE"},
-		func() ([]model.ECSService, error) {
-			return repo.ListServices(clusterName)
+		func(ctx context.Context) ([]model.ECSService, error) {
+			return repo.ListServices(ctx, clusterName)
 		},
 		func(v model.ECSService) []string {
 			var name, status, tasks, taskDefinition, scheduling string

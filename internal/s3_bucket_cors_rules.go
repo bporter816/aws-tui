@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
@@ -14,8 +15,8 @@ func NewS3CORSRules(repo *repo.S3, bucket string, app *Application) *TableView[m
 		"S3",
 		[]string{bucket, "CORS"},
 		[]string{"ID", "ALLOWED METHODS", "ALLOWED ORIGINS", "ALLOWED HEADERS", "EXPOSE HEADERS", "MAX AGE"},
-		func() ([]model.S3CORSRule, error) {
-			return repo.GetCORSRules(bucket)
+		func(ctx context.Context) ([]model.S3CORSRule, error) {
+			return repo.GetCORSRules(ctx, bucket)
 		},
 		func(v model.S3CORSRule) []string {
 			return []string{

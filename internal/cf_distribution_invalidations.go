@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -12,8 +14,8 @@ func NewCFDistributionInvalidations(repo *repo.CloudFront, distributionId string
 		"CloudFront",
 		[]string{distributionId, "Invalidations"},
 		[]string{"ID", "STATUS", "CREATED"},
-		func() ([]model.CloudFrontInvalidation, error) {
-			return repo.ListInvalidations(distributionId)
+		func(ctx context.Context) ([]model.CloudFrontInvalidation, error) {
+			return repo.ListInvalidations(ctx, distributionId)
 		},
 		func(v model.CloudFrontInvalidation) []string {
 			created := "-"

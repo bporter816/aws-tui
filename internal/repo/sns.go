@@ -17,9 +17,9 @@ func NewSNS(snsClient *sns.Client) *SNS {
 	}
 }
 
-func (s SNS) getTopicAttributes(topicArn string) (map[string]string, error) {
+func (s SNS) getTopicAttributes(ctx context.Context, topicArn string) (map[string]string, error) {
 	out, err := s.snsClient.GetTopicAttributes(
-		context.TODO(),
+		ctx,
 		&sns.GetTopicAttributesInput{
 			TopicArn: aws.String(topicArn),
 		},
@@ -30,9 +30,9 @@ func (s SNS) getTopicAttributes(topicArn string) (map[string]string, error) {
 	return out.Attributes, nil
 }
 
-func (s SNS) getSubscriptionAttributes(subscriptionArn string) (map[string]string, error) {
+func (s SNS) getSubscriptionAttributes(ctx context.Context, subscriptionArn string) (map[string]string, error) {
 	out, err := s.snsClient.GetSubscriptionAttributes(
-		context.TODO(),
+		ctx,
 		&sns.GetSubscriptionAttributesInput{
 			SubscriptionArn: aws.String(subscriptionArn),
 		},
@@ -43,14 +43,14 @@ func (s SNS) getSubscriptionAttributes(subscriptionArn string) (map[string]strin
 	return out.Attributes, nil
 }
 
-func (s SNS) ListTopics() ([]model.SNSTopic, error) {
+func (s SNS) ListTopics(ctx context.Context) ([]model.SNSTopic, error) {
 	pg := sns.NewListTopicsPaginator(
 		s.snsClient,
 		&sns.ListTopicsInput{},
 	)
 	var topics []model.SNSTopic
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.SNSTopic{}, err
 		}
@@ -59,7 +59,7 @@ func (s SNS) ListTopics() ([]model.SNSTopic, error) {
 				continue
 			}
 			topic := model.SNSTopic{Arn: *v.TopicArn}
-			if attrs, err := s.getTopicAttributes(*v.TopicArn); err == nil {
+			if attrs, err := s.getTopicAttributes(ctx, *v.TopicArn); err == nil {
 				topic.Attributes = attrs
 			}
 			topics = append(topics, topic)
@@ -68,8 +68,8 @@ func (s SNS) ListTopics() ([]model.SNSTopic, error) {
 	return topics, nil
 }
 
-func (s SNS) GetAccessControlPolicy(topicArn string) (string, error) {
-	attrs, err := s.getTopicAttributes(topicArn)
+func (s SNS) GetAccessControlPolicy(ctx context.Context, topicArn string) (string, error) {
+	attrs, err := s.getTopicAttributes(ctx, topicArn)
 	if err != nil {
 		return "", err
 	}
@@ -79,8 +79,8 @@ func (s SNS) GetAccessControlPolicy(topicArn string) (string, error) {
 	return "", nil
 }
 
-func (s SNS) GetDeliveryPolicy(topicArn string) (string, error) {
-	attrs, err := s.getTopicAttributes(topicArn)
+func (s SNS) GetDeliveryPolicy(ctx context.Context, topicArn string) (string, error) {
+	attrs, err := s.getTopicAttributes(ctx, topicArn)
 	if err != nil {
 		return "", err
 	}
@@ -91,7 +91,7 @@ func (s SNS) GetDeliveryPolicy(topicArn string) (string, error) {
 	return "", nil
 }
 
-func (s SNS) ListSubscriptions(topicArn string) ([]model.SNSSubscription, error) {
+func (s SNS) ListSubscriptions(ctx context.Context, topicArn string) ([]model.SNSSubscription, error) {
 	pg := sns.NewListSubscriptionsByTopicPaginator(
 		s.snsClient,
 		&sns.ListSubscriptionsByTopicInput{
@@ -100,13 +100,13 @@ func (s SNS) ListSubscriptions(topicArn string) ([]model.SNSSubscription, error)
 	)
 	var subscriptions []model.SNSSubscription
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.SNSSubscription{}, err
 		}
 		for _, v := range out.Subscriptions {
 			subscription := model.SNSSubscription{Subscription: v}
-			if attrs, err := s.getSubscriptionAttributes(*v.SubscriptionArn); err == nil {
+			if attrs, err := s.getSubscriptionAttributes(ctx, *v.SubscriptionArn); err == nil {
 				subscription.Attributes = attrs
 			}
 			subscriptions = append(subscriptions, subscription)
@@ -115,9 +115,9 @@ func (s SNS) ListSubscriptions(topicArn string) ([]model.SNSSubscription, error)
 	return subscriptions, nil
 }
 
-func (s SNS) ListTags(topicArn string) (model.Tags, error) {
+func (s SNS) ListTags(ctx context.Context, topicArn string) (model.Tags, error) {
 	out, err := s.snsClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&sns.ListTagsForResourceInput{
 			ResourceArn: aws.String(topicArn),
 		},

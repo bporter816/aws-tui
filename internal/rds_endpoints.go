@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -18,8 +19,8 @@ func NewRDSEndpoints(repo *repo.RDS, app *Application, clusterId string) *TableV
 		"RDS",
 		[]string{clusterId, "Endpoints"},
 		[]string{"ENDPOINT", "TYPE"},
-		func() ([]rdsEndpoint, error) {
-			model, err := repo.ListClusters([]rdsTypes.Filter{
+		func(ctx context.Context) ([]rdsEndpoint, error) {
+			model, err := repo.ListClusters(ctx, []rdsTypes.Filter{
 				{
 					Name:   aws.String("db-cluster-id"),
 					Values: []string{clusterId},

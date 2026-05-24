@@ -18,9 +18,9 @@ func NewEKS(eksClient *eks.Client) *EKS {
 	}
 }
 
-func (e EKS) describeCluster(name string) (eksTypes.Cluster, error) {
+func (e EKS) describeCluster(ctx context.Context, name string) (eksTypes.Cluster, error) {
 	out, err := e.eksClient.DescribeCluster(
-		context.TODO(),
+		ctx,
 		&eks.DescribeClusterInput{
 			Name: aws.String(name),
 		},
@@ -31,21 +31,21 @@ func (e EKS) describeCluster(name string) (eksTypes.Cluster, error) {
 	return *out.Cluster, nil
 }
 
-func (e EKS) ListClusters() ([]model.EKSCluster, error) {
+func (e EKS) ListClusters(ctx context.Context) ([]model.EKSCluster, error) {
 	pg := eks.NewListClustersPaginator(
 		e.eksClient,
 		&eks.ListClustersInput{},
 	)
 	var clusters []model.EKSCluster
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EKSCluster{}, err
 		}
 		for _, v := range out.Clusters {
 			tmp := v
 			cluster := model.EKSCluster{Name: &tmp}
-			if details, err := e.describeCluster(v); err == nil {
+			if details, err := e.describeCluster(ctx, v); err == nil {
 				cluster = model.EKSCluster(details)
 			}
 			clusters = append(clusters, cluster)
@@ -54,9 +54,9 @@ func (e EKS) ListClusters() ([]model.EKSCluster, error) {
 	return clusters, nil
 }
 
-func (e EKS) ListTags(arn string) (model.Tags, error) {
+func (e EKS) ListTags(ctx context.Context, arn string) (model.Tags, error) {
 	out, err := e.eksClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&eks.ListTagsForResourceInput{
 			ResourceArn: aws.String(arn),
 		},

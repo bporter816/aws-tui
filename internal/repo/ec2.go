@@ -19,14 +19,14 @@ func NewEC2(ec2Client *ec2.Client) *EC2 {
 	}
 }
 
-func (e EC2) ListInstances() ([]model.EC2Instance, error) {
+func (e EC2) ListInstances(ctx context.Context) ([]model.EC2Instance, error) {
 	pg := ec2.NewDescribeInstancesPaginator(
 		e.ec2Client,
 		&ec2.DescribeInstancesInput{},
 	)
 	var instances []model.EC2Instance
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EC2Instance{}, err
 		}
@@ -39,9 +39,9 @@ func (e EC2) ListInstances() ([]model.EC2Instance, error) {
 	return instances, nil
 }
 
-func (e EC2) ListKeyPairs() ([]model.EC2KeyPair, error) {
+func (e EC2) ListKeyPairs(ctx context.Context) ([]model.EC2KeyPair, error) {
 	out, err := e.ec2Client.DescribeKeyPairs(
-		context.TODO(),
+		ctx,
 		&ec2.DescribeKeyPairsInput{},
 	)
 	if err != nil {
@@ -54,9 +54,9 @@ func (e EC2) ListKeyPairs() ([]model.EC2KeyPair, error) {
 	return keyPairs, nil
 }
 
-func (e EC2) GetPublicKey(keyPairId string) (string, error) {
+func (e EC2) GetPublicKey(ctx context.Context, keyPairId string) (string, error) {
 	out, err := e.ec2Client.DescribeKeyPairs(
-		context.TODO(),
+		ctx,
 		&ec2.DescribeKeyPairsInput{
 			IncludePublicKey: aws.Bool(true),
 			Filters: []ec2Types.Filter{
@@ -79,7 +79,7 @@ func (e EC2) GetPublicKey(keyPairId string) (string, error) {
 	return *out.KeyPairs[0].PublicKey, nil
 }
 
-func (e EC2) ListImages() ([]model.EC2Image, error) {
+func (e EC2) ListImages(ctx context.Context) ([]model.EC2Image, error) {
 	pg := ec2.NewDescribeImagesPaginator(
 		e.ec2Client,
 		&ec2.DescribeImagesInput{
@@ -88,7 +88,7 @@ func (e EC2) ListImages() ([]model.EC2Image, error) {
 	)
 	var images []model.EC2Image
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EC2Image{}, err
 		}
@@ -99,14 +99,14 @@ func (e EC2) ListImages() ([]model.EC2Image, error) {
 	return images, nil
 }
 
-func (e EC2) ListSecurityGroups() ([]model.EC2SecurityGroup, error) {
+func (e EC2) ListSecurityGroups(ctx context.Context) ([]model.EC2SecurityGroup, error) {
 	pg := ec2.NewDescribeSecurityGroupsPaginator(
 		e.ec2Client,
 		&ec2.DescribeSecurityGroupsInput{},
 	)
 	var securityGroups []model.EC2SecurityGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EC2SecurityGroup{}, err
 		}
@@ -117,7 +117,7 @@ func (e EC2) ListSecurityGroups() ([]model.EC2SecurityGroup, error) {
 	return securityGroups, nil
 }
 
-func (e EC2) ListSecurityGroupRules(securityGroupId string) ([]model.EC2SecurityGroupRule, error) {
+func (e EC2) ListSecurityGroupRules(ctx context.Context, securityGroupId string) ([]model.EC2SecurityGroupRule, error) {
 	pg := ec2.NewDescribeSecurityGroupRulesPaginator(
 		e.ec2Client,
 		&ec2.DescribeSecurityGroupRulesInput{
@@ -131,7 +131,7 @@ func (e EC2) ListSecurityGroupRules(securityGroupId string) ([]model.EC2Security
 	)
 	var sgRules []model.EC2SecurityGroupRule
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EC2SecurityGroupRule{}, err
 		}
@@ -142,14 +142,14 @@ func (e EC2) ListSecurityGroupRules(securityGroupId string) ([]model.EC2Security
 	return sgRules, nil
 }
 
-func (e EC2) ListVPCs() ([]model.EC2VPC, error) {
+func (e EC2) ListVPCs(ctx context.Context) ([]model.EC2VPC, error) {
 	pg := ec2.NewDescribeVpcsPaginator(
 		e.ec2Client,
 		&ec2.DescribeVpcsInput{},
 	)
 	var vpcs []model.EC2VPC
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EC2VPC{}, err
 		}
@@ -160,7 +160,7 @@ func (e EC2) ListVPCs() ([]model.EC2VPC, error) {
 	return vpcs, nil
 }
 
-func (e EC2) ListSubnets(subnetIds []string) ([]model.EC2Subnet, error) {
+func (e EC2) ListSubnets(ctx context.Context, subnetIds []string) ([]model.EC2Subnet, error) {
 	var pg *ec2.DescribeSubnetsPaginator
 	if len(subnetIds) > 0 {
 		pg = ec2.NewDescribeSubnetsPaginator(
@@ -177,7 +177,7 @@ func (e EC2) ListSubnets(subnetIds []string) ([]model.EC2Subnet, error) {
 	}
 	var subnets []model.EC2Subnet
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EC2Subnet{}, err
 		}
@@ -188,9 +188,9 @@ func (e EC2) ListSubnets(subnetIds []string) ([]model.EC2Subnet, error) {
 	return subnets, nil
 }
 
-func (e EC2) ListAvailabilityZones() ([]model.EC2AvailabilityZone, error) {
+func (e EC2) ListAvailabilityZones(ctx context.Context) ([]model.EC2AvailabilityZone, error) {
 	out, err := e.ec2Client.DescribeAvailabilityZones(
-		context.TODO(),
+		ctx,
 		&ec2.DescribeAvailabilityZonesInput{},
 	)
 	if err != nil {
@@ -203,9 +203,9 @@ func (e EC2) ListAvailabilityZones() ([]model.EC2AvailabilityZone, error) {
 	return availabilityZones, nil
 }
 
-func (e EC2) ListReservedInstances(filters []ec2Types.Filter) ([]model.EC2ReservedInstance, error) {
+func (e EC2) ListReservedInstances(ctx context.Context, filters []ec2Types.Filter) ([]model.EC2ReservedInstance, error) {
 	out, err := e.ec2Client.DescribeReservedInstances(
-		context.TODO(),
+		ctx,
 		&ec2.DescribeReservedInstancesInput{
 			Filters: filters,
 		},
@@ -220,14 +220,14 @@ func (e EC2) ListReservedInstances(filters []ec2Types.Filter) ([]model.EC2Reserv
 	return reservedInstances, nil
 }
 
-func (e EC2) ListInternetGateways() ([]model.EC2InternetGateway, error) {
+func (e EC2) ListInternetGateways(ctx context.Context) ([]model.EC2InternetGateway, error) {
 	pg := ec2.NewDescribeInternetGatewaysPaginator(
 		e.ec2Client,
 		&ec2.DescribeInternetGatewaysInput{},
 	)
 	var internetGateways []model.EC2InternetGateway
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EC2InternetGateway{}, err
 		}
@@ -238,9 +238,9 @@ func (e EC2) ListInternetGateways() ([]model.EC2InternetGateway, error) {
 	return internetGateways, nil
 }
 
-func (e EC2) ListInternetGatewayAttachments(internetGatewayId string) ([]model.EC2InternetGatewayAttachment, error) {
+func (e EC2) ListInternetGatewayAttachments(ctx context.Context, internetGatewayId string) ([]model.EC2InternetGatewayAttachment, error) {
 	out, err := e.ec2Client.DescribeInternetGateways(
-		context.TODO(),
+		ctx,
 		&ec2.DescribeInternetGatewaysInput{
 			InternetGatewayIds: []string{internetGatewayId},
 		},
@@ -258,7 +258,7 @@ func (e EC2) ListInternetGatewayAttachments(internetGatewayId string) ([]model.E
 	return attachments, nil
 }
 
-func (e EC2) ListVolumes(filters []ec2Types.Filter) ([]model.EC2Volume, error) {
+func (e EC2) ListVolumes(ctx context.Context, filters []ec2Types.Filter) ([]model.EC2Volume, error) {
 	pg := ec2.NewDescribeVolumesPaginator(
 		e.ec2Client,
 		&ec2.DescribeVolumesInput{
@@ -267,7 +267,7 @@ func (e EC2) ListVolumes(filters []ec2Types.Filter) ([]model.EC2Volume, error) {
 	)
 	var volumes []model.EC2Volume
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.EC2Volume{}, err
 		}
@@ -278,7 +278,7 @@ func (e EC2) ListVolumes(filters []ec2Types.Filter) ([]model.EC2Volume, error) {
 	return volumes, nil
 }
 
-func (e EC2) ListTags(resourceId string) (model.Tags, error) {
+func (e EC2) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	pg := ec2.NewDescribeTagsPaginator(
 		e.ec2Client,
 		&ec2.DescribeTagsInput{
@@ -292,7 +292,7 @@ func (e EC2) ListTags(resourceId string) (model.Tags, error) {
 	)
 	var tags model.Tags
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return model.Tags{}, err
 		}

@@ -1,15 +1,17 @@
 package internal
 
 import (
+	"context"
+	"strings"
+
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/ui"
 	"github.com/bporter816/aws-tui/internal/utils"
-	"strings"
 )
 
 type Taggable interface {
-	ListTags(string) (model.Tags, error)
+	ListTags(context.Context, string) (model.Tags, error)
 }
 
 type Tags struct {
@@ -59,8 +61,8 @@ func (t Tags) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (t Tags) Render() error {
-	model, err := t.repo.ListTags(t.resourceId)
+func (t Tags) Render(ctx context.Context) error {
+	model, err := t.repo.ListTags(ctx, t.resourceId)
 	if err != nil {
 		return err
 	}

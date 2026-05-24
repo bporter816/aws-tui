@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
@@ -16,8 +18,8 @@ func NewSNSSubscriptions(repo *repo.SNS, topicArn string, app *Application) *Tab
 		"SNS",
 		[]string{topicLabel, "Subscriptions"},
 		[]string{"ID", "PROTOCOL", "ENDPOINT", "STATUS"},
-		func() ([]model.SNSSubscription, error) {
-			return repo.ListSubscriptions(topicArn)
+		func(ctx context.Context) ([]model.SNSSubscription, error) {
+			return repo.ListSubscriptions(ctx, topicArn)
 		},
 		func(v model.SNSSubscription) []string {
 			var id, protocol, status string

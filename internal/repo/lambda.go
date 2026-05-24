@@ -17,14 +17,14 @@ func NewLambda(lambdaClient *lambda.Client) *Lambda {
 	}
 }
 
-func (l Lambda) ListFunctions() ([]model.LambdaFunction, error) {
+func (l Lambda) ListFunctions(ctx context.Context) ([]model.LambdaFunction, error) {
 	pg := lambda.NewListFunctionsPaginator(
 		l.lambdaClient,
 		&lambda.ListFunctionsInput{},
 	)
 	var functions []model.LambdaFunction
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.LambdaFunction{}, err
 		}
@@ -35,9 +35,9 @@ func (l Lambda) ListFunctions() ([]model.LambdaFunction, error) {
 	return functions, nil
 }
 
-func (l Lambda) ListTags(functionArn string) (model.Tags, error) {
+func (l Lambda) ListTags(ctx context.Context, functionArn string) (model.Tags, error) {
 	out, err := l.lambdaClient.ListTags(
-		context.TODO(),
+		ctx,
 		&lambda.ListTagsInput{
 			Resource: aws.String(functionArn),
 		},

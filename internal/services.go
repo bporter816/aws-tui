@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 	"sort"
 
@@ -74,6 +75,6 @@ func (s Services) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s Services) Render() error {
+func (s Services) Render(_ context.Context) error {
 	return nil
 }

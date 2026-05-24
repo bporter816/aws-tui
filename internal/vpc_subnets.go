@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/bporter816/aws-tui/internal/model"
@@ -20,8 +21,8 @@ func NewVPCSubnets(repo *repo.EC2, subnetIds []string, label string, app *Applic
 		"VPC",
 		labels,
 		[]string{"NAME", "SUBNET ID", "STATE", "AVAILABILITY ZONE", "IPV4 CIDR", "VPC ID"},
-		func() ([]model.EC2Subnet, error) {
-			return repo.ListSubnets(subnetIds)
+		func(ctx context.Context) ([]model.EC2Subnet, error) {
+			return repo.ListSubnets(ctx, subnetIds)
 		},
 		func(v model.EC2Subnet) []string {
 			var name, availabilityZone string

@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -47,14 +48,14 @@ func (h *Header) UpdateRepos(stsRepo *repo.STS, iamRepo *repo.IAM) {
 	h.iamRepo = iamRepo
 }
 
-func (h Header) Render() {
+func (h Header) Render(ctx context.Context) {
 	region := h.app.GetRegion()
 	if region == "" {
 		region = "unknown"
 	}
 
 	var account, arn, userId string
-	if identityModel, err := h.stsRepo.GetCallerIdentity(); err == nil {
+	if identityModel, err := h.stsRepo.GetCallerIdentity(ctx); err == nil {
 		if identityModel.Account != nil {
 			account = *identityModel.Account
 		}
@@ -66,7 +67,7 @@ func (h Header) Render() {
 		}
 	}
 
-	aliases, _ := h.iamRepo.ListAccountAliases()
+	aliases, _ := h.iamRepo.ListAccountAliases(ctx)
 	var aliasesStr string
 	if len(aliases) > 0 {
 		aliasesStr = fmt.Sprintf(" (%v)", strings.Join(aliases, ", "))

@@ -47,6 +47,8 @@ type Application struct {
 	components []Component
 	region     string
 	profile    string
+	ctx        context.Context
+	cancel     context.CancelFunc
 }
 
 func buildRepos(cfg aws.Config) (Repos, *repo.STS) {
@@ -124,6 +126,7 @@ func NewApplication() *Application {
 	a := &Application{
 		region: cfg.Region,
 	}
+	a.ctx, a.cancel = context.WithCancel(context.Background())
 
 	tviewApp := tview.NewApplication()
 	pages := tview.NewPages()
@@ -186,6 +189,9 @@ func (a *Application) GetRegion() string {
 }
 
 func (a *Application) rebuild(profile, region string) {
+	a.cancel()
+	a.ctx, a.cancel = context.WithCancel(context.Background())
+
 	opts := []func(*config.LoadOptions) error{}
 	if profile != "" {
 		opts = append(opts, config.WithSharedConfigProfile(profile))
@@ -255,7 +261,7 @@ func (a *Application) ShowError(err error) {
 
 func (a *Application) refreshHandler() {
 	_, primitive := a.pages.GetFrontPage()
-	if err := primitive.(Component).Render(); err != nil {
+	if err := primitive.(Component).Render(a.ctx); err != nil {
 		a.ShowError(err)
 	}
 }
@@ -286,7 +292,7 @@ func (a *Application) GetActiveKeyActions() []KeyAction {
 }
 
 func (a *Application) AddAndSwitch(v Component) {
-	if err := v.Render(); err != nil {
+	if err := v.Render(a.ctx); err != nil {
 		a.ShowError(err)
 		return
 	}
@@ -295,7 +301,7 @@ func (a *Application) AddAndSwitch(v Component) {
 	name := fmt.Sprintf("%v | %v | %v ", a.pages.GetPageCount(), v.GetService(), strings.Join(v.GetLabels(), " > "))
 	a.components = append(a.components, v)
 	a.pages.AddAndSwitchToPage(name, v, true)
-	a.header.Render() // this has to happen after we update the pages view
+	a.header.Render(a.ctx) // this has to happen after we update the pages view
 	a.footer.Render()
 	a.pages.SetTitle(fmt.Sprintf(" %v ", v.GetService()))
 }
@@ -313,7 +319,7 @@ func (a *Application) Close() {
 	newName, _ := a.pages.GetFrontPage()
 	a.pages.SwitchToPage(newName)
 	a.pages.SetTitle(fmt.Sprintf(" %v ", a.components[len(a.components)-1].GetService()))
-	a.header.Render()
+	a.header.Render(a.ctx)
 	a.footer.Render()
 }
 

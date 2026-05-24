@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
 )
@@ -32,8 +34,8 @@ func (s SMSecretResourcePolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SMSecretResourcePolicy) Render() error {
-	policy, err := s.repo.GetResourcePolicy(s.secretName)
+func (s SMSecretResourcePolicy) Render(ctx context.Context) error {
+	policy, err := s.repo.GetResourcePolicy(ctx, s.secretName)
 	if err != nil {
 		return err
 	}

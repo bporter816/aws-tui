@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/bporter816/aws-tui/internal/model"
@@ -12,8 +13,8 @@ func NewCFDistributionCustomErrorResponses(repo *repo.CloudFront, distributionId
 		"CloudFront",
 		[]string{distributionId, "Custom Error Responses"},
 		[]string{"ERROR CODE", "RESPONSE CODE", "RESPONSE PAGE PATH", "MIN TTL SECONDS"},
-		func() ([]model.CloudFrontDistributionCustomErrorResponse, error) {
-			return repo.GetDistributionCustomErrorResponses(distributionId)
+		func(ctx context.Context) ([]model.CloudFrontDistributionCustomErrorResponse, error) {
+			return repo.GetDistributionCustomErrorResponses(ctx, distributionId)
 		},
 		func(v model.CloudFrontDistributionCustomErrorResponse) []string {
 			errorCode, responseCode, responsePagePath, minTTL := "-", "-", "-", "-"

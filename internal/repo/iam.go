@@ -21,9 +21,9 @@ func NewIAM(iamClient *iam.Client) *IAM {
 	}
 }
 
-func (i IAM) ListAccountAliases() ([]string, error) {
+func (i IAM) ListAccountAliases(ctx context.Context) ([]string, error) {
 	out, err := i.iamClient.ListAccountAliases(
-		context.TODO(),
+		ctx,
 		&iam.ListAccountAliasesInput{},
 	)
 	if err != nil {
@@ -32,7 +32,7 @@ func (i IAM) ListAccountAliases() ([]string, error) {
 	return out.AccountAliases, nil
 }
 
-func (i IAM) ListUsers(groupName *string) ([]model.IAMUser, error) {
+func (i IAM) ListUsers(ctx context.Context, groupName *string) ([]model.IAMUser, error) {
 	var users []model.IAMUser
 	if groupName == nil {
 		pg := iam.NewListUsersPaginator(
@@ -40,7 +40,7 @@ func (i IAM) ListUsers(groupName *string) ([]model.IAMUser, error) {
 			&iam.ListUsersInput{},
 		)
 		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
+			out, err := pg.NextPage(ctx)
 			if err != nil {
 				return []model.IAMUser{}, err
 			}
@@ -56,7 +56,7 @@ func (i IAM) ListUsers(groupName *string) ([]model.IAMUser, error) {
 			},
 		)
 		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
+			out, err := pg.NextPage(ctx)
 			if err != nil {
 				return []model.IAMUser{}, err
 			}
@@ -68,7 +68,7 @@ func (i IAM) ListUsers(groupName *string) ([]model.IAMUser, error) {
 	return users, nil
 }
 
-func (i IAM) ListGroups(userName *string) ([]model.IAMGroup, error) {
+func (i IAM) ListGroups(ctx context.Context, userName *string) ([]model.IAMGroup, error) {
 	var groups []model.IAMGroup
 	if userName == nil {
 		pg := iam.NewListGroupsPaginator(
@@ -76,7 +76,7 @@ func (i IAM) ListGroups(userName *string) ([]model.IAMGroup, error) {
 			&iam.ListGroupsInput{},
 		)
 		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
+			out, err := pg.NextPage(ctx)
 			if err != nil {
 				return []model.IAMGroup{}, err
 			}
@@ -92,7 +92,7 @@ func (i IAM) ListGroups(userName *string) ([]model.IAMGroup, error) {
 			},
 		)
 		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
+			out, err := pg.NextPage(ctx)
 			if err != nil {
 				return []model.IAMGroup{}, err
 			}
@@ -104,14 +104,14 @@ func (i IAM) ListGroups(userName *string) ([]model.IAMGroup, error) {
 	return groups, nil
 }
 
-func (i IAM) ListRoles() ([]model.IAMRole, error) {
+func (i IAM) ListRoles(ctx context.Context) ([]model.IAMRole, error) {
 	pg := iam.NewListRolesPaginator(
 		i.iamClient,
 		&iam.ListRolesInput{},
 	)
 	var roles []model.IAMRole
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.IAMRole{}, err
 		}
@@ -123,7 +123,7 @@ func (i IAM) ListRoles() ([]model.IAMRole, error) {
 }
 
 // TODO split this up
-func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]model.IAMPolicy, error) {
+func (i IAM) ListPolicies(ctx context.Context, id *string, identityType model.IAMIdentityType) ([]model.IAMPolicy, error) {
 	var policies []model.IAMPolicy
 	// inline policies
 	if id != nil {
@@ -136,7 +136,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				},
 			)
 			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
+				out, err := pg.NextPage(ctx)
 				if err != nil {
 					return []model.IAMPolicy{}, err
 				}
@@ -155,7 +155,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				},
 			)
 			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
+				out, err := pg.NextPage(ctx)
 				if err != nil {
 					return []model.IAMPolicy{}, err
 				}
@@ -174,7 +174,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				},
 			)
 			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
+				out, err := pg.NextPage(ctx)
 				if err != nil {
 					return []model.IAMPolicy{}, err
 				}
@@ -198,7 +198,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 			&iam.ListPoliciesInput{},
 		)
 		for pg.HasMorePages() {
-			out, err := pg.NextPage(context.TODO())
+			out, err := pg.NextPage(ctx)
 			if err != nil {
 				return policies, err
 			}
@@ -225,7 +225,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				},
 			)
 			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
+				out, err := pg.NextPage(ctx)
 				if err != nil {
 					return policies, err
 				}
@@ -249,7 +249,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				},
 			)
 			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
+				out, err := pg.NextPage(ctx)
 				if err != nil {
 					return policies, err
 				}
@@ -273,7 +273,7 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 				},
 			)
 			for pg.HasMorePages() {
-				out, err := pg.NextPage(context.TODO())
+				out, err := pg.NextPage(ctx)
 				if err != nil {
 					return policies, err
 				}
@@ -296,10 +296,10 @@ func (i IAM) ListPolicies(id *string, identityType model.IAMIdentityType) ([]mod
 	return policies, nil
 }
 
-func (i IAM) getIAMManagedPolicyCurrentVersion(policyArn string) (string, error) {
+func (i IAM) getIAMManagedPolicyCurrentVersion(ctx context.Context, policyArn string) (string, error) {
 	// get the managed policy
 	policyOut, err := i.iamClient.GetPolicy(
-		context.TODO(),
+		ctx,
 		&iam.GetPolicyInput{
 			PolicyArn: aws.String(policyArn),
 		},
@@ -310,7 +310,7 @@ func (i IAM) getIAMManagedPolicyCurrentVersion(policyArn string) (string, error)
 
 	// get the current version of the policy
 	versionOut, err := i.iamClient.GetPolicyVersion(
-		context.TODO(),
+		ctx,
 		&iam.GetPolicyVersionInput{
 			PolicyArn: aws.String(policyArn),
 			VersionId: policyOut.Policy.DefaultVersionId, // TODO use aws.String?
@@ -329,16 +329,16 @@ func (i IAM) getIAMManagedPolicyCurrentVersion(policyArn string) (string, error)
 	return decodedStr, nil
 }
 
-func (i IAM) GetIAMManagedPolicy(policyArn string) (string, error) {
-	return i.getIAMManagedPolicyCurrentVersion(policyArn)
+func (i IAM) GetIAMManagedPolicy(ctx context.Context, policyArn string) (string, error) {
+	return i.getIAMManagedPolicyCurrentVersion(ctx, policyArn)
 }
 
-func (i IAM) GetIAMInlinePolicy(identityType model.IAMIdentityType, identityName string, policyName string) (string, error) {
+func (i IAM) GetIAMInlinePolicy(ctx context.Context, identityType model.IAMIdentityType, identityName string, policyName string) (string, error) {
 	var policyDocument *string
 	switch identityType {
 	case model.IAMIdentityTypeUser:
 		out, err := i.iamClient.GetUserPolicy(
-			context.TODO(),
+			ctx,
 			&iam.GetUserPolicyInput{
 				UserName:   aws.String(identityName),
 				PolicyName: aws.String(policyName),
@@ -350,7 +350,7 @@ func (i IAM) GetIAMInlinePolicy(identityType model.IAMIdentityType, identityName
 		policyDocument = out.PolicyDocument
 	case model.IAMIdentityTypeRole:
 		out, err := i.iamClient.GetRolePolicy(
-			context.TODO(),
+			ctx,
 			&iam.GetRolePolicyInput{
 				RoleName:   aws.String(identityName),
 				PolicyName: aws.String(policyName),
@@ -362,7 +362,7 @@ func (i IAM) GetIAMInlinePolicy(identityType model.IAMIdentityType, identityName
 		policyDocument = out.PolicyDocument
 	case model.IAMIdentityTypeGroup:
 		out, err := i.iamClient.GetGroupPolicy(
-			context.TODO(),
+			ctx,
 			&iam.GetGroupPolicyInput{
 				GroupName:  aws.String(identityName),
 				PolicyName: aws.String(policyName),
@@ -387,12 +387,12 @@ func (i IAM) GetIAMInlinePolicy(identityType model.IAMIdentityType, identityName
 	return decodedStr, nil
 }
 
-func (i IAM) GetIAMPermissionsBoundary(name string, identityType model.IAMIdentityType) (string, error) {
+func (i IAM) GetIAMPermissionsBoundary(ctx context.Context, name string, identityType model.IAMIdentityType) (string, error) {
 	var attachment *iamTypes.AttachedPermissionsBoundary
 	switch identityType {
 	case model.IAMIdentityTypeUser:
 		out, err := i.iamClient.GetUser(
-			context.TODO(),
+			ctx,
 			&iam.GetUserInput{
 				UserName: aws.String(name),
 			},
@@ -403,7 +403,7 @@ func (i IAM) GetIAMPermissionsBoundary(name string, identityType model.IAMIdenti
 		attachment = out.User.PermissionsBoundary
 	case model.IAMIdentityTypeRole:
 		out, err := i.iamClient.GetRole(
-			context.TODO(),
+			ctx,
 			&iam.GetRoleInput{
 				RoleName: aws.String(name),
 			},
@@ -419,12 +419,12 @@ func (i IAM) GetIAMPermissionsBoundary(name string, identityType model.IAMIdenti
 		return "", nil
 	}
 
-	return i.getIAMManagedPolicyCurrentVersion(*attachment.PermissionsBoundaryArn)
+	return i.getIAMManagedPolicyCurrentVersion(ctx, *attachment.PermissionsBoundaryArn)
 }
 
-func (i IAM) GetIAMAssumeRolePolicy(roleName string) (string, error) {
+func (i IAM) GetIAMAssumeRolePolicy(ctx context.Context, roleName string) (string, error) {
 	out, err := i.iamClient.GetRole(
-		context.TODO(),
+		ctx,
 		&iam.GetRoleInput{
 			RoleName: aws.String(roleName),
 		},
@@ -441,9 +441,9 @@ func (i IAM) GetIAMAssumeRolePolicy(roleName string) (string, error) {
 	return decodedStr, nil
 }
 
-func (i IAM) getAccessKeyLastUsed(accessKeyId string) (iamTypes.AccessKeyLastUsed, error) {
+func (i IAM) getAccessKeyLastUsed(ctx context.Context, accessKeyId string) (iamTypes.AccessKeyLastUsed, error) {
 	out, err := i.iamClient.GetAccessKeyLastUsed(
-		context.TODO(),
+		ctx,
 		&iam.GetAccessKeyLastUsedInput{
 			AccessKeyId: aws.String(accessKeyId),
 		},
@@ -454,7 +454,7 @@ func (i IAM) getAccessKeyLastUsed(accessKeyId string) (iamTypes.AccessKeyLastUse
 	return *out.AccessKeyLastUsed, nil
 }
 
-func (i IAM) ListAccessKeys(userName string) ([]model.IAMAccessKey, error) {
+func (i IAM) ListAccessKeys(ctx context.Context, userName string) ([]model.IAMAccessKey, error) {
 	pg := iam.NewListAccessKeysPaginator(
 		i.iamClient,
 		&iam.ListAccessKeysInput{
@@ -463,14 +463,14 @@ func (i IAM) ListAccessKeys(userName string) ([]model.IAMAccessKey, error) {
 	)
 	var accessKeys []model.IAMAccessKey
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.IAMAccessKey{}, err
 		}
 		for _, v := range out.AccessKeyMetadata {
 			m := model.IAMAccessKey{AccessKeyMetadata: v}
 			if v.AccessKeyId != nil {
-				lastUsed, err := i.getAccessKeyLastUsed(*v.AccessKeyId)
+				lastUsed, err := i.getAccessKeyLastUsed(ctx, *v.AccessKeyId)
 				if err == nil {
 					m.LastUsed = lastUsed
 				}
@@ -481,22 +481,22 @@ func (i IAM) ListAccessKeys(userName string) ([]model.IAMAccessKey, error) {
 	return accessKeys, nil
 }
 
-func (i IAM) ListTags(typeAndName string) (model.Tags, error) {
+func (i IAM) ListTags(ctx context.Context, typeAndName string) (model.Tags, error) {
 	parts := strings.Split(typeAndName, ":")
 	if len(parts) != 2 {
 		return model.Tags{}, errors.New("must specify type and id for iam tags")
 	}
 	switch parts[0] {
 	case "role":
-		return i.listRoleTags(parts[1])
+		return i.listRoleTags(ctx, parts[1])
 	case "user":
-		return i.listUserTags(parts[1])
+		return i.listUserTags(ctx, parts[1])
 	default:
 		return model.Tags{}, errors.New("must get iam tags for a role or a user")
 	}
 }
 
-func (i IAM) listRoleTags(roleName string) (model.Tags, error) {
+func (i IAM) listRoleTags(ctx context.Context, roleName string) (model.Tags, error) {
 	pg := iam.NewListRoleTagsPaginator(
 		i.iamClient,
 		&iam.ListRoleTagsInput{
@@ -505,7 +505,7 @@ func (i IAM) listRoleTags(roleName string) (model.Tags, error) {
 	)
 	var tags model.Tags
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return model.Tags{}, err
 		}
@@ -517,7 +517,7 @@ func (i IAM) listRoleTags(roleName string) (model.Tags, error) {
 	return tags, nil
 }
 
-func (i IAM) listUserTags(userName string) (model.Tags, error) {
+func (i IAM) listUserTags(ctx context.Context, userName string) (model.Tags, error) {
 	pg := iam.NewListUserTagsPaginator(
 		i.iamClient,
 		&iam.ListUserTagsInput{
@@ -526,7 +526,7 @@ func (i IAM) listUserTags(userName string) (model.Tags, error) {
 	)
 	var tags model.Tags
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return model.Tags{}, err
 		}

@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/bporter816/aws-tui/internal/model"
@@ -14,8 +15,8 @@ func NewEBSVolumes(repo *repo.EC2, app *Application) *TableView[model.EC2Volume]
 		"EBS",
 		[]string{"Volumes"},
 		[]string{"NAME", "ID", "TYPE", "SIZE", "IOPS", "THROUGHPUT", "ATTACHMENTS", "ENCRYPTED"},
-		func() ([]model.EC2Volume, error) {
-			return repo.ListVolumes(nil)
+		func(ctx context.Context) ([]model.EC2Volume, error) {
+			return repo.ListVolumes(ctx, nil)
 		},
 		func(v model.EC2Volume) []string {
 			var name, size, iops, throughput, attachments, encrypted string

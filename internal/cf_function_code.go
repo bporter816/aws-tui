@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -33,8 +35,8 @@ func (c CFFunctionCode) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (c CFFunctionCode) Render() error {
-	code, err := c.repo.GetFunctionCode(c.name, c.stage)
+func (c CFFunctionCode) Render(ctx context.Context) error {
+	code, err := c.repo.GetFunctionCode(ctx, c.name, c.stage)
 	if err != nil {
 		return err
 	}

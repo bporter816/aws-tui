@@ -19,14 +19,14 @@ func NewKMS(kmsClient *kms.Client) *KMS {
 	}
 }
 
-func (k KMS) getAliasMap() (map[string][]string, error) {
+func (k KMS) getAliasMap(ctx context.Context) (map[string][]string, error) {
 	aliasMap := make(map[string][]string)
 	aliasesPg := kms.NewListAliasesPaginator(
 		k.kmsClient,
 		&kms.ListAliasesInput{},
 	)
 	for aliasesPg.HasMorePages() {
-		out, err := aliasesPg.NextPage(context.TODO())
+		out, err := aliasesPg.NextPage(ctx)
 		if err != nil {
 			return map[string][]string{}, err
 		}
@@ -39,9 +39,9 @@ func (k KMS) getAliasMap() (map[string][]string, error) {
 	return aliasMap, nil
 }
 
-func (k KMS) describeKey(keyId string) (kmsTypes.KeyMetadata, error) {
+func (k KMS) describeKey(ctx context.Context, keyId string) (kmsTypes.KeyMetadata, error) {
 	out, err := k.kmsClient.DescribeKey(
-		context.TODO(),
+		ctx,
 		&kms.DescribeKeyInput{
 			KeyId: aws.String(keyId),
 		},
@@ -52,8 +52,8 @@ func (k KMS) describeKey(keyId string) (kmsTypes.KeyMetadata, error) {
 	return *out.KeyMetadata, nil
 }
 
-func (k KMS) ListKeys() ([]model.KMSKey, error) {
-	aliasMap, err := k.getAliasMap()
+func (k KMS) ListKeys(ctx context.Context) ([]model.KMSKey, error) {
+	aliasMap, err := k.getAliasMap(ctx)
 	if err != nil {
 		return []model.KMSKey{}, err
 	}
@@ -63,13 +63,13 @@ func (k KMS) ListKeys() ([]model.KMSKey, error) {
 	)
 	var keys []model.KMSKey
 	for keysPg.HasMorePages() {
-		out, err := keysPg.NextPage(context.TODO())
+		out, err := keysPg.NextPage(ctx)
 		if err != nil {
 			return []model.KMSKey{}, err
 		}
 		for _, v := range out.Keys {
 			if v.KeyId != nil {
-				meta, err := k.describeKey(*v.KeyId)
+				meta, err := k.describeKey(ctx, *v.KeyId)
 				if err != nil {
 					// TODO handle error
 					continue
@@ -85,7 +85,7 @@ func (k KMS) ListKeys() ([]model.KMSKey, error) {
 	return keys, nil
 }
 
-func (k KMS) ListGrants(keyId string) ([]model.KMSGrant, error) {
+func (k KMS) ListGrants(ctx context.Context, keyId string) ([]model.KMSGrant, error) {
 	pg := kms.NewListGrantsPaginator(
 		k.kmsClient,
 		&kms.ListGrantsInput{
@@ -94,7 +94,7 @@ func (k KMS) ListGrants(keyId string) ([]model.KMSGrant, error) {
 	)
 	var grants []model.KMSGrant
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.KMSGrant{}, err
 		}
@@ -105,9 +105,9 @@ func (k KMS) ListGrants(keyId string) ([]model.KMSGrant, error) {
 	return grants, nil
 }
 
-func (k KMS) GetKeyPolicy(keyId string) (string, error) {
+func (k KMS) GetKeyPolicy(ctx context.Context, keyId string) (string, error) {
 	out, err := k.kmsClient.GetKeyPolicy(
-		context.TODO(),
+		ctx,
 		&kms.GetKeyPolicyInput{
 			KeyId:      aws.String(keyId),
 			PolicyName: aws.String("default"),
@@ -119,7 +119,7 @@ func (k KMS) GetKeyPolicy(keyId string) (string, error) {
 	return *out.Policy, nil
 }
 
-func (k KMS) ListTags(resourceId string) (model.Tags, error) {
+func (k KMS) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	pg := kms.NewListResourceTagsPaginator(
 		k.kmsClient,
 		&kms.ListResourceTagsInput{
@@ -128,7 +128,7 @@ func (k KMS) ListTags(resourceId string) (model.Tags, error) {
 	)
 	var tags model.Tags
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return model.Tags{}, err
 		}
@@ -139,14 +139,14 @@ func (k KMS) ListTags(resourceId string) (model.Tags, error) {
 	return tags, nil
 }
 
-func (k KMS) ListCustomKeyStores() ([]model.KMSCustomKeyStore, error) {
+func (k KMS) ListCustomKeyStores(ctx context.Context) ([]model.KMSCustomKeyStore, error) {
 	pg := kms.NewDescribeCustomKeyStoresPaginator(
 		k.kmsClient,
 		&kms.DescribeCustomKeyStoresInput{},
 	)
 	var keyStores []model.KMSCustomKeyStore
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.KMSCustomKeyStore{}, err
 		}

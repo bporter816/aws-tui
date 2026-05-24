@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -11,8 +13,8 @@ func NewIAMAccessKeys(repo *repo.IAM, userName string, app *Application) *TableV
 		"IAM",
 		[]string{userName, "Access Keys"},
 		[]string{"ID", "CREATED", "STATUS", "LAST USED DATE", "LAST USED REGION", "LAST USED SERVICE"},
-		func() ([]model.IAMAccessKey, error) {
-			return repo.ListAccessKeys(userName)
+		func(ctx context.Context) ([]model.IAMAccessKey, error) {
+			return repo.ListAccessKeys(ctx, userName)
 		},
 		func(v model.IAMAccessKey) []string {
 			var id, created, status, lastUsedDate, lastUsedRegion, lastUsedService string

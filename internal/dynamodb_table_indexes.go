@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -25,8 +26,8 @@ func NewDynamoDBTableIndexes(repo *repo.DynamoDB, tableName string, attributes [
 		"DynamoDB",
 		[]string{tableName, "Indexes"},
 		[]string{"NAME", "TYPE", "STATUS", "PARTITION KEY", "SORT KEY", "ITEMS", "SIZE", "PROJECTED ATTRIBUTES"},
-		func() ([]dynamoDBIndex, error) {
-			model, err := repo.ListIndexes(tableName)
+		func(ctx context.Context) ([]dynamoDBIndex, error) {
+			model, err := repo.ListIndexes(ctx, tableName)
 			if err != nil {
 				return nil, err
 			}

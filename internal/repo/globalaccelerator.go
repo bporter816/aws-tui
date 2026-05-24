@@ -17,14 +17,14 @@ func NewGlobalAccelerator(gaClient *ga.Client) *GlobalAccelerator {
 	}
 }
 
-func (g GlobalAccelerator) ListAccelerators() ([]model.GlobalAcceleratorAccelerator, error) {
+func (g GlobalAccelerator) ListAccelerators(ctx context.Context) ([]model.GlobalAcceleratorAccelerator, error) {
 	pg := ga.NewListAcceleratorsPaginator(
 		g.gaClient,
 		&ga.ListAcceleratorsInput{},
 	)
 	var accelerators []model.GlobalAcceleratorAccelerator
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.GlobalAcceleratorAccelerator{}, err
 		}
@@ -35,7 +35,7 @@ func (g GlobalAccelerator) ListAccelerators() ([]model.GlobalAcceleratorAccelera
 	return accelerators, nil
 }
 
-func (g GlobalAccelerator) ListListeners(acceleratorArn string) ([]model.GlobalAcceleratorListener, error) {
+func (g GlobalAccelerator) ListListeners(ctx context.Context, acceleratorArn string) ([]model.GlobalAcceleratorListener, error) {
 	pg := ga.NewListListenersPaginator(
 		g.gaClient,
 		&ga.ListListenersInput{
@@ -44,7 +44,7 @@ func (g GlobalAccelerator) ListListeners(acceleratorArn string) ([]model.GlobalA
 	)
 	var listeners []model.GlobalAcceleratorListener
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.GlobalAcceleratorListener{}, err
 		}
@@ -55,9 +55,9 @@ func (g GlobalAccelerator) ListListeners(acceleratorArn string) ([]model.GlobalA
 	return listeners, nil
 }
 
-func (g GlobalAccelerator) ListTags(resourceId string) (model.Tags, error) {
+func (g GlobalAccelerator) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	out, err := g.gaClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&ga.ListTagsForResourceInput{
 			ResourceArn: aws.String(resourceId),
 		},

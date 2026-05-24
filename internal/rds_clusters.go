@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strconv"
 
 	rdsTypes "github.com/aws/aws-sdk-go-v2/service/rds/types"
@@ -15,8 +16,8 @@ func NewRDSClusters(repo *repo.RDS, app *Application) *TableView[model.RDSCluste
 		"RDS",
 		[]string{"Clusters"},
 		[]string{"NAME", "PORT", "INSTANCES", "ENGINE", "PARAM GROUP", "CUSTOM ENDPOINTS"},
-		func() ([]model.RDSCluster, error) {
-			return repo.ListClusters([]rdsTypes.Filter{})
+		func(ctx context.Context) ([]model.RDSCluster, error) {
+			return repo.ListClusters(ctx, []rdsTypes.Filter{})
 		},
 		func(v model.RDSCluster) []string {
 			var port, engine string

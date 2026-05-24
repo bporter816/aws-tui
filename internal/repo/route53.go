@@ -20,14 +20,14 @@ func NewRoute53(r53Client *r53.Client) *Route53 {
 	}
 }
 
-func (r Route53) ListHostedZones() ([]model.Route53HostedZone, error) {
+func (r Route53) ListHostedZones(ctx context.Context) ([]model.Route53HostedZone, error) {
 	pg := r53.NewListHostedZonesPaginator(
 		r.r53Client,
 		&r53.ListHostedZonesInput{},
 	)
 	var hostedZones []model.Route53HostedZone
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.Route53HostedZone{}, err
 		}
@@ -38,14 +38,14 @@ func (r Route53) ListHostedZones() ([]model.Route53HostedZone, error) {
 	return hostedZones, nil
 }
 
-func (r Route53) ListHealthChecks() ([]model.Route53HealthCheck, error) {
+func (r Route53) ListHealthChecks(ctx context.Context) ([]model.Route53HealthCheck, error) {
 	pg := r53.NewListHealthChecksPaginator(
 		r.r53Client,
 		&r53.ListHealthChecksInput{},
 	)
 	var healthChecks []model.Route53HealthCheck
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.Route53HealthCheck{}, err
 		}
@@ -56,7 +56,7 @@ func (r Route53) ListHealthChecks() ([]model.Route53HealthCheck, error) {
 	return healthChecks, nil
 }
 
-func (r Route53) ListRecords(hostedZoneId string) ([]model.Route53Record, error) {
+func (r Route53) ListRecords(ctx context.Context, hostedZoneId string) ([]model.Route53Record, error) {
 	// ListResourceRecordSets doesn't have a paginator :'(
 	good := true
 	var resourceRecordSets []model.Route53Record
@@ -65,7 +65,7 @@ func (r Route53) ListRecords(hostedZoneId string) ([]model.Route53Record, error)
 	var nextRecordIdentifier *string = nil
 	for good {
 		out, err := r.r53Client.ListResourceRecordSets(
-			context.TODO(),
+			ctx,
 			&r53.ListResourceRecordSetsInput{
 				HostedZoneId:          aws.String(hostedZoneId),
 				StartRecordName:       nextRecordName,
@@ -89,7 +89,7 @@ func (r Route53) ListRecords(hostedZoneId string) ([]model.Route53Record, error)
 	return resourceRecordSets, nil
 }
 
-func (r Route53) ListTags(typeAndName string) (model.Tags, error) {
+func (r Route53) ListTags(ctx context.Context, typeAndName string) (model.Tags, error) {
 	parts := strings.Split(typeAndName, ":")
 	if len(parts) != 2 {
 		return model.Tags{}, errors.New("must specify resource type and id for route53 tags")
@@ -102,7 +102,7 @@ func (r Route53) ListTags(typeAndName string) (model.Tags, error) {
 		resourceType = r53Types.TagResourceTypeHealthcheck
 	}
 	out, err := r.r53Client.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&r53.ListTagsForResourceInput{
 			ResourceId:   aws.String(parts[1]),
 			ResourceType: resourceType,

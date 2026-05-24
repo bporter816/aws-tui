@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -11,8 +13,8 @@ func NewCFDistributionCacheBehaviors(repo *repo.CloudFront, distributionId strin
 		"CloudFront",
 		[]string{distributionId, "Cache Behaviors"},
 		[]string{"PATH", "ORIGIN", "VIEWER PROTOCOL POLICY", "CACHE POLICY", "ORIGIN REQUEST POLICY", "RESPONSE HEADERS POLICY"},
-		func() ([]model.CloudFrontDistributionCacheBehavior, error) {
-			return repo.GetDistributionCacheBehaviors(distributionId)
+		func(ctx context.Context) ([]model.CloudFrontDistributionCacheBehavior, error) {
+			return repo.GetDistributionCacheBehaviors(ctx, distributionId)
 		},
 		func(v model.CloudFrontDistributionCacheBehavior) []string {
 			return []string{

@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
@@ -38,8 +40,8 @@ func (s SNSDeliveryPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SNSDeliveryPolicy) Render() error {
-	policy, err := s.repo.GetDeliveryPolicy(s.topicArn)
+func (s SNSDeliveryPolicy) Render(ctx context.Context) error {
+	policy, err := s.repo.GetDeliveryPolicy(ctx, s.topicArn)
 	if err != nil {
 		return err
 	}

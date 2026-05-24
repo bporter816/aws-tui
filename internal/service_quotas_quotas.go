@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -11,8 +13,8 @@ func NewServiceQuotasQuotas(repo *repo.ServiceQuotas, serviceName string, servic
 		"Service Quotas",
 		[]string{serviceName, "Quotas"},
 		[]string{"NAME", "APPLIED VALUE", "DEFAULT VALUE", "ADJUSTABLE"},
-		func() ([]model.ServiceQuotasQuota, error) {
-			return repo.ListQuotas(serviceCode)
+		func(ctx context.Context) ([]model.ServiceQuotasQuota, error) {
+			return repo.ListQuotas(ctx, serviceCode)
 		},
 		func(v model.ServiceQuotasQuota) []string {
 			appliedValue := "Not available"

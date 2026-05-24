@@ -22,7 +22,7 @@ func NewElastiCache(ecClient *ec.Client, cwClient *cw.Client) *ElastiCache {
 	}
 }
 
-func (e ElastiCache) ListClusters() ([]model.ElastiCacheCluster, error) {
+func (e ElastiCache) ListClusters(ctx context.Context) ([]model.ElastiCacheCluster, error) {
 	// DescribeReplicationGroups doesn't return engine version, so we have to get it from the list of member cluster names
 	clusterToEngineVersion := make(map[string]string)
 
@@ -32,7 +32,7 @@ func (e ElastiCache) ListClusters() ([]model.ElastiCacheCluster, error) {
 	)
 	var clusters []model.ElastiCacheCluster
 	for clustersPg.HasMorePages() {
-		out, err := clustersPg.NextPage(context.TODO())
+		out, err := clustersPg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheCluster{}, err
 		}
@@ -54,7 +54,7 @@ func (e ElastiCache) ListClusters() ([]model.ElastiCacheCluster, error) {
 		&ec.DescribeReplicationGroupsInput{},
 	)
 	for replicationGroupsPg.HasMorePages() {
-		out, err := replicationGroupsPg.NextPage(context.TODO())
+		out, err := replicationGroupsPg.NextPage(ctx)
 		if err != nil {
 			// TODO more elegantly handle errors
 			return clusters, err
@@ -71,7 +71,7 @@ func (e ElastiCache) ListClusters() ([]model.ElastiCacheCluster, error) {
 	return clusters, nil
 }
 
-func (e ElastiCache) ListEvents() ([]model.ElastiCacheEvent, error) {
+func (e ElastiCache) ListEvents(ctx context.Context) ([]model.ElastiCacheEvent, error) {
 	oneWeekAgo := time.Now().AddDate(0, 0, -13) // TODO get this closer to the max 14 days
 	pg := ec.NewDescribeEventsPaginator(
 		e.ecClient,
@@ -81,7 +81,7 @@ func (e ElastiCache) ListEvents() ([]model.ElastiCacheEvent, error) {
 	)
 	var events []model.ElastiCacheEvent
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheEvent{}, err
 		}
@@ -92,14 +92,14 @@ func (e ElastiCache) ListEvents() ([]model.ElastiCacheEvent, error) {
 	return events, nil
 }
 
-func (e ElastiCache) ListReservedNodes() ([]model.ElastiCacheReservedNode, error) {
+func (e ElastiCache) ListReservedNodes(ctx context.Context) ([]model.ElastiCacheReservedNode, error) {
 	pg := ec.NewDescribeReservedCacheNodesPaginator(
 		e.ecClient,
 		&ec.DescribeReservedCacheNodesInput{},
 	)
 	var reservations []model.ElastiCacheReservedNode
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheReservedNode{}, err
 		}
@@ -110,14 +110,14 @@ func (e ElastiCache) ListReservedNodes() ([]model.ElastiCacheReservedNode, error
 	return reservations, nil
 }
 
-func (e ElastiCache) ListSnapshots() ([]model.ElastiCacheSnapshot, error) {
+func (e ElastiCache) ListSnapshots(ctx context.Context) ([]model.ElastiCacheSnapshot, error) {
 	pg := ec.NewDescribeSnapshotsPaginator(
 		e.ecClient,
 		&ec.DescribeSnapshotsInput{},
 	)
 	var snapshots []model.ElastiCacheSnapshot
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheSnapshot{}, err
 		}
@@ -128,14 +128,14 @@ func (e ElastiCache) ListSnapshots() ([]model.ElastiCacheSnapshot, error) {
 	return snapshots, nil
 }
 
-func (e ElastiCache) ListSubnetGroups() ([]model.ElastiCacheSubnetGroup, error) {
+func (e ElastiCache) ListSubnetGroups(ctx context.Context) ([]model.ElastiCacheSubnetGroup, error) {
 	pg := ec.NewDescribeCacheSubnetGroupsPaginator(
 		e.ecClient,
 		&ec.DescribeCacheSubnetGroupsInput{},
 	)
 	var subnetGroups []model.ElastiCacheSubnetGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheSubnetGroup{}, err
 		}
@@ -146,14 +146,14 @@ func (e ElastiCache) ListSubnetGroups() ([]model.ElastiCacheSubnetGroup, error) 
 	return subnetGroups, nil
 }
 
-func (e ElastiCache) ListParameterGroups() ([]model.ElastiCacheParameterGroup, error) {
+func (e ElastiCache) ListParameterGroups(ctx context.Context) ([]model.ElastiCacheParameterGroup, error) {
 	pg := ec.NewDescribeCacheParameterGroupsPaginator(
 		e.ecClient,
 		&ec.DescribeCacheParameterGroupsInput{},
 	)
 	var parameterGroups []model.ElastiCacheParameterGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheParameterGroup{}, err
 		}
@@ -164,7 +164,7 @@ func (e ElastiCache) ListParameterGroups() ([]model.ElastiCacheParameterGroup, e
 	return parameterGroups, nil
 }
 
-func (e ElastiCache) ListParameters(parameterGroupName string) ([]model.ElastiCacheParameter, error) {
+func (e ElastiCache) ListParameters(ctx context.Context, parameterGroupName string) ([]model.ElastiCacheParameter, error) {
 	pg := ec.NewDescribeCacheParametersPaginator(
 		e.ecClient,
 		&ec.DescribeCacheParametersInput{
@@ -173,7 +173,7 @@ func (e ElastiCache) ListParameters(parameterGroupName string) ([]model.ElastiCa
 	)
 	var parameters []model.ElastiCacheParameter
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheParameter{}, err
 		}
@@ -184,14 +184,14 @@ func (e ElastiCache) ListParameters(parameterGroupName string) ([]model.ElastiCa
 	return parameters, nil
 }
 
-func (e ElastiCache) ListUsers() ([]model.ElastiCacheUser, error) {
+func (e ElastiCache) ListUsers(ctx context.Context) ([]model.ElastiCacheUser, error) {
 	pg := ec.NewDescribeUsersPaginator(
 		e.ecClient,
 		&ec.DescribeUsersInput{},
 	)
 	var users []model.ElastiCacheUser
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheUser{}, err
 		}
@@ -202,14 +202,14 @@ func (e ElastiCache) ListUsers() ([]model.ElastiCacheUser, error) {
 	return users, nil
 }
 
-func (e ElastiCache) ListGroups() ([]model.ElastiCacheGroup, error) {
+func (e ElastiCache) ListGroups(ctx context.Context) ([]model.ElastiCacheGroup, error) {
 	pg := ec.NewDescribeUserGroupsPaginator(
 		e.ecClient,
 		&ec.DescribeUserGroupsInput{},
 	)
 	var users []model.ElastiCacheGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheGroup{}, err
 		}
@@ -220,14 +220,14 @@ func (e ElastiCache) ListGroups() ([]model.ElastiCacheGroup, error) {
 	return users, nil
 }
 
-func (e ElastiCache) ListServiceUpdates() ([]model.ElastiCacheServiceUpdate, error) {
+func (e ElastiCache) ListServiceUpdates(ctx context.Context) ([]model.ElastiCacheServiceUpdate, error) {
 	pg := ec.NewDescribeServiceUpdatesPaginator(
 		e.ecClient,
 		&ec.DescribeServiceUpdatesInput{},
 	)
 	var serviceUpdates []model.ElastiCacheServiceUpdate
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheServiceUpdate{}, err
 		}
@@ -239,6 +239,7 @@ func (e ElastiCache) ListServiceUpdates() ([]model.ElastiCacheServiceUpdate, err
 }
 
 func (e ElastiCache) ListUpdateActions(
+	ctx context.Context,
 	cacheClusterIds []string,
 	replicationGroupIds []string,
 	serviceUpdateName string,
@@ -271,7 +272,7 @@ func (e ElastiCache) ListUpdateActions(
 	)
 	var updateActions []model.ElastiCacheUpdateAction
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ElastiCacheUpdateAction{}, err
 		}
@@ -282,9 +283,9 @@ func (e ElastiCache) ListUpdateActions(
 	return updateActions, nil
 }
 
-func (e ElastiCache) ListTags(arn string) (model.Tags, error) {
+func (e ElastiCache) ListTags(ctx context.Context, arn string) (model.Tags, error) {
 	out, err := e.ecClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&ec.ListTagsForResourceInput{
 			ResourceName: aws.String(arn),
 		},

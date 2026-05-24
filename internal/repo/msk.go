@@ -18,14 +18,14 @@ func NewMSK(mskClient *msk.Client) *MSK {
 	}
 }
 
-func (m MSK) ListClusters() ([]model.MSKCluster, error) {
+func (m MSK) ListClusters(ctx context.Context) ([]model.MSKCluster, error) {
 	pg := msk.NewListClustersV2Paginator(
 		m.mskClient,
 		&msk.ListClustersV2Input{},
 	)
 	var clusters []model.MSKCluster
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.MSKCluster{}, err
 		}
@@ -36,9 +36,9 @@ func (m MSK) ListClusters() ([]model.MSKCluster, error) {
 	return clusters, nil
 }
 
-func (m MSK) ListTags(resourceId string) (model.Tags, error) {
+func (m MSK) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	out, err := m.mskClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&msk.ListTagsForResourceInput{
 			ResourceArn: aws.String(resourceId),
 		},

@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/gdamore/tcell/v2"
@@ -11,8 +13,8 @@ func NewIAMPolicies(repo *repo.IAM, identityType model.IAMIdentityType, id *stri
 		"IAM",
 		[]string{*id, "Policies"},
 		[]string{"NAME", "TYPE"},
-		func() ([]model.IAMPolicy, error) {
-			return repo.ListPolicies(id, identityType)
+		func(ctx context.Context) ([]model.IAMPolicy, error) {
+			return repo.ListPolicies(ctx, id, identityType)
 		},
 		func(v model.IAMPolicy) []string {
 			return []string{

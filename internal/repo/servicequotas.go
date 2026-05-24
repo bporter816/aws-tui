@@ -17,14 +17,14 @@ func NewServiceQuotas(sqClient *sq.Client) *ServiceQuotas {
 	}
 }
 
-func (s ServiceQuotas) ListServices() ([]model.ServiceQuotasService, error) {
+func (s ServiceQuotas) ListServices(ctx context.Context) ([]model.ServiceQuotasService, error) {
 	pg := sq.NewListServicesPaginator(
 		s.sqClient,
 		&sq.ListServicesInput{},
 	)
 	var services []model.ServiceQuotasService
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ServiceQuotasService{}, err
 		}
@@ -35,7 +35,7 @@ func (s ServiceQuotas) ListServices() ([]model.ServiceQuotasService, error) {
 	return services, nil
 }
 
-func (s ServiceQuotas) ListQuotas(serviceCode string) ([]model.ServiceQuotasQuota, error) {
+func (s ServiceQuotas) ListQuotas(ctx context.Context, serviceCode string) ([]model.ServiceQuotasQuota, error) {
 	defaultsPg := sq.NewListAWSDefaultServiceQuotasPaginator(
 		s.sqClient,
 		&sq.ListAWSDefaultServiceQuotasInput{
@@ -44,7 +44,7 @@ func (s ServiceQuotas) ListQuotas(serviceCode string) ([]model.ServiceQuotasQuot
 	)
 	var quotas []model.ServiceQuotasQuota
 	for defaultsPg.HasMorePages() {
-		out, err := defaultsPg.NextPage(context.TODO())
+		out, err := defaultsPg.NextPage(ctx)
 		if err != nil {
 			return []model.ServiceQuotasQuota{}, err
 		}
@@ -64,7 +64,7 @@ func (s ServiceQuotas) ListQuotas(serviceCode string) ([]model.ServiceQuotasQuot
 		},
 	)
 	for appliedPg.HasMorePages() {
-		out, err := appliedPg.NextPage(context.TODO())
+		out, err := appliedPg.NextPage(ctx)
 		if err != nil {
 			return []model.ServiceQuotasQuota{}, err
 		}

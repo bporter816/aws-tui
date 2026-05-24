@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -20,12 +22,12 @@ func NewRDSParameterGroups(repo *repo.RDS, app *Application) *TableView[rdsParam
 		"RDS",
 		[]string{"Parameter Groups"},
 		[]string{"NAME", "TYPE", "FAMILY", "DESCRIPTION"},
-		func() ([]rdsParameterGroup, error) {
-			clusterGroups, err := repo.ListClusterParameterGroups()
+		func(ctx context.Context) ([]rdsParameterGroup, error) {
+			clusterGroups, err := repo.ListClusterParameterGroups(ctx)
 			if err != nil {
 				return nil, err
 			}
-			instanceGroups, err := repo.ListInstanceParameterGroups()
+			instanceGroups, err := repo.ListInstanceParameterGroups(ctx)
 			if err != nil {
 				return nil, err
 			}

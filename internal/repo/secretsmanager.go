@@ -18,7 +18,7 @@ func NewSecretsManager(smClient *sm.Client) *SecretsManager {
 	}
 }
 
-func (s SecretsManager) ListSecrets() ([]model.SecretsManagerSecret, error) {
+func (s SecretsManager) ListSecrets(ctx context.Context) ([]model.SecretsManagerSecret, error) {
 	pg := sm.NewListSecretsPaginator(
 		s.smClient,
 		&sm.ListSecretsInput{
@@ -27,7 +27,7 @@ func (s SecretsManager) ListSecrets() ([]model.SecretsManagerSecret, error) {
 	)
 	var secrets []model.SecretsManagerSecret
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.SecretsManagerSecret{}, err
 		}
@@ -38,9 +38,9 @@ func (s SecretsManager) ListSecrets() ([]model.SecretsManagerSecret, error) {
 	return secrets, nil
 }
 
-func (s SecretsManager) GetSecretValue(secretName string) (string, error) {
+func (s SecretsManager) GetSecretValue(ctx context.Context, secretName string) (string, error) {
 	out, err := s.smClient.GetSecretValue(
-		context.TODO(),
+		ctx,
 		&sm.GetSecretValueInput{
 			SecretId: aws.String(secretName),
 		},
@@ -57,9 +57,9 @@ func (s SecretsManager) GetSecretValue(secretName string) (string, error) {
 	return "", nil
 }
 
-func (s SecretsManager) GetResourcePolicy(secretName string) (string, error) {
+func (s SecretsManager) GetResourcePolicy(ctx context.Context, secretName string) (string, error) {
 	out, err := s.smClient.GetResourcePolicy(
-		context.TODO(),
+		ctx,
 		&sm.GetResourcePolicyInput{
 			SecretId: aws.String(secretName),
 		},
@@ -74,9 +74,9 @@ func (s SecretsManager) GetResourcePolicy(secretName string) (string, error) {
 	return policy, nil
 }
 
-func (s SecretsManager) ListTags(secretName string) (model.Tags, error) {
+func (s SecretsManager) ListTags(ctx context.Context, secretName string) (model.Tags, error) {
 	out, err := s.smClient.DescribeSecret(
-		context.TODO(),
+		ctx,
 		&sm.DescribeSecretInput{
 			SecretId: aws.String(secretName),
 		},

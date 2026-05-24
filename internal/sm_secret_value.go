@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
@@ -23,7 +24,7 @@ func NewSMSecretValue(repo *repo.SecretsManager, secretName string, app *Applica
 		app:        app,
 	}
 
-	secretValue, err := s.repo.GetSecretValue(s.secretName)
+	secretValue, err := s.repo.GetSecretValue(app.ctx, s.secretName)
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +51,7 @@ func (s SMSecretValue) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (s SMSecretValue) Render() error {
+func (s SMSecretValue) Render(ctx context.Context) error {
 	if v, ok := s.Primitive.(*ui.Table); ok {
 		var data [][]string
 		for k, v := range s.valueKV {

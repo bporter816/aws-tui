@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/bporter816/aws-tui/internal/model"
@@ -14,8 +15,8 @@ func NewEC2SecurityGroupRules(repo *repo.EC2, sgId string, app *Application) *Ta
 		"EC2",
 		[]string{sgId, "Rules"},
 		[]string{"NAME", "ID", "TYPE", "PROTOCOL", "PORTS", "SRC/DST", "DESCRIPTION"},
-		func() ([]model.EC2SecurityGroupRule, error) {
-			return repo.ListSecurityGroupRules(sgId)
+		func(ctx context.Context) ([]model.EC2SecurityGroupRule, error) {
+			return repo.ListSecurityGroupRules(ctx, sgId)
 		},
 		func(v model.EC2SecurityGroupRule) []string {
 			name := "-"

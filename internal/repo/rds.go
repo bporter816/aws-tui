@@ -19,7 +19,7 @@ func NewRDS(rdsClient *rds.Client) *RDS {
 	}
 }
 
-func (r RDS) ListClusters(filters []rdsTypes.Filter) ([]model.RDSCluster, error) {
+func (r RDS) ListClusters(ctx context.Context, filters []rdsTypes.Filter) ([]model.RDSCluster, error) {
 	pg := rds.NewDescribeDBClustersPaginator(
 		r.rdsClient,
 		&rds.DescribeDBClustersInput{
@@ -28,7 +28,7 @@ func (r RDS) ListClusters(filters []rdsTypes.Filter) ([]model.RDSCluster, error)
 	)
 	var clusters []model.RDSCluster
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSCluster{}, err
 		}
@@ -39,14 +39,14 @@ func (r RDS) ListClusters(filters []rdsTypes.Filter) ([]model.RDSCluster, error)
 	return clusters, nil
 }
 
-func (r RDS) ListGlobalClusters() ([]model.RDSGlobalCluster, error) {
+func (r RDS) ListGlobalClusters(ctx context.Context) ([]model.RDSGlobalCluster, error) {
 	pg := rds.NewDescribeGlobalClustersPaginator(
 		r.rdsClient,
 		&rds.DescribeGlobalClustersInput{},
 	)
 	var globalClusters []model.RDSGlobalCluster
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSGlobalCluster{}, err
 		}
@@ -57,7 +57,7 @@ func (r RDS) ListGlobalClusters() ([]model.RDSGlobalCluster, error) {
 	return globalClusters, nil
 }
 
-func (r RDS) ListInstances(filters []rdsTypes.Filter) ([]model.RDSInstance, error) {
+func (r RDS) ListInstances(ctx context.Context, filters []rdsTypes.Filter) ([]model.RDSInstance, error) {
 	pg := rds.NewDescribeDBInstancesPaginator(
 		r.rdsClient,
 		&rds.DescribeDBInstancesInput{
@@ -66,7 +66,7 @@ func (r RDS) ListInstances(filters []rdsTypes.Filter) ([]model.RDSInstance, erro
 	)
 	var instances []model.RDSInstance
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSInstance{}, err
 		}
@@ -77,14 +77,14 @@ func (r RDS) ListInstances(filters []rdsTypes.Filter) ([]model.RDSInstance, erro
 	return instances, nil
 }
 
-func (r RDS) ListClusterParameterGroups() ([]model.RDSClusterParameterGroup, error) {
+func (r RDS) ListClusterParameterGroups(ctx context.Context) ([]model.RDSClusterParameterGroup, error) {
 	pg := rds.NewDescribeDBClusterParameterGroupsPaginator(
 		r.rdsClient,
 		&rds.DescribeDBClusterParameterGroupsInput{},
 	)
 	var parameterGroups []model.RDSClusterParameterGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSClusterParameterGroup{}, err
 		}
@@ -95,14 +95,14 @@ func (r RDS) ListClusterParameterGroups() ([]model.RDSClusterParameterGroup, err
 	return parameterGroups, nil
 }
 
-func (r RDS) ListInstanceParameterGroups() ([]model.RDSInstanceParameterGroup, error) {
+func (r RDS) ListInstanceParameterGroups(ctx context.Context) ([]model.RDSInstanceParameterGroup, error) {
 	pg := rds.NewDescribeDBParameterGroupsPaginator(
 		r.rdsClient,
 		&rds.DescribeDBParameterGroupsInput{},
 	)
 	var parameterGroups []model.RDSInstanceParameterGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSInstanceParameterGroup{}, err
 		}
@@ -113,7 +113,7 @@ func (r RDS) ListInstanceParameterGroups() ([]model.RDSInstanceParameterGroup, e
 	return parameterGroups, nil
 }
 
-func (r RDS) ListClusterParameters(paramGroupName string) ([]model.RDSParameter, error) {
+func (r RDS) ListClusterParameters(ctx context.Context, paramGroupName string) ([]model.RDSParameter, error) {
 	pg := rds.NewDescribeDBClusterParametersPaginator(
 		r.rdsClient,
 		&rds.DescribeDBClusterParametersInput{
@@ -122,7 +122,7 @@ func (r RDS) ListClusterParameters(paramGroupName string) ([]model.RDSParameter,
 	)
 	var parameters []model.RDSParameter
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSParameter{}, err
 		}
@@ -133,7 +133,7 @@ func (r RDS) ListClusterParameters(paramGroupName string) ([]model.RDSParameter,
 	return parameters, nil
 }
 
-func (r RDS) ListInstanceParameters(paramGroupName string) ([]model.RDSParameter, error) {
+func (r RDS) ListInstanceParameters(ctx context.Context, paramGroupName string) ([]model.RDSParameter, error) {
 	pg := rds.NewDescribeDBParametersPaginator(
 		r.rdsClient,
 		&rds.DescribeDBParametersInput{
@@ -142,7 +142,7 @@ func (r RDS) ListInstanceParameters(paramGroupName string) ([]model.RDSParameter
 	)
 	var parameters []model.RDSParameter
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSParameter{}, err
 		}
@@ -153,14 +153,14 @@ func (r RDS) ListInstanceParameters(paramGroupName string) ([]model.RDSParameter
 	return parameters, nil
 }
 
-func (r RDS) ListSubnetGroups() ([]model.RDSSubnetGroup, error) {
+func (r RDS) ListSubnetGroups(ctx context.Context) ([]model.RDSSubnetGroup, error) {
 	pg := rds.NewDescribeDBSubnetGroupsPaginator(
 		r.rdsClient,
 		&rds.DescribeDBSubnetGroupsInput{},
 	)
 	var subnetGroups []model.RDSSubnetGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSSubnetGroup{}, err
 		}
@@ -171,14 +171,14 @@ func (r RDS) ListSubnetGroups() ([]model.RDSSubnetGroup, error) {
 	return subnetGroups, nil
 }
 
-func (r RDS) ListReservedInstances() ([]model.RDSReservedInstance, error) {
+func (r RDS) ListReservedInstances(ctx context.Context) ([]model.RDSReservedInstance, error) {
 	pg := rds.NewDescribeReservedDBInstancesPaginator(
 		r.rdsClient,
 		&rds.DescribeReservedDBInstancesInput{},
 	)
 	var reservedInstances []model.RDSReservedInstance
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.RDSReservedInstance{}, err
 		}
@@ -189,9 +189,9 @@ func (r RDS) ListReservedInstances() ([]model.RDSReservedInstance, error) {
 	return reservedInstances, nil
 }
 
-func (r RDS) ListTags(resourceId string) (model.Tags, error) {
+func (r RDS) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	out, err := r.rdsClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&rds.ListTagsForResourceInput{
 			ResourceName: aws.String(resourceId),
 		},

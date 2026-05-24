@@ -18,7 +18,7 @@ func NewACM(acmClient *acm.Client) *ACM {
 	}
 }
 
-func (a ACM) ListCertificates() ([]model.ACMCertificate, error) {
+func (a ACM) ListCertificates(ctx context.Context) ([]model.ACMCertificate, error) {
 	pg := acm.NewListCertificatesPaginator(
 		a.acmClient,
 		&acm.ListCertificatesInput{
@@ -29,7 +29,7 @@ func (a ACM) ListCertificates() ([]model.ACMCertificate, error) {
 	)
 	var certificates []model.ACMCertificate
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ACMCertificate{}, err
 		}
@@ -40,17 +40,17 @@ func (a ACM) ListCertificates() ([]model.ACMCertificate, error) {
 	return certificates, nil
 }
 
-func (a ACM) getCertificateDetails(certificateArn string) (*acm.GetCertificateOutput, error) {
+func (a ACM) getCertificateDetails(ctx context.Context, certificateArn string) (*acm.GetCertificateOutput, error) {
 	return a.acmClient.GetCertificate(
-		context.TODO(),
+		ctx,
 		&acm.GetCertificateInput{
 			CertificateArn: aws.String(certificateArn),
 		},
 	)
 }
 
-func (a ACM) GetCertificate(certificateArn string) (string, error) {
-	out, err := a.getCertificateDetails(certificateArn)
+func (a ACM) GetCertificate(ctx context.Context, certificateArn string) (string, error) {
+	out, err := a.getCertificateDetails(ctx, certificateArn)
 	if err != nil {
 		return "", err
 	}
@@ -60,9 +60,9 @@ func (a ACM) GetCertificate(certificateArn string) (string, error) {
 	return *out.Certificate, nil
 }
 
-func (a ACM) ListTags(resourceId string) (model.Tags, error) {
+func (a ACM) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	out, err := a.acmClient.ListTagsForCertificate(
-		context.TODO(),
+		ctx,
 		&acm.ListTagsForCertificateInput{
 			CertificateArn: aws.String(resourceId),
 		},

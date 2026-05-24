@@ -19,9 +19,9 @@ func NewCloudFront(cfClient *cf.Client) *CloudFront {
 	}
 }
 
-func (c CloudFront) getDistributionConfig(distributionId string) (*cfTypes.DistributionConfig, error) {
+func (c CloudFront) getDistributionConfig(ctx context.Context, distributionId string) (*cfTypes.DistributionConfig, error) {
 	out, err := c.cfClient.GetDistributionConfig(
-		context.TODO(),
+		ctx,
 		&cf.GetDistributionConfigInput{
 			Id: aws.String(distributionId),
 		},
@@ -32,14 +32,14 @@ func (c CloudFront) getDistributionConfig(distributionId string) (*cfTypes.Distr
 	return out.DistributionConfig, nil
 }
 
-func (c CloudFront) ListDistributions() ([]model.CloudFrontDistribution, error) {
+func (c CloudFront) ListDistributions(ctx context.Context) ([]model.CloudFrontDistribution, error) {
 	pg := cf.NewListDistributionsPaginator(
 		c.cfClient,
 		&cf.ListDistributionsInput{},
 	)
 	var distributions []model.CloudFrontDistribution
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil || out.DistributionList == nil {
 			return []model.CloudFrontDistribution{}, err
 		}
@@ -50,8 +50,8 @@ func (c CloudFront) ListDistributions() ([]model.CloudFrontDistribution, error) 
 	return distributions, nil
 }
 
-func (c CloudFront) GetDistributionOrigins(distributionId string) ([]model.CloudFrontDistributionOrigin, error) {
-	out, err := c.getDistributionConfig(distributionId)
+func (c CloudFront) GetDistributionOrigins(ctx context.Context, distributionId string) ([]model.CloudFrontDistributionOrigin, error) {
+	out, err := c.getDistributionConfig(ctx, distributionId)
 	if err != nil || out.Origins == nil {
 		return []model.CloudFrontDistributionOrigin{}, err
 	}
@@ -62,8 +62,8 @@ func (c CloudFront) GetDistributionOrigins(distributionId string) ([]model.Cloud
 	return origins, nil
 }
 
-func (c CloudFront) GetDistributionCacheBehaviors(distributionId string) ([]model.CloudFrontDistributionCacheBehavior, error) {
-	out, err := c.getDistributionConfig(distributionId)
+func (c CloudFront) GetDistributionCacheBehaviors(ctx context.Context, distributionId string) ([]model.CloudFrontDistributionCacheBehavior, error) {
+	out, err := c.getDistributionConfig(ctx, distributionId)
 	if err != nil {
 		return []model.CloudFrontDistributionCacheBehavior{}, err
 	}
@@ -87,8 +87,8 @@ func (c CloudFront) GetDistributionCacheBehaviors(distributionId string) ([]mode
 	return cacheBehaviors, nil
 }
 
-func (c CloudFront) GetDistributionCustomErrorResponses(distributionId string) ([]model.CloudFrontDistributionCustomErrorResponse, error) {
-	out, err := c.getDistributionConfig(distributionId)
+func (c CloudFront) GetDistributionCustomErrorResponses(ctx context.Context, distributionId string) ([]model.CloudFrontDistributionCustomErrorResponse, error) {
+	out, err := c.getDistributionConfig(ctx, distributionId)
 	if err != nil || out.CustomErrorResponses == nil {
 		return []model.CloudFrontDistributionCustomErrorResponse{}, err
 	}
@@ -99,7 +99,7 @@ func (c CloudFront) GetDistributionCustomErrorResponses(distributionId string) (
 	return customErrorResponses, nil
 }
 
-func (c CloudFront) ListInvalidations(distributionId string) ([]model.CloudFrontInvalidation, error) {
+func (c CloudFront) ListInvalidations(ctx context.Context, distributionId string) ([]model.CloudFrontInvalidation, error) {
 	pg := cf.NewListInvalidationsPaginator(
 		c.cfClient,
 		&cf.ListInvalidationsInput{
@@ -108,7 +108,7 @@ func (c CloudFront) ListInvalidations(distributionId string) ([]model.CloudFront
 	)
 	var invalidations []model.CloudFrontInvalidation
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil || out.InvalidationList == nil {
 			return []model.CloudFrontInvalidation{}, err
 		}
@@ -119,9 +119,9 @@ func (c CloudFront) ListInvalidations(distributionId string) ([]model.CloudFront
 	return invalidations, nil
 }
 
-func (c CloudFront) ListInvalidationPaths(distributionId string, invalidationId string) ([]model.CloudFrontInvalidationPath, error) {
+func (c CloudFront) ListInvalidationPaths(ctx context.Context, distributionId string, invalidationId string) ([]model.CloudFrontInvalidationPath, error) {
 	out, err := c.cfClient.GetInvalidation(
-		context.TODO(),
+		ctx,
 		&cf.GetInvalidationInput{
 			DistributionId: aws.String(distributionId),
 			Id:             aws.String(invalidationId),
@@ -137,13 +137,13 @@ func (c CloudFront) ListInvalidationPaths(distributionId string, invalidationId 
 	return paths, nil
 }
 
-func (c CloudFront) ListFunctions() ([]model.CloudFrontFunction, error) {
+func (c CloudFront) ListFunctions(ctx context.Context) ([]model.CloudFrontFunction, error) {
 	// ListFunctions doesn't have a paginator
 	var functions []model.CloudFrontFunction
 	var marker *string
 	for {
 		out, err := c.cfClient.ListFunctions(
-			context.TODO(),
+			ctx,
 			&cf.ListFunctionsInput{
 				Marker: marker,
 			},
@@ -162,7 +162,7 @@ func (c CloudFront) ListFunctions() ([]model.CloudFrontFunction, error) {
 	return functions, nil
 }
 
-func (c CloudFront) GetFunctionCode(name string, stage string) (string, error) {
+func (c CloudFront) GetFunctionCode(ctx context.Context, name string, stage string) (string, error) {
 	var stg cfTypes.FunctionStage
 	// TODO this has to know about case, refactor
 	if stage == "Development" {
@@ -173,7 +173,7 @@ func (c CloudFront) GetFunctionCode(name string, stage string) (string, error) {
 		return "", errors.New("invalid function stage")
 	}
 	out, err := c.cfClient.GetFunction(
-		context.TODO(),
+		ctx,
 		&cf.GetFunctionInput{
 			Name:  aws.String(name),
 			Stage: stg,
@@ -185,9 +185,9 @@ func (c CloudFront) GetFunctionCode(name string, stage string) (string, error) {
 	return string(out.FunctionCode), nil
 }
 
-func (c CloudFront) ListTags(resourceId string) (model.Tags, error) {
+func (c CloudFront) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	out, err := c.cfClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&cf.ListTagsForResourceInput{
 			Resource: aws.String(resourceId),
 		},

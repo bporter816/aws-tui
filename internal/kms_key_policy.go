@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
 )
@@ -32,8 +34,8 @@ func (k KmsKeyPolicy) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (k KmsKeyPolicy) Render() error {
-	policy, err := k.repo.GetKeyPolicy(k.keyId)
+func (k KmsKeyPolicy) Render(ctx context.Context) error {
+	policy, err := k.repo.GetKeyPolicy(ctx, k.keyId)
 	if err != nil {
 		return err
 	}

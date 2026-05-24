@@ -19,9 +19,9 @@ func NewSQS(sqsClient *sqs.Client) *SQS {
 	}
 }
 
-func (s SQS) getAttributes(queueUrl string, attributeNames []sqsTypes.QueueAttributeName) (map[string]string, error) {
+func (s SQS) getAttributes(ctx context.Context, queueUrl string, attributeNames []sqsTypes.QueueAttributeName) (map[string]string, error) {
 	out, err := s.sqsClient.GetQueueAttributes(
-		context.TODO(),
+		ctx,
 		&sqs.GetQueueAttributesInput{
 			QueueUrl:       aws.String(queueUrl),
 			AttributeNames: attributeNames,
@@ -33,19 +33,19 @@ func (s SQS) getAttributes(queueUrl string, attributeNames []sqsTypes.QueueAttri
 	return out.Attributes, nil
 }
 
-func (s SQS) ListQueues() ([]model.SQSQueue, error) {
+func (s SQS) ListQueues(ctx context.Context) ([]model.SQSQueue, error) {
 	var queues []model.SQSQueue
 	pg := sqs.NewListQueuesPaginator(
 		s.sqsClient,
 		&sqs.ListQueuesInput{},
 	)
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.SQSQueue{}, err
 		}
 		for _, v := range out.QueueUrls {
-			attrs, err := s.getAttributes(v, []sqsTypes.QueueAttributeName{sqsTypes.QueueAttributeNameAll})
+			attrs, err := s.getAttributes(ctx, v, []sqsTypes.QueueAttributeName{sqsTypes.QueueAttributeNameAll})
 			if err != nil {
 				continue
 			}
@@ -67,8 +67,8 @@ func (s SQS) ListQueues() ([]model.SQSQueue, error) {
 	return queues, nil
 }
 
-func (s SQS) GetAccessPolicy(queueUrl string) (string, error) {
-	attrs, err := s.getAttributes(queueUrl, []sqsTypes.QueueAttributeName{sqsTypes.QueueAttributeNamePolicy})
+func (s SQS) GetAccessPolicy(ctx context.Context, queueUrl string) (string, error) {
+	attrs, err := s.getAttributes(ctx, queueUrl, []sqsTypes.QueueAttributeName{sqsTypes.QueueAttributeNamePolicy})
 	if err != nil {
 		return "", err
 	}
@@ -78,9 +78,9 @@ func (s SQS) GetAccessPolicy(queueUrl string) (string, error) {
 	return "", nil
 }
 
-func (s SQS) ListTags(queueUrl string) (model.Tags, error) {
+func (s SQS) ListTags(ctx context.Context, queueUrl string) (model.Tags, error) {
 	out, err := s.sqsClient.ListQueueTags(
-		context.TODO(),
+		ctx,
 		&sqs.ListQueueTagsInput{
 			QueueUrl: aws.String(queueUrl),
 		},

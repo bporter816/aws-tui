@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -12,8 +14,8 @@ func NewEC2ReservedInstances(repo *repo.EC2, app *Application) *TableView[model.
 		"EC2",
 		[]string{"Reserved Instances"},
 		[]string{"ID", "INSTANCE TYPE", "SCOPE", "STATE"},
-		func() ([]model.EC2ReservedInstance, error) {
-			return repo.ListReservedInstances(nil)
+		func(ctx context.Context) ([]model.EC2ReservedInstance, error) {
+			return repo.ListReservedInstances(ctx, nil)
 		},
 		func(v model.EC2ReservedInstance) []string {
 			return []string{

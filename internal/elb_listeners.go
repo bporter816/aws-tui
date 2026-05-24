@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/bporter816/aws-tui/internal/model"
@@ -16,8 +17,8 @@ func NewELBListeners(repo *repo.ELB, lbArn string, lbName string, app *Applicati
 		"ELB",
 		[]string{lbName, "Listeners"},
 		[]string{"PROTOCOL", "PORT", "RULES", "SSL POLICY", "DEFAULT CERTIFICATE", "MTLS MODE"},
-		func() ([]model.ELBListener, error) {
-			return repo.ListListeners(lbArn)
+		func(ctx context.Context) ([]model.ELBListener, error) {
+			return repo.ListListeners(ctx, lbArn)
 		},
 		func(v model.ELBListener) []string {
 			var port, defaultCertificate, mtlsMode string

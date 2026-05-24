@@ -21,9 +21,9 @@ func NewS3(s3Client *s3.Client) *S3 {
 	}
 }
 
-func (s S3) ListBuckets() ([]model.S3Bucket, error) {
+func (s S3) ListBuckets(ctx context.Context) ([]model.S3Bucket, error) {
 	out, err := s.s3Client.ListBuckets(
-		context.TODO(),
+		ctx,
 		&s3.ListBucketsInput{},
 	)
 	if err != nil {
@@ -36,7 +36,7 @@ func (s S3) ListBuckets() ([]model.S3Bucket, error) {
 	return buckets, nil
 }
 
-func (s S3) ListObjects(bucketName string, prefix string) ([]string, []string, error) {
+func (s S3) ListObjects(ctx context.Context, bucketName string, prefix string) ([]string, []string, error) {
 	pg := s3.NewListObjectsV2Paginator(
 		s.s3Client,
 		&s3.ListObjectsV2Input{
@@ -47,7 +47,7 @@ func (s S3) ListObjects(bucketName string, prefix string) ([]string, []string, e
 	)
 	var prefixes, objects []string
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []string{}, []string{}, err
 		}
@@ -61,9 +61,9 @@ func (s S3) ListObjects(bucketName string, prefix string) ([]string, []string, e
 	return prefixes, objects, nil
 }
 
-func (s S3) GetBucketPolicy(bucketName string) (string, error) {
+func (s S3) GetBucketPolicy(ctx context.Context, bucketName string) (string, error) {
 	out, err := s.s3Client.GetBucketPolicy(
-		context.TODO(),
+		ctx,
 		&s3.GetBucketPolicyInput{
 			Bucket: aws.String(bucketName),
 		},
@@ -74,9 +74,9 @@ func (s S3) GetBucketPolicy(bucketName string) (string, error) {
 	return *out.Policy, nil
 }
 
-func (s S3) GetCORSRules(bucketName string) ([]model.S3CORSRule, error) {
+func (s S3) GetCORSRules(ctx context.Context, bucketName string) ([]model.S3CORSRule, error) {
 	out, err := s.s3Client.GetBucketCors(
-		context.TODO(),
+		ctx,
 		&s3.GetBucketCorsInput{
 			Bucket: aws.String(bucketName),
 		},
@@ -91,10 +91,10 @@ func (s S3) GetCORSRules(bucketName string) ([]model.S3CORSRule, error) {
 	return corsRules, nil
 }
 
-func (s S3) listBucketTags(bucketName string) (model.Tags, error) {
+func (s S3) listBucketTags(ctx context.Context, bucketName string) (model.Tags, error) {
 	// TODO find where the panic occurs when there are no tags
 	out, err := s.s3Client.GetBucketTagging(
-		context.TODO(),
+		ctx,
 		&s3.GetBucketTaggingInput{
 			Bucket: aws.String(bucketName),
 		},
@@ -109,9 +109,9 @@ func (s S3) listBucketTags(bucketName string) (model.Tags, error) {
 	return tags, nil
 }
 
-func (s S3) GetObject(bucketName string, key string) ([]byte, error) {
+func (s S3) GetObject(ctx context.Context, bucketName string, key string) ([]byte, error) {
 	out, err := s.s3Client.GetObject(
-		context.TODO(),
+		ctx,
 		&s3.GetObjectInput{
 			Bucket: aws.String(bucketName),
 			Key:    aws.String(key),
@@ -131,9 +131,9 @@ func (s S3) GetObject(bucketName string, key string) ([]byte, error) {
 	return b, nil
 }
 
-func (s S3) GetObjectMetadata(bucketName string, key string) (model.Tags, error) {
+func (s S3) GetObjectMetadata(ctx context.Context, bucketName string, key string) (model.Tags, error) {
 	out, err := s.s3Client.GetObject(
-		context.TODO(),
+		ctx,
 		&s3.GetObjectInput{
 			Bucket: aws.String(bucketName),
 			Key:    aws.String(key),
@@ -152,9 +152,9 @@ func (s S3) GetObjectMetadata(bucketName string, key string) (model.Tags, error)
 	return tags, nil
 }
 
-func (s S3) listObjectTags(bucketName string, key string) (model.Tags, error) {
+func (s S3) listObjectTags(ctx context.Context, bucketName string, key string) (model.Tags, error) {
 	out, err := s.s3Client.GetObjectTagging(
-		context.TODO(),
+		ctx,
 		&s3.GetObjectTaggingInput{
 			Bucket: aws.String(bucketName),
 			Key:    aws.String(key),
@@ -170,16 +170,16 @@ func (s S3) listObjectTags(bucketName string, key string) (model.Tags, error) {
 	return tags, nil
 }
 
-func (s S3) ListTags(typeAndName string) (model.Tags, error) {
+func (s S3) ListTags(ctx context.Context, typeAndName string) (model.Tags, error) {
 	parts := strings.Split(typeAndName, ":")
 	if len(parts) != 2 && len(parts) != 3 {
 		return model.Tags{}, errors.New("must give type and name for s3 tags")
 	}
 	switch parts[0] {
 	case "bucket":
-		return s.listBucketTags(parts[1])
+		return s.listBucketTags(ctx, parts[1])
 	case "object":
-		return s.listObjectTags(parts[1], parts[2])
+		return s.listObjectTags(ctx, parts[1], parts[2])
 	default:
 		return model.Tags{}, errors.New("must use bucket or object for s3 tags")
 	}

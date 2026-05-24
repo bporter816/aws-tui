@@ -25,14 +25,14 @@ func NewELB(elbClient *elb.Client, httpClient *http.Client) *ELB {
 	}
 }
 
-func (e ELB) ListLoadBalancers() ([]model.ELBLoadBalancer, error) {
+func (e ELB) ListLoadBalancers(ctx context.Context) ([]model.ELBLoadBalancer, error) {
 	pg := elb.NewDescribeLoadBalancersPaginator(
 		e.elbClient,
 		&elb.DescribeLoadBalancersInput{},
 	)
 	var loadBalancers []model.ELBLoadBalancer
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ELBLoadBalancer{}, err
 		}
@@ -43,7 +43,7 @@ func (e ELB) ListLoadBalancers() ([]model.ELBLoadBalancer, error) {
 	return loadBalancers, nil
 }
 
-func (e ELB) ListListeners(loadBalancerArn string) ([]model.ELBListener, error) {
+func (e ELB) ListListeners(ctx context.Context, loadBalancerArn string) ([]model.ELBListener, error) {
 	pg := elb.NewDescribeListenersPaginator(
 		e.elbClient,
 		&elb.DescribeListenersInput{
@@ -52,14 +52,14 @@ func (e ELB) ListListeners(loadBalancerArn string) ([]model.ELBListener, error) 
 	)
 	var listeners []model.ELBListener
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ELBListener{}, err
 		}
 		for _, v := range out.Listeners {
 			m := model.ELBListener{Listener: v}
 			if v.ListenerArn != nil {
-				if rules, err := e.ListListenerRules(*v.ListenerArn); err != nil {
+				if rules, err := e.ListListenerRules(ctx, *v.ListenerArn); err != nil {
 					m.Rules = len(rules)
 				}
 			}
@@ -69,12 +69,12 @@ func (e ELB) ListListeners(loadBalancerArn string) ([]model.ELBListener, error) 
 	return listeners, nil
 }
 
-func (e ELB) ListListenerRules(listenerArn string) ([]model.ELBListenerRule, error) {
+func (e ELB) ListListenerRules(ctx context.Context, listenerArn string) ([]model.ELBListenerRule, error) {
 	var marker *string
 	var rules []model.ELBListenerRule
 	for {
 		out, err := e.elbClient.DescribeRules(
-			context.TODO(),
+			ctx,
 			&elb.DescribeRulesInput{
 				ListenerArn: aws.String(listenerArn),
 				Marker:      marker,
@@ -94,14 +94,14 @@ func (e ELB) ListListenerRules(listenerArn string) ([]model.ELBListenerRule, err
 	return rules, nil
 }
 
-func (e ELB) ListTargetGroups() ([]model.ELBTargetGroup, error) {
+func (e ELB) ListTargetGroups(ctx context.Context) ([]model.ELBTargetGroup, error) {
 	pg := elb.NewDescribeTargetGroupsPaginator(
 		e.elbClient,
 		&elb.DescribeTargetGroupsInput{},
 	)
 	var targetGroups []model.ELBTargetGroup
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ELBTargetGroup{}, err
 		}
@@ -112,9 +112,9 @@ func (e ELB) ListTargetGroups() ([]model.ELBTargetGroup, error) {
 	return targetGroups, nil
 }
 
-func (e ELB) ListTags(resourceArn string) (model.Tags, error) {
+func (e ELB) ListTags(ctx context.Context, resourceArn string) (model.Tags, error) {
 	out, err := e.elbClient.DescribeTags(
-		context.TODO(),
+		ctx,
 		&elb.DescribeTagsInput{
 			ResourceArns: []string{resourceArn},
 		},
@@ -132,14 +132,14 @@ func (e ELB) ListTags(resourceArn string) (model.Tags, error) {
 	return tags, nil
 }
 
-func (e ELB) ListTrustStores() ([]model.ELBTrustStore, error) {
+func (e ELB) ListTrustStores(ctx context.Context) ([]model.ELBTrustStore, error) {
 	pg := elb.NewDescribeTrustStoresPaginator(
 		e.elbClient,
 		&elb.DescribeTrustStoresInput{},
 	)
 	var trustStores []model.ELBTrustStore
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ELBTrustStore{}, err
 		}
@@ -150,7 +150,7 @@ func (e ELB) ListTrustStores() ([]model.ELBTrustStore, error) {
 	return trustStores, nil
 }
 
-func (e ELB) ListTrustStoreAssociations(a arn.ARN) ([]model.ELBTrustStoreAssociation, error) {
+func (e ELB) ListTrustStoreAssociations(ctx context.Context, a arn.ARN) ([]model.ELBTrustStoreAssociation, error) {
 	pg := elb.NewDescribeTrustStoreAssociationsPaginator(
 		e.elbClient,
 		&elb.DescribeTrustStoreAssociationsInput{
@@ -159,7 +159,7 @@ func (e ELB) ListTrustStoreAssociations(a arn.ARN) ([]model.ELBTrustStoreAssocia
 	)
 	var associations []model.ELBTrustStoreAssociation
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.ELBTrustStoreAssociation{}, err
 		}
@@ -170,9 +170,9 @@ func (e ELB) ListTrustStoreAssociations(a arn.ARN) ([]model.ELBTrustStoreAssocia
 	return associations, nil
 }
 
-func (e ELB) GetTrustStoreCACertificatesBundle(trustStoreArn string) (string, error) {
+func (e ELB) GetTrustStoreCACertificatesBundle(ctx context.Context, trustStoreArn string) (string, error) {
 	out, err := e.elbClient.GetTrustStoreCaCertificatesBundle(
-		context.TODO(),
+		ctx,
 		&elb.GetTrustStoreCaCertificatesBundleInput{
 			TrustStoreArn: aws.String(trustStoreArn),
 		},

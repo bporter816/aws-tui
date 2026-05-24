@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -11,8 +13,8 @@ func NewCFDistributionOrigins(repo *repo.CloudFront, distributionId string, app 
 		"CloudFront",
 		[]string{distributionId, "Origins"},
 		[]string{"NAME", "DOMAIN NAME", "PATH", "TYPE"},
-		func() ([]model.CloudFrontDistributionOrigin, error) {
-			return repo.GetDistributionOrigins(distributionId)
+		func(ctx context.Context) ([]model.CloudFrontDistributionOrigin, error) {
+			return repo.GetDistributionOrigins(ctx, distributionId)
 		},
 		func(v model.CloudFrontDistributionOrigin) []string {
 			var originType string

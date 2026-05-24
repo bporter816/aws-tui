@@ -16,9 +16,9 @@ func NewSTS(stsClient *sts.Client) *STS {
 	}
 }
 
-func (s STS) GetCallerIdentity() (model.STSCallerIdentity, error) {
+func (s STS) GetCallerIdentity(ctx context.Context) (model.STSCallerIdentity, error) {
 	out, err := s.stsClient.GetCallerIdentity(
-		context.TODO(),
+		ctx,
 		&sts.GetCallerIdentityInput{},
 	)
 	if err != nil {

@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/ui"
@@ -38,8 +40,8 @@ func (e ELBTrustStoreBundle) GetKeyActions() []KeyAction {
 	return []KeyAction{}
 }
 
-func (e ELBTrustStoreBundle) Render() error {
-	cert, err := e.repo.GetTrustStoreCACertificatesBundle(e.trustStoreArn)
+func (e ELBTrustStoreBundle) Render(ctx context.Context) error {
+	cert, err := e.repo.GetTrustStoreCACertificatesBundle(ctx, e.trustStoreArn)
 	if err != nil {
 		return err
 	}

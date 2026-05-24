@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"context"
+
 	"github.com/bporter816/aws-tui/internal/model"
 	"github.com/bporter816/aws-tui/internal/repo"
 	"github.com/bporter816/aws-tui/internal/utils"
@@ -11,8 +13,8 @@ func NewElastiCacheParameters(repo *repo.ElastiCache, parameterGroupName string,
 		"ElastiCache",
 		[]string{parameterGroupName, "Parameters"},
 		[]string{"NAME", "ALLOWED VALUES", "VALUE", "TYPE", "MODIFIABLE", "CHANGE TYPE", "SOURCE", "DESCRIPTION"},
-		func() ([]model.ElastiCacheParameter, error) {
-			return repo.ListParameters(parameterGroupName)
+		func(ctx context.Context) ([]model.ElastiCacheParameter, error) {
+			return repo.ListParameters(ctx, parameterGroupName)
 		},
 		func(v model.ElastiCacheParameter) []string {
 			var isModifiable string

@@ -21,14 +21,14 @@ func NewSSM(ssmClient *ssm.Client) *SSM {
 	}
 }
 
-func (s SSM) ListParameters() ([]model.SSMParameter, error) {
+func (s SSM) ListParameters(ctx context.Context) ([]model.SSMParameter, error) {
 	pg := ssm.NewDescribeParametersPaginator(
 		s.ssmClient,
 		&ssm.DescribeParametersInput{},
 	)
 	var parameters []model.SSMParameter
 	for pg.HasMorePages() {
-		out, err := pg.NextPage(context.TODO())
+		out, err := pg.NextPage(ctx)
 		if err != nil {
 			return []model.SSMParameter{}, err
 		}
@@ -39,7 +39,7 @@ func (s SSM) ListParameters() ([]model.SSMParameter, error) {
 	return parameters, nil
 }
 
-func (s SSM) ListTags(resourceId string) (model.Tags, error) {
+func (s SSM) ListTags(ctx context.Context, resourceId string) (model.Tags, error) {
 	parts := strings.Split(resourceId, ":")
 	if len(parts) != 2 {
 		return model.Tags{}, errors.New("must provide type and arn for ssm tags")
@@ -53,7 +53,7 @@ func (s SSM) ListTags(resourceId string) (model.Tags, error) {
 	}
 
 	out, err := s.ssmClient.ListTagsForResource(
-		context.TODO(),
+		ctx,
 		&ssm.ListTagsForResourceInput{
 			ResourceId:   aws.String(parts[1]),
 			ResourceType: resourceType,
