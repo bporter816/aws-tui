@@ -33,7 +33,7 @@ func TestKeyActionString(t *testing.T) {
 				Description: "test",
 				Action:      func() {},
 			},
-			expected: "Ctrl+a",
+			expected: "Ctrl+A",
 		},
 	}
 
